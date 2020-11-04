@@ -1,3 +1,7 @@
+# Figuring out fastDigest
+*.epub
+*.lua
+
 # PyCharm
 .idea
 
