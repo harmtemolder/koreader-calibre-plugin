@@ -52,11 +52,11 @@ class SettingsDialog(QDialog):
         self.resize(self.sizeHint())
 
     def about(self):
-        text = get_resources('about.txt')
+        text = get_resources('about.txt').decode('utf-8')
         QMessageBox.about(
             self,
-            'About the Interface Plugin Demo',
-            text.decode('utf-8')
+            'About the KOReader Sync plugin',
+            text
         )
 
     def marked(self):

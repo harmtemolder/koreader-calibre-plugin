@@ -1,4 +1,6 @@
-<strong>KOReader Sync Plugin</strong>
-<p>A calibre plugin to synchronize metadata from KOReader to calibre.</p>
-<p>The source code of this plugin can be found <a href="https://git.sr.ht/~harmtemolder/koreader-calibre-plugin">on sourcehut</a>.</p>
-<p>If you encounter any issues with the plugin, please submit them as issues <a href="https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin">here</a>.</p>
+<p>KOReader Sync</p>
+<ul>
+  <li>A plugin to synchronize metadata from KOReader to calibre.</li>
+  <li>The source code of this plugin can be found <a href="https://git.sr.ht/~harmtemolder/koreader-calibre-plugin">on sourcehut</a>.</li>
+  <li>If you encounter any issues with the plugin, please submit them <a href="https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin">here</a>.</li>
+</ul>
