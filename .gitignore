@@ -1,5 +1,9 @@
-# PyCharm
+# https://manual.calibre-ebook.com/creating_plugins.html#a-user-interface-plugin
+interface_demo_plugin
+
+# PyCharm & VSCodium
 .idea
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
