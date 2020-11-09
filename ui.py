@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 __license__   = 'GPL v3'
-__copyright__ = '2020, Harm te Molder <mail@harmtemolder.com>'
+__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader.main import SettingsDialog
+
 
 class InterfacePlugin(InterfaceAction):
     name = 'KOReader Sync'

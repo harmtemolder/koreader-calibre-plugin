@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
 __license__   = 'GPL v3'
-__copyright__ = '2020, Harm te Molder <mail@harmtemolder.com>'
+__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
-from calibre.customize import InterfaceActionBase
+import os
 
+from calibre.customize import InterfaceActionBase
+from calibre.utils.config import JSONConfig
 
 class KoreaderSync(InterfaceActionBase):
     name                    = 'KOReader Sync'
     description             = 'Get read progress from a locally connected KOReader device'
-    supported_platforms     = ['windows', 'osx', 'linux']
-    author                  = 'Harm te Molder'
+    author                  = 'harmtemolder'
     version                 = (0, 0, 1)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
+    config                  = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
     actual_plugin           = 'calibre_plugins.koreader.ui:InterfacePlugin'
 
     def is_customizable(self):

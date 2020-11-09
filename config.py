@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 __license__   = 'GPL v3'
-__copyright__ = '2020, Harm te Molder <mail@harmtemolder.com>'
+__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
+
+import os
 
 from PyQt5.Qt import QWidget, QHBoxLayout, QLabel, QLineEdit
 from calibre.utils.config import JSONConfig
 
-
-prefs = JSONConfig('plugins/koreader')
-
+prefs = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 prefs.defaults['hello_world_msg'] = 'Hello, World!'
 
 

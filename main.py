@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 __license__   = 'GPL v3'
-__copyright__ = '2020, Harm te Molder <mail@harmtemolder.com>'
+__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 from PyQt5.Qt import QDialog, QVBoxLayout, QPushButton, QMessageBox, QLabel
