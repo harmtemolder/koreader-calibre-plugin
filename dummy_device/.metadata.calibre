@@ -1,0 +1,327 @@
+[
+  {
+    "size": 113969,
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "user_metadata": {
+      "#formats": {
+        "table": "custom_column_1",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Formats",
+        "search_terms": [
+          "#formats"
+        ],
+        "label": "formats",
+        "colnum": 1,
+        "display": {
+          "contains_html": false,
+          "make_category": false,
+          "composite_sort": "text",
+          "use_decorations": 0,
+          "composite_template": "{:'re(approximate_formats(), ',', ', ')'}",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 22,
+        "#value#": "EPUB",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_rating": {
+        "table": "custom_column_12",
+        "column": "value",
+        "datatype": "rating",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Rating",
+        "search_terms": [
+          "#gr_rating"
+        ],
+        "label": "gr_rating",
+        "colnum": 12,
+        "display": {
+          "description": "",
+          "allow_half_stars": false
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 23,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_review": {
+        "table": "custom_column_3",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Review",
+        "search_terms": [
+          "#gr_review"
+        ],
+        "label": "gr_review",
+        "colnum": 3,
+        "display": {
+          "heading_position": "hide",
+          "interpret_as": "long-text",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 24,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_shelf": {
+        "table": "custom_column_5",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Shelf",
+        "search_terms": [
+          "#gr_shelf"
+        ],
+        "label": "gr_shelf",
+        "colnum": 5,
+        "display": {
+          "use_decorations": 0,
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 25,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#mm_annotations": {
+        "table": "custom_column_2",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Annotations",
+        "search_terms": [
+          "#mm_annotations"
+        ],
+        "label": "mm_annotations",
+        "colnum": 2,
+        "display": {},
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 26,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_first": {
+        "table": "custom_column_13",
+        "column": "value",
+        "datatype": "datetime",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read First",
+        "search_terms": [
+          "#read_first"
+        ],
+        "label": "read_first",
+        "colnum": 13,
+        "display": {
+          "description": "The date on which I added this book to my Goodreads Currently Reading shelf",
+          "date_format": null
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 27,
+        "#value#": "None",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_last": {
+        "table": "custom_column_6",
+        "column": "value",
+        "datatype": "datetime",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Last",
+        "search_terms": [
+          "#read_last"
+        ],
+        "label": "read_last",
+        "colnum": 6,
+        "display": {
+          "description": "The date on which I last opened this book on my e-reader",
+          "date_format": null
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 28,
+        "#value#": "None",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_location": {
+        "table": "custom_column_9",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Location",
+        "search_terms": [
+          "#read_location"
+        ],
+        "label": "read_location",
+        "colnum": 9,
+        "display": {
+          "description": "",
+          "use_decorations": 0
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 29,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_progress": {
+        "table": "custom_column_7",
+        "column": "value",
+        "datatype": "float",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Progress",
+        "search_terms": [
+          "#read_progress"
+        ],
+        "label": "read_progress",
+        "colnum": 7,
+        "display": {
+          "description": "",
+          "number_format": null
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 30,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_status": {
+        "table": "custom_column_11",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Status",
+        "search_terms": [
+          "#read_status"
+        ],
+        "label": "read_status",
+        "colnum": 11,
+        "display": {
+          "use_decorations": 0,
+          "contains_html": false,
+          "description": "",
+          "composite_template": "{#read_progress:get_read_status()}",
+          "composite_sort": "text",
+          "make_category": true
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 31,
+        "#value#": "",
+        "#extra#": null,
+        "is_multiple2": {}
+      }
+    },
+    "languages": [
+      "eng"
+    ],
+    "book_producer": null,
+    "db_id": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "comments": null,
+    "timestamp": "2018-12-07T11:12:11+00:00",
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "series": null,
+    "publication_type": null,
+    "rating": null,
+    "title": "Alice's Adventures in Wonderland",
+    "last_modified": "2020-08-12T14:07:39+00:00",
+    "publisher": null,
+    "user_categories": {},
+    "thumbnail": [
+      53,
+      68,
+      "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
+    ],
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "rights": null,
+    "tags": [
+      "Fantasy"
+    ],
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "pubdate": "2008-06-26T22:00:00+00:00",
+    "title_sort": "Alice's Adventures in Wonderland",
+    "application_id": 6397,
+    "mime": null,
+    "author_sort": "Carroll, Lewis",
+    "series_index": null,
+    "cover": null,
+    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e"
+  }
+]
