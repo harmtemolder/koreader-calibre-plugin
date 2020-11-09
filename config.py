@@ -65,10 +65,9 @@ class SettingsDialog(QDialog):
         self.about_button.clicked.connect(self.about)
         self.l.addWidget(self.about_button)
 
-        # pydevd_pycharm.settrace('localhost', port=12345, stdoutToServer=True,stderrToServer=True)
-        self.get_device_path_button = QPushButton('get_device_path', self)
-        self.get_device_path_button.clicked.connect(self.action.get_device_path)
-        self.l.addWidget(self.get_device_path_button)
+        self.get_smart_device_button = QPushButton('get_smart_device', self)
+        self.get_smart_device_button.clicked.connect(self.action.get_smart_device)
+        self.l.addWidget(self.get_smart_device_button)
 
         self.marked_button = QPushButton(
             'Show books with only one format in the calibre GUI', self)

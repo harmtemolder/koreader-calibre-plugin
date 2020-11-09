@@ -8,6 +8,7 @@ from functools import partial
 import sys
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.devices.smart_device_app.driver import SMART_DEVICE_APP
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader.config import SettingsDialog
 
@@ -43,28 +44,34 @@ class KoreaderAction(InterfaceAction):
         from calibre_plugins.koreader.config import prefs
         prefs
 
-    def get_device_path(self):
-        """Tries to get the path to the connected device.
+    def get_smart_device(self):
+        """Tries to get the connected smart device, if any.
 
-        Inspired by Kobo Utilities/action.py/get_device_path
-
-        :return: path to the root of the calibre library on device
+        :return: the connected SMART_DEVICE_APP object
         """
-        debug_print = partial(module_debug_print, 'KoreaderAction:get_device_path:')
-        device_path = ''
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:get_smart_device:')
 
         try:
-            device_connected = self.gui.library_view.model().device_connected
+            is_device_present = self.gui.device_manager.is_device_present
         except:
-            device_connected = None
+            is_device_present = False
 
-        debug_print('device_connected = ', device_connected)
 
-        if device_connected:
-            try:
-                device_path = self.gui.device_manager.connected_device._main_prefix
-            except:
-                debug_print('device connected but no device_path')
+        if not is_device_present:
+            debug_print('is_device_present = ', is_device_present)
+            return False
 
-        debug_print('device_path = ', device_path)
-        return device_path
+        try:
+            connected_device = self.gui.device_manager.connected_device
+            is_smart_device = isinstance(connected_device, SMART_DEVICE_APP)
+        except:
+            is_smart_device = False
+
+        if not is_smart_device:
+            debug_print('is_smart_device = ', is_smart_device)
+            return False
+
+        # debug_print('connected_device = ', connected_device)
+        connected_device._show_message('test')
+        return connected_device
