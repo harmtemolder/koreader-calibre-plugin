@@ -14,7 +14,9 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader.config import SettingsDialog
+from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.slpp import slpp as lua
+
 
 sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
 import pydevd_pycharm
@@ -25,7 +27,13 @@ module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
 
 
 class KoreaderAction(InterfaceAction):
-    name = 'KOReader Sync'
+    name = KoreaderSync.name
+    action_spec = (name, None, KoreaderSync.description, None)
+    dont_add_to = frozenset([
+        'toolbar', 'context-menu', 'context-menu-device','toolbar-child',
+        'menubar', 'menubar-device', 'context-menu-cover-browser',
+        'context-menu-split'])
+    action_type = 'global'
 
     def genesis(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:genesis:')
