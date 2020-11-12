@@ -10,7 +10,8 @@ import sys
 
 from calibre.devices.usbms.driver import debug_print as _debug_print
 from calibre.utils.config import JSONConfig
-from PyQt5.Qt import (QWidget, QHBoxLayout, QLabel, QLineEdit, QDialog, QVBoxLayout, QPushButton, QMessageBox)
+from PyQt5.Qt import (QWidget, QHBoxLayout, QLabel, QLineEdit, QDialog,
+                      QVBoxLayout, QPushButton, QMessageBox)
 
 prefs = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 prefs.defaults['hello_world_msg'] = 'Hello, World!'
@@ -23,9 +24,8 @@ debug_print = partial(_debug_print, ' koreader:config:', sep='')
 
 class ConfigWidget(QWidget):
     def __init__(self):
-        debug_print('ConfigWidget:__init__:start')
-        self.action = self.gui.iactions['KOReader Sync']
         QWidget.__init__(self)
+        debug_print('ConfigWidget:__init__:start')
         self.l = QHBoxLayout()
         self.setLayout(self.l)
 
@@ -61,29 +61,17 @@ class SettingsDialog(QDialog):
         self.setWindowTitle('Interface Plugin Demo')
         self.setWindowIcon(icon)
 
+        # About
         self.about_button = QPushButton('About', self)
         self.about_button.clicked.connect(self.about)
         self.l.addWidget(self.about_button)
 
-        self.get_smart_device_button = QPushButton('get_smart_device', self)
-        self.get_smart_device_button.clicked.connect(self.action.get_smart_device)
-        self.l.addWidget(self.get_smart_device_button)
+        # sync_to_calibre
+        self.sync_to_calibre_button = QPushButton('sync_to_calibre', self)
+        self.sync_to_calibre_button.clicked.connect(self.action.sync_to_calibre)
+        self.l.addWidget(self.sync_to_calibre_button)
 
-        self.marked_button = QPushButton(
-            'Show books with only one format in the calibre GUI', self)
-        self.marked_button.clicked.connect(self.marked)
-        self.l.addWidget(self.marked_button)
-
-        self.view_button = QPushButton(
-            'View the most recently added book', self)
-        self.view_button.clicked.connect(self.view)
-        self.l.addWidget(self.view_button)
-
-        self.update_metadata_button = QPushButton(
-            'Update metadata in a book\'s files', self)
-        self.update_metadata_button.clicked.connect(self.update_metadata)
-        self.l.addWidget(self.update_metadata_button)
-
+        # Configure this plugin
         self.conf_button = QPushButton(
             'Configure this plugin', self)
         self.conf_button.clicked.connect(self.config)

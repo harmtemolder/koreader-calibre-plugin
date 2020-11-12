@@ -1,6 +1,32 @@
 [
   {
     "rating": null,
+    "title": "Alice's Adventures in Wonderland",
+    "user_categories": {},
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "title_sort": "Alice's Adventures in Wonderland",
+    "book_producer": null,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "tags": [
+      "Fantasy"
+    ],
+    "timestamp": "2018-12-07T11:12:11+00:00",
+    "db_id": null,
+    "pubdate": "2008-06-26T22:00:00+00:00",
+    "languages": [
+      "eng"
+    ],
+    "comments": null,
+    "mime": null,
+    "rights": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "authors": [
+      "Lewis Carroll"
+    ],
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -277,51 +303,53 @@
         "#value#": "",
         "#extra#": null,
         "is_multiple2": {}
+      },
+      "#sidecar": {
+        "table": "custom_column_14",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Sidecar",
+        "search_terms": [
+          "#sidecar"
+        ],
+        "label": "sidecar",
+        "colnum": 14,
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "long-text",
+          "description": "The entire dict from KOReader\u2019s metadata.epub.lua"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 32,
+        "#value#": "{\"copt_font_gamma\": 30, \"copt_embedded_css\": 0, \"copt_font_kerning\": 3, \"header_font_face\": \"Noto Sans\", \"doc_props\": {\"title\": \"Alice's Adventures in Wonderland\", \"keywords\": \"Fantasy\", \"language\": \"en\", \"authors\": \"Lewis Carroll\", \"series\": \"\", \"description\": \"\"}, \"stats\": {\"title\": \"Alice's Adventures in Wonderland\", \"notes\": 0, \"language\": \"en\", \"pages\": 241, \"md5\": \"dc6cce610b4f29cd199d61c755bfc0ca\", \"authors\": \"Lewis Carroll\", \"series\": \"\", \"highlights\": 1}, \"doc_pages\": 241, \"bookmarks_sorted\": true, \"highlights_imported\": true, \"percent_finished\": 0.020746887966805, \"copt_h_page_margins\": {\"2\": 50, \"1\": 50}, \"copt_block_rendering_mode\": 1, \"font_hinting\": 2, \"copt_line_spacing\": 130, \"font_kerning\": 3, \"copt_render_dpi\": 96, \"font_size\": 26, \"highlight\": {\"5\": {\"1\": {\"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"datetime\": \"2020-11-11 12:46:55\", \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\", \"text\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\", \"drawer\": \"lighten\", \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\"}}}, \"embedded_css\": false, \"copt_smooth_scaling\": 1, \"word_spacing\": {\"2\": 75, \"1\": 95}, \"smooth_scaling\": true, \"copt_font_weight\": 0, \"highlight_disabled\": false, \"nightmode_images\": true, \"rotation_mode\": 0, \"copt_sync_t_b_page_margins\": 0, \"render_mode\": 0, \"show_overlap_enable\": false, \"visible_pages\": 1, \"copt_word_expansion\": 0, \"copt_visible_pages\": 1, \"css\": \"./data/epub.css\", \"gamma\": 1, \"copt_nightmode_images\": 1, \"copt_view_mode\": 0, \"copt_font_hinting\": 2, \"copt_t_page_margin\": 30, \"copt_status_line\": 1, \"copt_word_spacing\": {\"2\": 75, \"1\": 95}, \"text_lang_embedded_langs\": true, \"hyphenation\": true, \"hyph_trust_soft_hyphens\": false, \"hyph_soft_hyphens_only\": false, \"hyph_force_algorithmic\": false, \"floating_punctuation\": 0, \"highlight_drawer\": \"lighten\", \"copt_rotation_mode\": 0, \"font_face\": \"FreeSerif\", \"inverse_reading_order\": false, \"text_lang\": \"en-US\", \"gamma_index\": 30, \"partial_md5_checksum\": \"dc6cce610b4f29cd199d61c755bfc0ca\", \"copt_b_page_margin\": 50, \"render_dpi\": 96, \"font_embolden\": 0, \"cre_dom_version\": 20200824, \"page_overlap_style\": \"dim\", \"last_xpointer\": \"/body/DocFragment[1]/body/hr[2].0\", \"disable_fuzzy_search\": false, \"copt_embedded_fonts\": 0, \"word_expansion\": 0, \"embedded_fonts\": false, \"bookmarks\": {\"1\": {\"page\": \"/body/DocFragment[1]/body/p[9]/text()[1].0\", \"datetime\": \"2020-11-11 12:47:23\", \"notes\": \"in CHAPTER I. Down the Rabbit-Hole\", \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\"}, \"2\": {\"page\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\", \"highlighted\": true, \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\", \"notes\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\", \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"datetime\": \"2020-11-11 12:46:55\"}}, \"line_space_percent\": 130, \"config_panel_index\": 1, \"readermenu_tab_index\": 1, \"copt_font_size\": 26}",
+        "#extra#": null,
+        "is_multiple2": {}
       }
     },
-    "series_index": null,
-    "cover": null,
-    "title_sort": "Alice's Adventures in Wonderland",
-    "application_id": 6397,
-    "publisher": null,
-    "publication_type": null,
-    "title": "Alice's Adventures in Wonderland",
+    "size": 113969,
+    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
     "thumbnail": [
       53,
       68,
       "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
     ],
-    "tags": [
-      "Fantasy"
-    ],
-    "last_modified": "2020-08-12T14:07:39+00:00",
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "rights": null,
-    "mime": null,
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/ebooks/11"
-    },
-    "book_producer": null,
-    "author_sort": "Carroll, Lewis",
-    "authors": [
-      "Lewis Carroll"
-    ],
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "db_id": null,
+    "publisher": null,
+    "series_index": null,
+    "publication_type": null,
+    "last_modified": "2020-11-12T18:27:30+00:00",
+    "application_id": 6397,
     "author_link_map": {
       "Lewis Carroll": ""
     },
-    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "user_categories": {},
-    "size": 113969,
-    "comments": null,
     "series": null,
-    "languages": [
-      "eng"
-    ],
-    "pubdate": "2008-06-26T22:00:00+00:00"
+    "cover": null,
+    "author_sort": "Carroll, Lewis"
   }
 ]

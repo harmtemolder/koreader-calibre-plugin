@@ -1,3 +1,7 @@
+# Project-specific
+slpp.py
+*.zip
+
 # https://manual.calibre-ebook.com/creating_plugins.html#a-user-interface-plugin
 interface_demo_plugin
 
