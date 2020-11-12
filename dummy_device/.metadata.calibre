@@ -1,9 +1,6 @@
 [
   {
-    "size": 113969,
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
+    "rating": null,
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -282,46 +279,49 @@
         "is_multiple2": {}
       }
     },
-    "languages": [
-      "eng"
-    ],
-    "book_producer": null,
-    "db_id": null,
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/ebooks/11"
-    },
-    "comments": null,
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "series": null,
-    "publication_type": null,
-    "rating": null,
-    "title": "Alice's Adventures in Wonderland",
-    "last_modified": "2020-08-12T14:07:39+00:00",
+    "series_index": null,
+    "cover": null,
+    "title_sort": "Alice's Adventures in Wonderland",
+    "application_id": 6397,
     "publisher": null,
-    "user_categories": {},
+    "publication_type": null,
+    "title": "Alice's Adventures in Wonderland",
     "thumbnail": [
       53,
       68,
       "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
     ],
-    "authors": [
-      "Lewis Carroll"
-    ],
-    "rights": null,
     "tags": [
       "Fantasy"
     ],
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "pubdate": "2008-06-26T22:00:00+00:00",
-    "title_sort": "Alice's Adventures in Wonderland",
-    "application_id": 6397,
+    "last_modified": "2020-08-12T14:07:39+00:00",
+    "timestamp": "2018-12-07T11:12:11+00:00",
+    "rights": null,
     "mime": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "book_producer": null,
     "author_sort": "Carroll, Lewis",
-    "series_index": null,
-    "cover": null,
-    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e"
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "db_id": null,
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "user_categories": {},
+    "size": 113969,
+    "comments": null,
+    "series": null,
+    "languages": [
+      "eng"
+    ],
+    "pubdate": "2008-06-26T22:00:00+00:00"
   }
 ]
