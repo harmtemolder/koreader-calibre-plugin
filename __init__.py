@@ -29,14 +29,10 @@ class KoreaderSync(InterfaceActionBase):
 
     def config_widget(self):
         debug_print('KoreaderSync:config_widget:start')
-        from calibre_plugins.koreader.config import ConfigWidget
-        return ConfigWidget()
+        if self.actual_plugin_:
+            from calibre_plugins.koreader.config import ConfigWidget
+            return ConfigWidget(self.actual_plugin_)
 
     def save_settings(self, config_widget):
         debug_print('KoreaderSync:save_settings:start')
         config_widget.save_settings()
-
-        # Apply the changes
-        ac = self.actual_plugin_
-        if ac is not None:
-            ac.apply_settings()
