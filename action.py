@@ -13,7 +13,6 @@ import sys
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.actions import InterfaceAction
-from calibre_plugins.koreader.config import SettingsDialog
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.slpp import slpp as lua
 
@@ -38,17 +37,17 @@ class KoreaderAction(InterfaceAction):
     def genesis(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:genesis:')
         debug_print('start')
+
+        base = self.interface_action_base_plugin
+        self.version = '{} {}.{}.{}'.format(base.name, *base.version)
+
         icon = get_icons('images/icon.png')
         self.qaction.setIcon(icon)
-        self.qaction.triggered.connect(self.show_dialog)
 
-    def show_dialog(self):
-        debug_print = partial(module_debug_print, 'KoreaderAction:show_dialog:')
-        debug_print('start')
-        base_plugin_object = self.interface_action_base_plugin
-        do_user_config = base_plugin_object.do_user_config
-        d = SettingsDialog(self.gui, self.qaction.icon(), do_user_config)
-        d.show()
+        self.qaction.triggered.connect(self.show_config)
+
+    def show_config(self):
+        self.interface_action_base_plugin.do_user_config(self.gui)
 
     def apply_settings(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:apply_settings:')
@@ -142,7 +141,7 @@ class KoreaderAction(InterfaceAction):
                               'KoreaderAction:parse_sidecar_lua:')
 
         try:
-            decoded_lua = lua.decode(re.sub('^[^\{]*', '', sidecar_lua))
+            decoded_lua = lua.decode(re.sub('^[^{]*', '', sidecar_lua))
         except:
             debug_print('could not decode sidecar_lua')
             decoded_lua = None
