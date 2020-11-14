@@ -20,10 +20,30 @@ from PyQt5.Qt import (
     Qt,
 )
 
-prefs = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
-prefs.defaults['hello_world_msg'] = 'Hello, World!'
-prefs.defaults['percent_read_column'] = ''
-prefs.defaults['sidecar_column'] = ''
+COLUMNS = [{
+    'name': 'column_percent_read',
+    'label': 'Percent Read Column:',
+    'tooltip': 'Column used to store the current percent read. It must be of the type “Floating point numbers”.',
+    'type': 'float',
+    'sidecar_property': 'percent_finished',
+}, {
+    'name': 'column_md5',
+    'label': 'MD5 Hash Column:',
+    'tooltip': 'Column used to store the MD5 hash KOReader’s sync server uses to sync progress. It must be of the type “Text”.',
+    'type': 'text',
+    'sidecar_property': 'partial_md5_checksum',
+}, {
+    'name': 'column_sidecar',
+    'label': 'Raw Sidecar Column:',
+    'tooltip': 'Column used to store the entire contents of the sidecar (converted to a Python dict). Useful for debugging, but not much else. It must be of the type “Long text”.',
+    'type': 'comments',
+    'sidecar_property': '*',
+}]
+
+CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
+CONFIG.defaults['hello_world_msg'] = 'Hello, World!'
+for column in COLUMNS:
+    CONFIG.defaults[column['name']] = ''
 
 module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
 
@@ -34,65 +54,65 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print('ConfigWidget:__init__:start')
         self.action = plugin_action
         layout = QGridLayout()
+        row = 1
         self.setLayout(layout)
 
         # Get available columns per type
-        comments_columns = self.get_comments_custom_columns()
-        datetime_columns = self.get_datetime_custom_columns()
-        float_columns = self.get_float_custom_columns()
-        rating_columns = self.get_rating_columns()
-        text_columns = self.get_text_custom_columns()
+        available_columns = {
+            'comments': self.get_comments_custom_columns(),
+            'datetime': self.get_datetime_custom_columns(),
+            'float': self.get_float_custom_columns(),
+            'rating': self.get_rating_columns(),
+            'text': self.get_text_custom_columns(),
+        }
 
-        # Map percent_finished to percent_read
-        percent_read_label = QLabel('Percent Read Column:', self)
-        percent_read_label.setToolTip(
-            'Column used to store the current percent read. It must be of the '
-            'type “Floating point numbers”. Leave this blank if you do not '
-            'want to store or restore the percentage read.')
-        self.percent_read_combo = CustomColumnComboBox(
-            self, float_columns, prefs['percent_read_column'])
-        percent_read_label.setBuddy(self.percent_read_combo)
-        layout.addWidget(percent_read_label, 1, 1, Qt.AlignRight)
-        layout.addWidget(self.percent_read_combo, 1, 2)
-
-        # Map entire sidecar
-        sidecar_label = QLabel('Raw Sidecar Column:', self)
-        sidecar_label.setToolTip(
-            'Column used to store the entire contents of the sidecar ('
-            'converted to a Python dict). Useful for debugging, but not much '
-            'else. It must be of the type “Long text”. Leave this blank if '
-            'you do not want to store or restore the sidecar contents.')
-        self.sidecar_combo = CustomColumnComboBox(
-            self, comments_columns, prefs['sidecar_column'])
-        sidecar_label.setBuddy(self.sidecar_combo)
-        layout.addWidget(sidecar_label, 2, 1, Qt.AlignRight)
-        layout.addWidget(self.sidecar_combo, 2, 2)
+        # Add custom column dropdowns
+        for column in COLUMNS:
+            label = QLabel(column['label'], self)
+            label.setToolTip(column['tooltip'])
+            column['combo'] = CustomColumnComboBox(
+                self, available_columns[column['type']], CONFIG[column['name']])
+            label.setBuddy(column['combo'])
+            layout.addWidget(label, row, 1, Qt.AlignRight)
+            layout.addWidget(column['combo'], row, 2)
+            row += 1
 
         # Hello world message
         hello_world_label = QLabel('Hello world message:', self)
         self.hello_world_input = QLineEdit(self)
-        self.hello_world_input.setText(prefs['hello_world_msg'])
+        self.hello_world_input.setText(CONFIG['hello_world_msg'])
         hello_world_label.setBuddy(self.hello_world_input)
-        layout.addWidget(hello_world_label, 3, 1)
-        layout.addWidget(self.hello_world_input, 4, 1, 1, 2)
+        layout.addWidget(hello_world_label, row, 1)
+        row += 1
+        layout.addWidget(self.hello_world_input, row, 1, 1, 2)
+        row += 1
 
         # sync_to_calibre
         sync_to_calibre_button = QPushButton('sync_to_calibre', self)
-        sync_to_calibre_button.clicked.connect(self.action.sync_to_calibre)
-        layout.addWidget(sync_to_calibre_button, 5, 1, 1, 2, Qt.AlignHCenter)
+        sync_to_calibre_button.clicked.connect(self.save_and_sync)
+        layout.addWidget(sync_to_calibre_button, row, 1, 1, 2, Qt.AlignHCenter)
+        row += 1
 
         # About button
         about_button = QPushButton('About', self)
         about_button.clicked.connect(self.about)
-        layout.addWidget(about_button, 6, 1, 1, 2, Qt.AlignHCenter)
+        layout.addWidget(about_button, row, 1, 1, 2, Qt.AlignHCenter)
+        row += 1
 
     def save_settings(self):
         debug_print = partial(module_debug_print, 'ConfigWidget:save_settings:')
-        debug_print('old prefs = ', prefs)
-        prefs['percent_read_column'] = self.percent_read_combo.get_selected_column()
-        prefs['sidecar_column'] = self.sidecar_combo.get_selected_column()
-        prefs['hello_world_msg'] = self.hello_world_input.text()
-        debug_print('new prefs = ', prefs)
+        debug_print('old CONFIG = ', CONFIG)
+
+        for column in COLUMNS:
+            CONFIG[column['name']] = column['combo'].get_selected_column()
+
+        CONFIG['hello_world_msg'] = self.hello_world_input.text()
+
+        debug_print('new CONFIG = ', CONFIG)
+
+    def save_and_sync(self):
+        self.save_settings()
+        self.action.sync_to_calibre()
 
     def about(self):
         debug_print = partial(module_debug_print, 'ConfigWidget:about:')

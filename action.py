@@ -14,6 +14,7 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader import KoreaderSync
+from calibre_plugins.koreader.config import COLUMNS, CONFIG
 from calibre_plugins.koreader.slpp import slpp as lua
 
 
@@ -29,10 +30,9 @@ class KoreaderAction(InterfaceAction):
     name = KoreaderSync.name
     action_spec = (name, None, KoreaderSync.description, None)
     dont_add_to = frozenset([
-        'toolbar', 'context-menu', 'context-menu-device','toolbar-child',
-        'menubar', 'menubar-device', 'context-menu-cover-browser',
-        'context-menu-split'])
-    dont_remove_from = frozenset(['toolbar-device'])
+        'context-menu', 'context-menu-device','toolbar-child', 'menubar',
+        'menubar-device', 'context-menu-cover-browser', 'context-menu-split'])
+    dont_remove_from = frozenset(['toolbar', 'toolbar-device'])
     action_type = 'current'
 
     def genesis(self):
@@ -53,8 +53,7 @@ class KoreaderAction(InterfaceAction):
     def apply_settings(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:apply_settings:')
         debug_print('start')
-        from calibre_plugins.koreader.config import prefs
-        prefs
+        pass
 
     def get_connected_device(self):
         """Tries to get the connected device, if any
@@ -169,7 +168,7 @@ class KoreaderAction(InterfaceAction):
         pass
 
     def sync_to_calibre(self):
-        """This plugin’s main function. It syncs the contents of
+        """This plugin’s main purpose. It syncs the contents of
         KOReader’s metadata sidecar files into calibre’s metadata.
 
         :return:
@@ -186,6 +185,20 @@ class KoreaderAction(InterfaceAction):
 
         for book_uuid, sidecar_path in sidecar_paths.items():
             sidecar_contents = self.get_sidecar(device, sidecar_path)
-            self.update_metadata(book_uuid, '#sidecar',
-                                 json.dumps(sidecar_contents, indent=4))
-            debug_print('wrote sidecar_contents to #sidecar for ', book_uuid)
+
+            for column in COLUMNS:
+                key = column['name']
+
+                if CONFIG[key] == '':
+                    # No column mapped, so do not sync
+                    continue
+
+                property = column['sidecar_property']
+                if property == '*':
+                    value = json.dumps(sidecar_contents, indent=4)
+                else:
+                    value = sidecar_contents[property]
+
+                self.update_metadata(book_uuid, key, value)
+
+            debug_print('updated metadata for ', book_uuid)

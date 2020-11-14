@@ -1,11 +1,5 @@
 [
   {
-    "pubdate": "2008-06-26T22:00:00+00:00",
-    "languages": [
-      "eng"
-    ],
-    "publication_type": null,
-    "last_modified": "2020-11-14T17:58:06.164195+00:00",
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -143,7 +137,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 26,
-        "#value#": null,
+        "#value#": "dc6cce610b4f29cd199d61c755bfc0ca",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -171,7 +165,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 27,
-        "#value#": "{\n    \"copt_font_gamma\": 30,\n    \"copt_embedded_css\": 0,\n    \"copt_font_kerning\": 3,\n    \"header_font_face\": \"Noto Sans\",\n    \"doc_props\": {\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"keywords\": \"Fantasy\",\n        \"language\": \"en\",\n        \"authors\": \"Lewis Carroll\",\n        \"series\": \"\",\n        \"description\": \"\"\n    },\n    \"stats\": {\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"notes\": 0,\n        \"language\": \"en\",\n        \"pages\": 241,\n        \"md5\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n        \"authors\": \"Lewis Carroll\",\n        \"series\": \"\",\n        \"highlights\": 1\n    },\n    \"doc_pages\": 241,\n    \"bookmarks_sorted\": true,\n    \"highlights_imported\": true,\n    \"percent_finished\": 0.020746887966805,\n    \"copt_h_page_margins\": {\n        \"2\": 50,\n        \"1\": 50\n    },\n    \"copt_block_rendering_mode\": 1,\n    \"font_hinting\": 2,\n    \"copt_line_spacing\": 130,\n    \"font_kerning\": 3,\n    \"copt_render_dpi\": 96,\n    \"font_size\": 26,\n    \"highlight\": {\n        \"5\": {\n            \"1\": {\n                \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n                \"datetime\": \"2020-11-11 12:46:55\",\n                \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\",\n                \"text\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\",\n                \"drawer\": \"lighten\",\n                \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\"\n            }\n        }\n    },\n    \"embedded_css\": false,\n    \"copt_smooth_scaling\": 1,\n    \"word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"smooth_scaling\": true,\n    \"copt_font_weight\": 0,\n    \"highlight_disabled\": false,\n    \"nightmode_images\": true,\n    \"rotation_mode\": 0,\n    \"copt_sync_t_b_page_margins\": 0,\n    \"render_mode\": 0,\n    \"show_overlap_enable\": false,\n    \"visible_pages\": 1,\n    \"copt_word_expansion\": 0,\n    \"copt_visible_pages\": 1,\n    \"css\": \"./data/epub.css\",\n    \"gamma\": 1,\n    \"copt_nightmode_images\": 1,\n    \"copt_view_mode\": 0,\n    \"copt_font_hinting\": 2,\n    \"copt_t_page_margin\": 30,\n    \"copt_status_line\": 1,\n    \"copt_word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"text_lang_embedded_langs\": true,\n    \"hyphenation\": true,\n    \"hyph_trust_soft_hyphens\": false,\n    \"hyph_soft_hyphens_only\": false,\n    \"hyph_force_algorithmic\": false,\n    \"floating_punctuation\": 0,\n    \"highlight_drawer\": \"lighten\",\n    \"copt_rotation_mode\": 0,\n    \"font_face\": \"FreeSerif\",\n    \"inverse_reading_order\": false,\n    \"text_lang\": \"en-US\",\n    \"gamma_index\": 30,\n    \"partial_md5_checksum\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n    \"copt_b_page_margin\": 50,\n    \"render_dpi\": 96,\n    \"font_embolden\": 0,\n    \"cre_dom_version\": 20200824,\n    \"page_overlap_style\": \"dim\",\n    \"last_xpointer\": \"/body/DocFragment[1]/body/hr[2].0\",\n    \"disable_fuzzy_search\": false,\n    \"copt_embedded_fonts\": 0,\n    \"word_expansion\": 0,\n    \"embedded_fonts\": false,\n    \"bookmarks\": {\n        \"1\": {\n            \"page\": \"/body/DocFragment[1]/body/p[9]/text()[1].0\",\n            \"datetime\": \"2020-11-11 12:47:23\",\n            \"notes\": \"in CHAPTER I. Down the Rabbit-Hole\",\n            \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\"\n        },\n        \"2\": {\n            \"page\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n            \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\",\n            \"highlighted\": true,\n            \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\",\n            \"notes\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\",\n            \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n            \"datetime\": \"2020-11-11 12:46:55\"\n        }\n    },\n    \"line_space_percent\": 130,\n    \"config_panel_index\": 1,\n    \"readermenu_tab_index\": 1,\n    \"copt_font_size\": 26\n}",
+        "#value#": "{\n    \"smooth_scaling\": false,\n    \"render_mode\": 0,\n    \"copt_block_rendering_mode\": 3,\n    \"nightmode_images\": true,\n    \"disable_fuzzy_search\": false,\n    \"copt_font_size\": 22,\n    \"visible_pages\": 1,\n    \"copt_font_weight\": 0,\n    \"copt_font_hinting\": 2,\n    \"inverse_reading_order\": false,\n    \"copt_word_expansion\": 0,\n    \"copt_line_spacing\": 100,\n    \"copt_font_gamma\": 15,\n    \"line_space_percent\": 100,\n    \"cre_dom_version\": 20200824,\n    \"last_xpointer\": \"/body/DocFragment[4]/body/div[4]/text()[298].42\",\n    \"copt_visible_pages\": 1,\n    \"highlight\": {\n        \"56\": {\n            \"1\": {\n                \"datetime\": \"2020-11-14 15:02:42\",\n                \"chapter\": \"CHAPTER VII. A Mad Tea-Party\",\n                \"pos0\": \"/body/DocFragment[2]/body/p[198]/text().1\",\n                \"pos1\": \"/body/DocFragment[2]/body/p[198]/text().117\",\n                \"drawer\": \"lighten\",\n                \"text\": \"And ever since that,' the Hatter went on in a mournful tone, 'he won't do a thing I ask! It's always six o'clock now\"\n            }\n        },\n        \"54\": {\n            \"1\": {\n                \"datetime\": \"2020-11-14 15:02:03\",\n                \"chapter\": \"CHAPTER VII. A Mad Tea-Party\",\n                \"pos0\": \"/body/DocFragment[2]/body/p[169]/text()[1].0\",\n                \"pos1\": \"/body/DocFragment[2]/body/p[169]/text()[1].185\",\n                \"drawer\": \"lighten\",\n                \"text\": \"The March Hare took the watch and looked at it gloomily: then he dipped it into his cup of tea, and looked at it again: but he could think of nothing better to say than his first remark\"\n            }\n        }\n    },\n    \"font_face\": \"Noto Serif\",\n    \"show_overlap_enable\": false,\n    \"word_expansion\": 0,\n    \"copt_view_mode\": 0,\n    \"copt_status_line\": 1,\n    \"copt_h_page_margins\": {\n        \"2\": 10,\n        \"1\": 10\n    },\n    \"copt_t_page_margin\": 15,\n    \"copt_b_page_margin\": 15,\n    \"copt_word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"text_lang\": \"en-US\",\n    \"highlight_drawer\": \"lighten\",\n    \"word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"font_kerning\": 3,\n    \"partial_md5_checksum\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n    \"summary\": {\n        \"modified\": \"2020-11-14\",\n        \"note\": \"It\\u2019s a classic for a reason\",\n        \"rating\": 5,\n        \"status\": \"complete\"\n    },\n    \"readermenu_tab_index\": 1,\n    \"copt_embedded_fonts\": 1,\n    \"copt_embedded_css\": 1,\n    \"copt_render_dpi\": 96,\n    \"bookmarks\": {\n        \"1\": {\n            \"page\": \"/body/DocFragment[2]/body/p[198]/text().1\",\n            \"notes\": \"And ever since that,' the Hatter went on in a mournful tone, 'he won't do a thing I ask! It's always six o'clock now\",\n            \"datetime\": \"2020-11-14 15:02:42\",\n            \"chapter\": \"CHAPTER VII. A Mad Tea-Party\",\n            \"pos0\": \"/body/DocFragment[2]/body/p[198]/text().1\",\n            \"pos1\": \"/body/DocFragment[2]/body/p[198]/text().117\",\n            \"highlighted\": true,\n            \"text\": \"Page 56 And ever since that,' the Hatter went on in a mournful tone, 'he won't do a thing I ask! It's always six o'clock now @ 2020-11-14 15:02:42\"\n        },\n        \"2\": {\n            \"page\": \"/body/DocFragment[2]/body/p[169]/text()[1].0\",\n            \"datetime\": \"2020-11-14 15:02:03\",\n            \"chapter\": \"CHAPTER VII. A Mad Tea-Party\",\n            \"pos0\": \"/body/DocFragment[2]/body/p[169]/text()[1].0\",\n            \"pos1\": \"/body/DocFragment[2]/body/p[169]/text()[1].185\",\n            \"notes\": \"The March Hare took the watch and looked at it gloomily: then he dipped it into his cup of tea, and looked at it again: but he could think of nothing better to say than his first remark\",\n            \"highlighted\": true\n        },\n        \"3\": {\n            \"page\": \"/body/DocFragment[2]/body/h2[3]/text().0\",\n            \"notes\": \"in CHAPTER VII. A Mad Tea-Party\",\n            \"datetime\": \"2020-11-14 15:01:03\",\n            \"chapter\": \"CHAPTER VII. A Mad Tea-Party\"\n        }\n    },\n    \"page_overlap_style\": \"dim\",\n    \"copt_sync_t_b_page_margins\": 0,\n    \"copt_smooth_scaling\": 0,\n    \"copt_rotation_mode\": 0,\n    \"copt_nightmode_images\": 1,\n    \"highlight_disabled\": false,\n    \"highlights_imported\": true,\n    \"font_embolden\": 0,\n    \"text_lang_embedded_langs\": true,\n    \"hyphenation\": true,\n    \"hyph_trust_soft_hyphens\": false,\n    \"hyph_soft_hyphens_only\": false,\n    \"hyph_force_algorithmic\": false,\n    \"gamma_index\": 15,\n    \"percent_finished\": 1,\n    \"copt_font_kerning\": 3,\n    \"render_dpi\": 96,\n    \"rotation_mode\": 0,\n    \"floating_punctuation\": 0,\n    \"bookmarks_sorted\": true,\n    \"config_panel_index\": 1,\n    \"header_font_face\": \"Noto Sans\",\n    \"doc_props\": {\n        \"authors\": \"Lewis Carroll\",\n        \"keywords\": \"Fantasy\",\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"language\": \"en\",\n        \"series\": \"\",\n        \"description\": \"\"\n    },\n    \"stats\": {\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"notes\": 1,\n        \"md5\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n        \"language\": \"en\",\n        \"pages\": 113,\n        \"highlights\": 2,\n        \"series\": \"\",\n        \"authors\": \"Lewis Carroll\"\n    },\n    \"doc_pages\": 113,\n    \"gamma\": 1,\n    \"embedded_css\": true,\n    \"css\": \"./data/epub.css\",\n    \"font_hinting\": 2,\n    \"font_size\": 22,\n    \"embedded_fonts\": true\n}",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -303,7 +297,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 32,
-        "#value#": 0.020746887966805,
+        "#value#": 1.0,
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -334,49 +328,55 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 33,
-        "#value#": "\u2610",
+        "#value#": "\u2611\ufe0e",
         "#extra#": null,
         "is_multiple2": {}
       }
     },
-    "book_producer": null,
+    "size": 113969,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "authors": [
+      "Lewis Carroll"
+    ],
     "author_sort": "Carroll, Lewis",
-    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
-    "publisher": null,
     "identifiers": {
       "uri": "http://www.gutenberg.org/ebooks/11"
     },
+    "publication_type": null,
+    "title_sort": "Alice's Adventures in Wonderland",
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
     "application_id": 6397,
+    "rights": null,
+    "series": null,
     "rating": null,
+    "title": "Alice's Adventures in Wonderland",
+    "db_id": null,
+    "comments": null,
+    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
+    "user_categories": {},
     "thumbnail": [
       53,
       68,
       "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
     ],
-    "db_id": null,
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "rights": null,
     "cover": null,
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
-    "title": "Alice's Adventures in Wonderland",
-    "title_sort": "Alice's Adventures in Wonderland",
-    "user_categories": {},
-    "comments": null,
-    "mime": null,
-    "authors": [
-      "Lewis Carroll"
-    ],
-    "series": null,
-    "size": 113969,
+    "last_modified": "2020-11-14T19:26:33+00:00",
+    "timestamp": "2018-12-07T11:12:11+00:00",
     "tags": [
       "Fantasy"
     ],
-    "series_index": null
+    "languages": [
+      "eng"
+    ],
+    "pubdate": "2008-06-26T22:00:00+00:00",
+    "mime": null,
+    "series_index": null,
+    "book_producer": null,
+    "publisher": null,
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub"
   }
 ]
