@@ -41,7 +41,6 @@ COLUMNS = [{
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
-CONFIG.defaults['hello_world_msg'] = 'Hello, World!'
 for column in COLUMNS:
     CONFIG.defaults[column['name']] = ''
 
@@ -77,26 +76,16 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             layout.addWidget(column['combo'], row, 2)
             row += 1
 
-        # Hello world message
-        hello_world_label = QLabel('Hello world message:', self)
-        self.hello_world_input = QLineEdit(self)
-        self.hello_world_input.setText(CONFIG['hello_world_msg'])
-        hello_world_label.setBuddy(self.hello_world_input)
-        layout.addWidget(hello_world_label, row, 1)
-        row += 1
-        layout.addWidget(self.hello_world_input, row, 1, 1, 2)
-        row += 1
-
         # sync_to_calibre
         sync_to_calibre_button = QPushButton('sync_to_calibre', self)
         sync_to_calibre_button.clicked.connect(self.save_and_sync)
-        layout.addWidget(sync_to_calibre_button, row, 1, 1, 2, Qt.AlignHCenter)
+        layout.addWidget(sync_to_calibre_button, row, 1, 1, 2, Qt.AlignRight)
         row += 1
 
         # About button
         about_button = QPushButton('About', self)
         about_button.clicked.connect(self.about)
-        layout.addWidget(about_button, row, 1, 1, 2, Qt.AlignHCenter)
+        layout.addWidget(about_button, row, 1, 1, 2, Qt.AlignRight)
         row += 1
 
     def save_settings(self):
@@ -105,8 +94,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         for column in COLUMNS:
             CONFIG[column['name']] = column['combo'].get_selected_column()
-
-        CONFIG['hello_world_msg'] = self.hello_world_input.text()
 
         debug_print('new CONFIG = ', CONFIG)
 
