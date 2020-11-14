@@ -32,7 +32,8 @@ class KoreaderAction(InterfaceAction):
         'toolbar', 'context-menu', 'context-menu-device','toolbar-child',
         'menubar', 'menubar-device', 'context-menu-cover-browser',
         'context-menu-split'])
-    action_type = 'global'
+    dont_remove_from = frozenset(['toolbar-device'])
+    action_type = 'current'
 
     def genesis(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:genesis:')

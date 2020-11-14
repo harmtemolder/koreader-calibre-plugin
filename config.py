@@ -6,155 +6,161 @@ __docformat__ = 'restructuredtext en'
 
 from functools import partial
 import os
-import sys
 
-from calibre.devices.usbms.driver import debug_print as _debug_print
+from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
-from PyQt5.Qt import (QWidget, QHBoxLayout, QLabel, QLineEdit, QDialog,
-                      QVBoxLayout, QPushButton, QMessageBox)
+from PyQt5.Qt import (
+    QComboBox,
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QWidget,
+    Qt,
+)
 
 prefs = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 prefs.defaults['hello_world_msg'] = 'Hello, World!'
+prefs.defaults['percent_read_column'] = ''
+prefs.defaults['sidecar_column'] = ''
 
-sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
-import pydevd_pycharm
+module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
 
-debug_print = partial(_debug_print, ' koreader:config:', sep='')
-
-
-class ConfigWidget(QWidget):
-    def __init__(self):
+class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
+    def __init__(self, plugin_action):
         QWidget.__init__(self)
+        debug_print = partial(module_debug_print, 'ConfigWidget:__init__:')
         debug_print('ConfigWidget:__init__:start')
-        self.l = QHBoxLayout()
-        self.setLayout(self.l)
+        self.action = plugin_action
+        layout = QGridLayout()
+        self.setLayout(layout)
 
-        self.label = QLabel('Hello world &message:')
-        self.l.addWidget(self.label)
+        # Get available columns per type
+        comments_columns = self.get_comments_custom_columns()
+        datetime_columns = self.get_datetime_custom_columns()
+        float_columns = self.get_float_custom_columns()
+        rating_columns = self.get_rating_columns()
+        text_columns = self.get_text_custom_columns()
 
-        self.msg = QLineEdit(self)
-        self.msg.setText(prefs['hello_world_msg'])
-        self.l.addWidget(self.msg)
-        self.label.setBuddy(self.msg)
+        # Map percent_finished to percent_read
+        percent_read_label = QLabel('Percent Read Column:', self)
+        percent_read_label.setToolTip(
+            'Column used to store the current percent read. It must be of the '
+            'type “Floating point numbers”. Leave this blank if you do not '
+            'want to store or restore the percentage read.')
+        self.percent_read_combo = CustomColumnComboBox(
+            self, float_columns, prefs['percent_read_column'])
+        percent_read_label.setBuddy(self.percent_read_combo)
+        layout.addWidget(percent_read_label, 1, 1, Qt.AlignRight)
+        layout.addWidget(self.percent_read_combo, 1, 2)
 
-    def save_settings(self):
-        debug_print('ConfigWidget:save_settings:start')
-        prefs['hello_world_msg'] = self.msg.text()
+        # Map entire sidecar
+        sidecar_label = QLabel('Raw Sidecar Column:', self)
+        sidecar_label.setToolTip(
+            'Column used to store the entire contents of the sidecar ('
+            'converted to a Python dict). Useful for debugging, but not much '
+            'else. It must be of the type “Long text”. Leave this blank if '
+            'you do not want to store or restore the sidecar contents.')
+        self.sidecar_combo = CustomColumnComboBox(
+            self, comments_columns, prefs['sidecar_column'])
+        sidecar_label.setBuddy(self.sidecar_combo)
+        layout.addWidget(sidecar_label, 2, 1, Qt.AlignRight)
+        layout.addWidget(self.sidecar_combo, 2, 2)
 
-
-class SettingsDialog(QDialog):
-    def __init__(self, gui, icon, do_user_config):
-        debug_print('SettingsDialog:__init__:start')
-        QDialog.__init__(self, gui)
-        self.gui = gui
-        self.action = gui.iactions['KOReader Sync']
-        self.do_user_config = do_user_config
-
-        self.db = gui.current_db
-
-        self.l = QVBoxLayout()
-        self.setLayout(self.l)
-
-        self.label = QLabel(prefs['hello_world_msg'])
-        self.l.addWidget(self.label)
-
-        self.setWindowTitle('Interface Plugin Demo')
-        self.setWindowIcon(icon)
-
-        # About
-        self.about_button = QPushButton('About', self)
-        self.about_button.clicked.connect(self.about)
-        self.l.addWidget(self.about_button)
+        # Hello world message
+        hello_world_label = QLabel('Hello world message:', self)
+        self.hello_world_input = QLineEdit(self)
+        self.hello_world_input.setText(prefs['hello_world_msg'])
+        hello_world_label.setBuddy(self.hello_world_input)
+        layout.addWidget(hello_world_label, 3, 1)
+        layout.addWidget(self.hello_world_input, 4, 1, 1, 2)
 
         # sync_to_calibre
-        self.sync_to_calibre_button = QPushButton('sync_to_calibre', self)
-        self.sync_to_calibre_button.clicked.connect(self.action.sync_to_calibre)
-        self.l.addWidget(self.sync_to_calibre_button)
+        sync_to_calibre_button = QPushButton('sync_to_calibre', self)
+        sync_to_calibre_button.clicked.connect(self.action.sync_to_calibre)
+        layout.addWidget(sync_to_calibre_button, 5, 1, 1, 2, Qt.AlignHCenter)
 
-        # Configure this plugin
-        self.conf_button = QPushButton(
-            'Configure this plugin', self)
-        self.conf_button.clicked.connect(self.config)
-        self.l.addWidget(self.conf_button)
+        # About button
+        about_button = QPushButton('About', self)
+        about_button.clicked.connect(self.about)
+        layout.addWidget(about_button, 6, 1, 1, 2, Qt.AlignHCenter)
 
-        self.resize(self.sizeHint())
+    def save_settings(self):
+        debug_print = partial(module_debug_print, 'ConfigWidget:save_settings:')
+        debug_print('old prefs = ', prefs)
+        prefs['percent_read_column'] = self.percent_read_combo.get_selected_column()
+        prefs['sidecar_column'] = self.sidecar_combo.get_selected_column()
+        prefs['hello_world_msg'] = self.hello_world_input.text()
+        debug_print('new prefs = ', prefs)
 
     def about(self):
-        debug_print('SettingsDialog:about:start')
-        pydevd_pycharm.settrace('localhost', port=12345, stdoutToServer=True,stderrToServer=True)
-
+        debug_print = partial(module_debug_print, 'ConfigWidget:about:')
+        debug_print('start')
         text = get_resources('about.txt').decode('utf-8')
-        QMessageBox.about(
-            self,
-            'About the KOReader Sync plugin',
-            text
-        )
+        QMessageBox.about(self, 'About the KOReader Sync plugin', text)
 
-    def marked(self):
-        debug_print('SettingsDialog:marked:start')
-        db = self.db.new_api
-        matched_ids = {book_id for book_id in db.all_book_ids() if len(db.formats(book_id)) == 1}
+    def get_float_custom_columns(self):
+        # "Floating point numbers"
+        column_types = ['float']
+        return self.get_custom_columns(column_types)
 
-        self.db.set_marked_ids(matched_ids)
+    def get_rating_columns(self):
+        column_types = ['rating']
+        custom_columns = self.get_custom_columns(column_types)
 
-        self.gui.search.setEditText('marked:true')
-        self.gui.search.do_search()
+        # Add original rating column as well
+        ratings_column_name = self.action.gui.library_view.model().orig_headers['rating']
+        custom_columns['rating'] = {'name': ratings_column_name}
 
-    def view(self):
-        debug_print('SettingsDialog:view:start')
-        most_recent = most_recent_id = None
-        db = self.db.new_api
-        for book_id, timestamp in db.all_field_for('timestamp', db.all_book_ids()).items():
-            if most_recent is None or timestamp > most_recent:
-                most_recent = timestamp
-                most_recent_id = book_id
+        return custom_columns
 
-        if most_recent_id is not None:
-            view_plugin = self.gui.iactions['View']
-            view_plugin._view_calibre_books([most_recent_id])
+    def get_text_custom_columns(self):
 
-    def update_metadata(self):
-        debug_print('SettingsDialog:update_metadata:start')
-        '''
-        Set the metadata in the files in the selected book's record to
-        match the current metadata in the database.
-        '''
-        from calibre.ebooks.metadata.meta import set_metadata
-        from calibre.gui2 import error_dialog, info_dialog
+        column_types = ['text']
+        return self.get_custom_columns(column_types)
 
-        # Get currently selected books
-        rows = self.gui.library_view.selectionModel().selectedRows()
-        if not rows or len(rows) == 0:
-            return error_dialog(self.gui, 'Cannot update metadata',
-                                'No books selected', show=True)
-        # Map the rows to book ids
-        ids = list(map(self.gui.library_view.model().id, rows))
-        db = self.db.new_api
-        for book_id in ids:
-            # Get the current metadata for this book from the db
-            mi = db.get_metadata(book_id, get_cover=True, cover_as_data=True)
-            fmts = db.formats(book_id)
-            if not fmts:
-                continue
-            for fmt in fmts:
-                fmt = fmt.lower()
-                # Get a python file object for the format. This will be either
-                # an in memory file or a temporary on disk file
-                ffile = db.format(book_id, fmt, as_file=True)
-                ffile.seek(0)
-                # Set metadata in the format
-                set_metadata(ffile, mi, fmt)
-                ffile.seek(0)
-                # Now replace the file in the calibre library with the updated
-                # file. We dont use add_format_with_hooks as the hooks were
-                # already run when the file was first added to calibre.
-                db.add_format(book_id, fmt, ffile, run_hooks=False)
+    def get_comments_custom_columns(self):
+        # "Long text, like comments..."
+        column_types = ['comments']
+        return self.get_custom_columns(column_types)
 
-        info_dialog(self, 'Updated files',
-                    'Updated the metadata in the files of %d book(s)'%len(ids),
-                    show=True)
+    def get_datetime_custom_columns(self):
+        # "Date"
+        column_types = ['datetime']
+        return self.get_custom_columns(column_types)
 
-    def config(self):
-        debug_print('SettingsDialog:config:start')
-        self.do_user_config(parent=self)
-        self.label.setText(prefs['hello_world_msg'])
+    def get_custom_columns(self, column_types):
+        custom_columns = self.action.gui.library_view.model().custom_columns
+        available_columns = {}
+
+        for key, column in custom_columns.items():
+            type_ = column['datatype']
+            if type_ in column_types and not column['is_multiple']:
+                available_columns[key] = column
+
+        return available_columns
+
+
+class CustomColumnComboBox(QComboBox):
+    def __init__(self, parent, custom_columns={}, selected_column=''):
+        QComboBox.__init__(self, parent)
+        self.populate_combo(custom_columns, selected_column)
+
+    def populate_combo(self, custom_columns, selected_column):
+        self.clear()
+        self.column_names = ['']
+        self.addItem('do not sync')
+        selected_idx = 0
+
+        for key in sorted(custom_columns.keys()):
+            self.column_names.append(key)
+            display_name = '{} ({})'.format(custom_columns[key]['name'], key)
+            self.addItem(display_name)
+            if key == selected_column:
+                selected_idx = len(self.column_names) - 1
+
+        self.setCurrentIndex(selected_idx)
+
+    def get_selected_column(self):
+        return self.column_names[self.currentIndex()]
