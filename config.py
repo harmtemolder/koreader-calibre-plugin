@@ -29,20 +29,54 @@ from PyQt5.Qt import (
 
 COLUMNS = [{
     'name': 'column_percent_read',
-    'label': 'Percent Read Column:',
-    'tooltip': 'Column used to store the current percent read. It must be of the type “Floating point numbers”.',
+    'label': 'Percent read column:',
+    'tooltip': 'Used to store the current percent read. It must be of\n'
+               'the type “Floating point numbers”.',
     'type': 'float',
     'sidecar_property': 'percent_finished',
 }, {
+    'name': 'column_date_status_modified',
+    'label': 'Status modified date column:',
+    'tooltip': 'Used to store the date on which the book’s status was\n'
+               'last modified. This is probably the date on which you\n'
+               'marked it as read. It must be of the type “Date”.',
+    'type': 'datetime',
+    'sidecar_property': 'summary.modified',
+}, {
+#     'name': 'column_review',
+#     'label': '',
+#     'tooltip': '',
+#     'type': 'comments',
+#     'sidecar_property': 'summary.note',  # TODO
+# }, {
+#     'name': 'column_rating',
+#     'label': '',
+#     'tooltip': '',
+#     'type': 'rating',
+#     'sidecar_property': 'summary.rating',  # TODO
+# }, {
+#     'name': 'column_status',
+#     'label': '',
+#     'tooltip': '',
+#     'type': 'text',
+#     'sidecar_property': 'summary.status',  # TODO
+# }, {
+#     'sidecar_property': 'bookmarks',  # TODO
+# }, {
+#     'sidecar_property': 'highlight',  # TODO
+# }, {
     'name': 'column_md5',
-    'label': 'MD5 Hash Column:',
-    'tooltip': 'Column used to store the MD5 hash KOReader’s sync server uses to sync progress. It must be of the type “Text”.',
+    'label': 'MD5 hash column:',
+    'tooltip': 'Used to store the MD5 hash KOReader’s sync server uses\n'
+               'to sync progress. It must be of the type “Text”.',
     'type': 'text',
     'sidecar_property': 'partial_md5_checksum',
 }, {
     'name': 'column_sidecar',
-    'label': 'Raw Sidecar Column:',
-    'tooltip': 'Column used to store the entire contents of the sidecar (converted to a Python dict). Useful for debugging, but not much else. It must be of the type “Long text”.',
+    'label': 'Raw sidecar column:',
+    'tooltip': 'Used to store the entire contents of the sidecar\n'
+               '(converted to a Python dict). Useful for debugging, but\n'
+               'not much else. It must be of the type “Long text”.',
     'type': 'comments',
     'sidecar_property': '*',
 }]
@@ -126,9 +160,6 @@ class TitleLayout(QHBoxLayout):
         title_label.setFont(title_font)
         self.addWidget(title_label)
 
-        # Add empty space to the end
-        self.insertStretch(-1)
-
 
 class CustomColumnsLayout(QGridLayout):
     """A sub-layout to the main layout used in ConfigWidget that contains a
@@ -137,7 +168,7 @@ class CustomColumnsLayout(QGridLayout):
     """
 
     def __init__(self, parent):
-        QGridLayout.__init__(self, parent)
+        QGridLayout.__init__(self)
         self.action = parent.action
         row = 1
 

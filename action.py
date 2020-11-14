@@ -165,7 +165,6 @@ class KoreaderAction(InterfaceAction):
         metadata = db.get_metadata(book_id)
         metadata.set(key, value, extra='test value for extra')
         db.set_metadata(book_id, metadata, set_title=False, set_authors=False)
-        pass
 
     def sync_to_calibre(self):
         """This plugin’s main purpose. It syncs the contents of
@@ -187,9 +186,10 @@ class KoreaderAction(InterfaceAction):
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
             for column in COLUMNS:
-                key = column['name']
+                name = column['name']
+                target = CONFIG[name]
 
-                if CONFIG[key] == '':
+                if target == '':
                     # No column mapped, so do not sync
                     continue
 
@@ -197,8 +197,11 @@ class KoreaderAction(InterfaceAction):
                 if property == '*':
                     value = json.dumps(sidecar_contents, indent=4)
                 else:
-                    value = sidecar_contents[property]
+                    property_split = property.split('.')
+                    value = sidecar_contents
+                    for subproperty in property_split:
+                        value = value[subproperty]
 
-                self.update_metadata(book_uuid, key, value)
+                self.update_metadata(book_uuid, target, value)
 
             debug_print('updated metadata for ', book_uuid)
