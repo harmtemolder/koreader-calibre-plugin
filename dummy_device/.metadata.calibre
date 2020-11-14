@@ -1,32 +1,11 @@
 [
   {
-    "rating": null,
-    "title": "Alice's Adventures in Wonderland",
-    "user_categories": {},
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "title_sort": "Alice's Adventures in Wonderland",
-    "book_producer": null,
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "tags": [
-      "Fantasy"
-    ],
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "db_id": null,
     "pubdate": "2008-06-26T22:00:00+00:00",
     "languages": [
       "eng"
     ],
-    "comments": null,
-    "mime": null,
-    "rights": null,
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/ebooks/11"
-    },
-    "authors": [
-      "Lewis Carroll"
-    ],
+    "publication_type": null,
+    "last_modified": "2020-11-14T17:58:06.164195+00:00",
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -141,6 +120,61 @@
         "#extra#": null,
         "is_multiple2": {}
       },
+      "#ko_md5": {
+        "table": "custom_column_15",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Sync Server MD5 Hash",
+        "search_terms": [
+          "#ko_md5"
+        ],
+        "label": "ko_md5",
+        "colnum": 15,
+        "display": {
+          "use_decorations": 0,
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 26,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#ko_sidecar": {
+        "table": "custom_column_14",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Sidecar",
+        "search_terms": [
+          "#ko_sidecar"
+        ],
+        "label": "ko_sidecar",
+        "colnum": 14,
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "long-text",
+          "description": "The entire dict from KOReader\u2019s metadata.epub.lua"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 27,
+        "#value#": "{\n    \"copt_font_gamma\": 30,\n    \"copt_embedded_css\": 0,\n    \"copt_font_kerning\": 3,\n    \"header_font_face\": \"Noto Sans\",\n    \"doc_props\": {\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"keywords\": \"Fantasy\",\n        \"language\": \"en\",\n        \"authors\": \"Lewis Carroll\",\n        \"series\": \"\",\n        \"description\": \"\"\n    },\n    \"stats\": {\n        \"title\": \"Alice's Adventures in Wonderland\",\n        \"notes\": 0,\n        \"language\": \"en\",\n        \"pages\": 241,\n        \"md5\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n        \"authors\": \"Lewis Carroll\",\n        \"series\": \"\",\n        \"highlights\": 1\n    },\n    \"doc_pages\": 241,\n    \"bookmarks_sorted\": true,\n    \"highlights_imported\": true,\n    \"percent_finished\": 0.020746887966805,\n    \"copt_h_page_margins\": {\n        \"2\": 50,\n        \"1\": 50\n    },\n    \"copt_block_rendering_mode\": 1,\n    \"font_hinting\": 2,\n    \"copt_line_spacing\": 130,\n    \"font_kerning\": 3,\n    \"copt_render_dpi\": 96,\n    \"font_size\": 26,\n    \"highlight\": {\n        \"5\": {\n            \"1\": {\n                \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n                \"datetime\": \"2020-11-11 12:46:55\",\n                \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\",\n                \"text\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\",\n                \"drawer\": \"lighten\",\n                \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\"\n            }\n        }\n    },\n    \"embedded_css\": false,\n    \"copt_smooth_scaling\": 1,\n    \"word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"smooth_scaling\": true,\n    \"copt_font_weight\": 0,\n    \"highlight_disabled\": false,\n    \"nightmode_images\": true,\n    \"rotation_mode\": 0,\n    \"copt_sync_t_b_page_margins\": 0,\n    \"render_mode\": 0,\n    \"show_overlap_enable\": false,\n    \"visible_pages\": 1,\n    \"copt_word_expansion\": 0,\n    \"copt_visible_pages\": 1,\n    \"css\": \"./data/epub.css\",\n    \"gamma\": 1,\n    \"copt_nightmode_images\": 1,\n    \"copt_view_mode\": 0,\n    \"copt_font_hinting\": 2,\n    \"copt_t_page_margin\": 30,\n    \"copt_status_line\": 1,\n    \"copt_word_spacing\": {\n        \"2\": 75,\n        \"1\": 95\n    },\n    \"text_lang_embedded_langs\": true,\n    \"hyphenation\": true,\n    \"hyph_trust_soft_hyphens\": false,\n    \"hyph_soft_hyphens_only\": false,\n    \"hyph_force_algorithmic\": false,\n    \"floating_punctuation\": 0,\n    \"highlight_drawer\": \"lighten\",\n    \"copt_rotation_mode\": 0,\n    \"font_face\": \"FreeSerif\",\n    \"inverse_reading_order\": false,\n    \"text_lang\": \"en-US\",\n    \"gamma_index\": 30,\n    \"partial_md5_checksum\": \"dc6cce610b4f29cd199d61c755bfc0ca\",\n    \"copt_b_page_margin\": 50,\n    \"render_dpi\": 96,\n    \"font_embolden\": 0,\n    \"cre_dom_version\": 20200824,\n    \"page_overlap_style\": \"dim\",\n    \"last_xpointer\": \"/body/DocFragment[1]/body/hr[2].0\",\n    \"disable_fuzzy_search\": false,\n    \"copt_embedded_fonts\": 0,\n    \"word_expansion\": 0,\n    \"embedded_fonts\": false,\n    \"bookmarks\": {\n        \"1\": {\n            \"page\": \"/body/DocFragment[1]/body/p[9]/text()[1].0\",\n            \"datetime\": \"2020-11-11 12:47:23\",\n            \"notes\": \"in CHAPTER I. Down the Rabbit-Hole\",\n            \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\"\n        },\n        \"2\": {\n            \"page\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n            \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\",\n            \"highlighted\": true,\n            \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\",\n            \"notes\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\",\n            \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\",\n            \"datetime\": \"2020-11-11 12:46:55\"\n        }\n    },\n    \"line_space_percent\": 130,\n    \"config_panel_index\": 1,\n    \"readermenu_tab_index\": 1,\n    \"copt_font_size\": 26\n}",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
       "#mm_annotations": {
         "table": "custom_column_2",
         "column": "value",
@@ -160,7 +194,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 26,
+        "rec_index": 28,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -187,7 +221,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 27,
+        "rec_index": 29,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -214,7 +248,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 28,
+        "rec_index": 30,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -241,7 +275,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 29,
+        "rec_index": 31,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -260,7 +294,7 @@
         "colnum": 7,
         "display": {
           "description": "",
-          "number_format": null
+          "number_format": "{:.0%}"
         },
         "is_custom": true,
         "is_category": false,
@@ -268,8 +302,8 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 30,
-        "#value#": null,
+        "rec_index": 32,
+        "#value#": 0.020746887966805,
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -299,57 +333,50 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 31,
-        "#value#": "",
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#sidecar": {
-        "table": "custom_column_14",
-        "column": "value",
-        "datatype": "comments",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "KOReader Sidecar",
-        "search_terms": [
-          "#sidecar"
-        ],
-        "label": "sidecar",
-        "colnum": 14,
-        "display": {
-          "heading_position": "above",
-          "interpret_as": "long-text",
-          "description": "The entire dict from KOReader\u2019s metadata.epub.lua"
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 32,
-        "#value#": "{\"copt_font_gamma\": 30, \"copt_embedded_css\": 0, \"copt_font_kerning\": 3, \"header_font_face\": \"Noto Sans\", \"doc_props\": {\"title\": \"Alice's Adventures in Wonderland\", \"keywords\": \"Fantasy\", \"language\": \"en\", \"authors\": \"Lewis Carroll\", \"series\": \"\", \"description\": \"\"}, \"stats\": {\"title\": \"Alice's Adventures in Wonderland\", \"notes\": 0, \"language\": \"en\", \"pages\": 241, \"md5\": \"dc6cce610b4f29cd199d61c755bfc0ca\", \"authors\": \"Lewis Carroll\", \"series\": \"\", \"highlights\": 1}, \"doc_pages\": 241, \"bookmarks_sorted\": true, \"highlights_imported\": true, \"percent_finished\": 0.020746887966805, \"copt_h_page_margins\": {\"2\": 50, \"1\": 50}, \"copt_block_rendering_mode\": 1, \"font_hinting\": 2, \"copt_line_spacing\": 130, \"font_kerning\": 3, \"copt_render_dpi\": 96, \"font_size\": 26, \"highlight\": {\"5\": {\"1\": {\"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"datetime\": \"2020-11-11 12:46:55\", \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\", \"text\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\", \"drawer\": \"lighten\", \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\"}}}, \"embedded_css\": false, \"copt_smooth_scaling\": 1, \"word_spacing\": {\"2\": 75, \"1\": 95}, \"smooth_scaling\": true, \"copt_font_weight\": 0, \"highlight_disabled\": false, \"nightmode_images\": true, \"rotation_mode\": 0, \"copt_sync_t_b_page_margins\": 0, \"render_mode\": 0, \"show_overlap_enable\": false, \"visible_pages\": 1, \"copt_word_expansion\": 0, \"copt_visible_pages\": 1, \"css\": \"./data/epub.css\", \"gamma\": 1, \"copt_nightmode_images\": 1, \"copt_view_mode\": 0, \"copt_font_hinting\": 2, \"copt_t_page_margin\": 30, \"copt_status_line\": 1, \"copt_word_spacing\": {\"2\": 75, \"1\": 95}, \"text_lang_embedded_langs\": true, \"hyphenation\": true, \"hyph_trust_soft_hyphens\": false, \"hyph_soft_hyphens_only\": false, \"hyph_force_algorithmic\": false, \"floating_punctuation\": 0, \"highlight_drawer\": \"lighten\", \"copt_rotation_mode\": 0, \"font_face\": \"FreeSerif\", \"inverse_reading_order\": false, \"text_lang\": \"en-US\", \"gamma_index\": 30, \"partial_md5_checksum\": \"dc6cce610b4f29cd199d61c755bfc0ca\", \"copt_b_page_margin\": 50, \"render_dpi\": 96, \"font_embolden\": 0, \"cre_dom_version\": 20200824, \"page_overlap_style\": \"dim\", \"last_xpointer\": \"/body/DocFragment[1]/body/hr[2].0\", \"disable_fuzzy_search\": false, \"copt_embedded_fonts\": 0, \"word_expansion\": 0, \"embedded_fonts\": false, \"bookmarks\": {\"1\": {\"page\": \"/body/DocFragment[1]/body/p[9]/text()[1].0\", \"datetime\": \"2020-11-11 12:47:23\", \"notes\": \"in CHAPTER I. Down the Rabbit-Hole\", \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\"}, \"2\": {\"page\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"pos1\": \"/body/DocFragment[1]/body/p[7]/text().103\", \"highlighted\": true, \"chapter\": \"CHAPTER I. Down the Rabbit-Hole\", \"notes\": \"Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do\", \"pos0\": \"/body/DocFragment[1]/body/p[7]/text().0\", \"datetime\": \"2020-11-11 12:46:55\"}}, \"line_space_percent\": 130, \"config_panel_index\": 1, \"readermenu_tab_index\": 1, \"copt_font_size\": 26}",
+        "rec_index": 33,
+        "#value#": "\u2610",
         "#extra#": null,
         "is_multiple2": {}
       }
     },
-    "size": 113969,
+    "book_producer": null,
+    "author_sort": "Carroll, Lewis",
     "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
+    "publisher": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "application_id": 6397,
+    "rating": null,
     "thumbnail": [
       53,
       68,
       "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
     ],
-    "publisher": null,
-    "series_index": null,
-    "publication_type": null,
-    "last_modified": "2020-11-12T18:27:30+00:00",
-    "application_id": 6397,
+    "db_id": null,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "timestamp": "2018-12-07T11:12:11+00:00",
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "rights": null,
+    "cover": null,
     "author_link_map": {
       "Lewis Carroll": ""
     },
+    "title": "Alice's Adventures in Wonderland",
+    "title_sort": "Alice's Adventures in Wonderland",
+    "user_categories": {},
+    "comments": null,
+    "mime": null,
+    "authors": [
+      "Lewis Carroll"
+    ],
     "series": null,
-    "cover": null,
-    "author_sort": "Carroll, Lewis"
+    "size": 113969,
+    "tags": [
+      "Fantasy"
+    ],
+    "series_index": null
   }
 ]
