@@ -50,7 +50,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     def __init__(self, plugin_action):
         QWidget.__init__(self)
         debug_print = partial(module_debug_print, 'ConfigWidget:__init__:')
-        debug_print('ConfigWidget:__init__:start')
+        debug_print('start')
         self.action = plugin_action
         layout = QGridLayout()
         row = 1
@@ -58,11 +58,11 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Get available columns per type
         available_columns = {
-            'comments': self.get_comments_custom_columns(),
-            'datetime': self.get_datetime_custom_columns(),
-            'float': self.get_float_custom_columns(),
-            'rating': self.get_rating_columns(),
-            'text': self.get_text_custom_columns(),
+            'comments': self.get_custom_columns(['comments']),
+            'datetime': self.get_custom_columns(['datetime']),
+            'float': self.get_custom_columns(['float']),
+            'rating': self.get_rating_columns(),  # Includes built-in column
+            'text': self.get_custom_columns(['text']),
         }
 
         # Add custom column dropdowns
@@ -107,36 +107,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         text = get_resources('about.txt').decode('utf-8')
         QMessageBox.about(self, 'About the KOReader Sync plugin', text)
 
-    def get_float_custom_columns(self):
-        # "Floating point numbers"
-        column_types = ['float']
-        return self.get_custom_columns(column_types)
-
-    def get_rating_columns(self):
-        column_types = ['rating']
-        custom_columns = self.get_custom_columns(column_types)
-
-        # Add original rating column as well
-        ratings_column_name = self.action.gui.library_view.model().orig_headers['rating']
-        custom_columns['rating'] = {'name': ratings_column_name}
-
-        return custom_columns
-
-    def get_text_custom_columns(self):
-
-        column_types = ['text']
-        return self.get_custom_columns(column_types)
-
-    def get_comments_custom_columns(self):
-        # "Long text, like comments..."
-        column_types = ['comments']
-        return self.get_custom_columns(column_types)
-
-    def get_datetime_custom_columns(self):
-        # "Date"
-        column_types = ['datetime']
-        return self.get_custom_columns(column_types)
-
     def get_custom_columns(self, column_types):
         custom_columns = self.action.gui.library_view.model().custom_columns
         available_columns = {}
@@ -147,6 +117,17 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                 available_columns[key] = column
 
         return available_columns
+
+    def get_rating_columns(self):
+        column_types = ['rating']
+        custom_columns = self.get_custom_columns(column_types)
+
+        # Add built-in rating column as well
+        ratings_column_name = self.action.gui.library_view.model().orig_headers[
+            'rating']
+        custom_columns['rating'] = {'name':ratings_column_name}
+
+        return custom_columns
 
 
 class CustomColumnComboBox(QComboBox):
