@@ -9,13 +9,20 @@ import os
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
+
+from PyQt5.QtGui import (
+    QFont,
+    QPixmap
+)
+
 from PyQt5.Qt import (
     QComboBox,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMessageBox,
     QPushButton,
+    QVBoxLayout,
     QWidget,
     Qt,
 )
@@ -52,41 +59,28 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print = partial(module_debug_print, 'ConfigWidget:__init__:')
         debug_print('start')
         self.action = plugin_action
-        layout = QGridLayout()
-        row = 1
+
+        # Set up main layout
+        layout = QVBoxLayout()
         self.setLayout(layout)
 
-        # Get available columns per type
-        available_columns = {
-            'comments': self.get_custom_columns(['comments']),
-            'datetime': self.get_custom_columns(['datetime']),
-            'float': self.get_custom_columns(['float']),
-            'rating': self.get_rating_columns(),  # Includes built-in column
-            'text': self.get_custom_columns(['text']),
-        }
+        # Add icon and title
+        title_layout = TitleLayout(self, 'images/icon.png', 'KOReader Sync')
+        layout.addLayout(title_layout)
 
         # Add custom column dropdowns
-        for column in COLUMNS:
-            label = QLabel(column['label'], self)
-            label.setToolTip(column['tooltip'])
-            column['combo'] = CustomColumnComboBox(
-                self, available_columns[column['type']], CONFIG[column['name']])
-            label.setBuddy(column['combo'])
-            layout.addWidget(label, row, 1, Qt.AlignRight)
-            layout.addWidget(column['combo'], row, 2)
-            row += 1
+        custom_columns_layout = CustomColumnsLayout(self)
+        layout.addLayout(custom_columns_layout)
 
-        # sync_to_calibre
-        sync_to_calibre_button = QPushButton('sync_to_calibre', self)
-        sync_to_calibre_button.clicked.connect(self.save_and_sync)
-        layout.addWidget(sync_to_calibre_button, row, 1, 1, 2, Qt.AlignRight)
-        row += 1
+        # Add sync button
+        sync_from_koreader_button = QPushButton('Sync from KOReader', self)
+        sync_from_koreader_button.clicked.connect(self.save_and_sync)
+        layout.addWidget(sync_from_koreader_button, Qt.AlignRight)
 
-        # About button
+        # Add about button
         about_button = QPushButton('About', self)
         about_button.clicked.connect(self.about)
-        layout.addWidget(about_button, row, 1, 1, 2, Qt.AlignRight)
-        row += 1
+        layout.addWidget(about_button, Qt.AlignRight)
 
     def save_settings(self):
         debug_print = partial(module_debug_print, 'ConfigWidget:save_settings:')
@@ -107,6 +101,68 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         text = get_resources('about.txt').decode('utf-8')
         QMessageBox.about(self, 'About the KOReader Sync plugin', text)
 
+
+class TitleLayout(QHBoxLayout):
+    """A sub-layout to the main layout used in ConfigWidget that contains an
+    icon and title.
+    """
+
+    def __init__(self, parent, icon, title):
+        QHBoxLayout.__init__(self)
+
+        # Add icon
+        icon_label = QLabel(parent)
+        pixmap = QPixmap()
+        pixmap.loadFromData(get_resources(icon))
+        icon_label.setPixmap(pixmap)
+        icon_label.setMaximumSize(32, 32)
+        icon_label.setScaledContents(True)
+        self.addWidget(icon_label)
+
+        # Add title
+        title_font = QFont()
+        title_font.setPointSize(16)
+        title_label = QLabel(title, parent)
+        title_label.setFont(title_font)
+        self.addWidget(title_label)
+
+        # Add empty space to the end
+        self.insertStretch(-1)
+
+
+class CustomColumnsLayout(QGridLayout):
+    """A sub-layout to the main layout used in ConfigWidget that contains a
+    grid of dropdowns for the mapping from KOReader metadata properties to
+    calibre’s custom columns.
+    """
+
+    def __init__(self, parent):
+        QGridLayout.__init__(self, parent)
+        self.action = parent.action
+        row = 1
+
+        # Get available columns per type
+        available_columns = {
+            'comments': self.get_custom_columns(['comments']),
+            'datetime': self.get_custom_columns(['datetime']),
+            'float': self.get_custom_columns(['float']),
+            'rating': self.get_rating_columns(),  # Includes built-in
+            'text': self.get_custom_columns(['text']),
+        }
+
+        # Add custom column dropdowns
+        for column in COLUMNS:
+            label = QLabel(column['label'], parent)
+            label.setToolTip(column['tooltip'])
+            column['combo'] = CustomColumnComboBox(
+                parent,
+                available_columns[column['type']],
+                CONFIG[column['name']])
+            label.setBuddy(column['combo'])
+            self.addWidget(label, row, 1, Qt.AlignRight)
+            self.addWidget(column['combo'], row, 2, 1, 2)
+            row += 1
+
     def get_custom_columns(self, column_types):
         custom_columns = self.action.gui.library_view.model().custom_columns
         available_columns = {}
@@ -119,15 +175,14 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         return available_columns
 
     def get_rating_columns(self):
-        column_types = ['rating']
-        custom_columns = self.get_custom_columns(column_types)
+        rating_columns = self.get_custom_columns(['rating'])
 
         # Add built-in rating column as well
-        ratings_column_name = self.action.gui.library_view.model().orig_headers[
+        rating_column_name = self.action.gui.library_view.model().orig_headers[
             'rating']
-        custom_columns['rating'] = {'name':ratings_column_name}
+        rating_columns['rating'] = {'name': rating_column_name}
 
-        return custom_columns
+        return rating_columns
 
 
 class CustomColumnComboBox(QComboBox):
