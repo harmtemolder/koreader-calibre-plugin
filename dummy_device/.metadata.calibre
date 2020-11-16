@@ -1,46 +1,23 @@
 [
   {
-    "application_id": 6397,
-    "user_categories": {},
-    "comments": null,
-    "last_modified": "2020-11-16T13:23:12+00:00",
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/ebooks/11"
-    },
     "db_id": null,
+    "uuid": "5639b98d-5ca2-452d-8200-3e2369cb36c7",
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "rights": null,
+    "series_index": null,
+    "pubdate": "2008-06-26T22:00:00+00:00",
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
     "thumbnail": [
       51,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD//gAgR2VuZXJhdGVkIGNvdmVyOiBjYWxpYnJlIDUuNS4w/9sAQwADAgIDAgIDAwMDBAMDBAUIBQUEBAUKBwcGCAwKDAwLCgsLDQ4SEA0OEQ4LCxAWEBETFBUVFQwPFxgWFBgSFBUU/9sAQwEDBAQFBAUJBQUJFA0LDRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU/8AAEQgARAAzAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A+4PFWty+HdAu7+CzfUbmNQIbOMkNNISAq5AOMkjJwcDJxxXE2PxwtbmS6L6Fqf2dIftEMsEYbzYy7KMh9m1iArbckgFicKhavTAcVxwbxxda5rVoz2dnoskLrYX64a4hkIYKdpJBUYU4KnJJyccV9VT5LNSX42PHqc6acX+FyLXPiUNE0/U5m0e8nudPmjSaGNSwZGQys6MAd22IMxGPvDbxkNVGy+MkFzLqAfw7rKQ286xQypAGWZT5SkkkgIVaZQVJ4Bz1DBYLeX4sW9rbNLFoF1cyynz1LtshjIRht5UswLyIcnDeUGG3dgy2dz8U5L52nt9GigmuFADt5ot4t8a5UB1LHYZHOT95QBgc1soQS1t95i5zb0v9xAvx80ZrdZf7G10E20VyYvsqb1WR2VFI3/eOxjj0B9DjpPDfj+28S6m1gml6nYzqJiftcKhR5bIrZKswGS42/wB4AkZHJ52y1D4sW0dvDJp+j3KxWI8y5mn/AHk1wIl6hWVQN5fOBjHAx1ruvDS6nD4c0uPWZvO1ZbWMXki7cNNtG8jbxjdnpUVFCK0S++5dOU5PVv7rGhRRRXKdYUUUUAFFFFABRRRQAUUUUAFFct/ws/wz/wBBP/yBL/8AE0f8LP8ADP8A0E//ACBL/wDE10fVq/8AI/uZl7Wn/MvvOporlv8AhZ/hn/oJ/wDkCX/4mj/hZ/hn/oJ/+QJf/iaPq1f+R/cw9rT/AJl951NFct/ws/wz/wBBP/yBL/8AE0f8LP8ADP8A0E//ACBL/wDE0fVq/wDI/uYe1p/zL7zqaK5b/hZ/hn/oJ/8AkCX/AOJoo+rV/wCR/cw9rT/mX3ngdFFFfenz4UUVXvLtrUR7LW4umcsNttHvIwjNkj0+XH1Io2AsUVnLqd3mTdouooq7QP3SksS5QgAMenBz6Gmw6lqF1cWUUWg6hGJypeS6VYlhQnBZuScjjjHNRzx7gadFFFWAUUUUAFFFFABRRRQAUUUUAf/Z"
     ],
-    "cover": null,
-    "rights": null,
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "series": null,
-    "pubdate": "2008-06-26T22:00:00+00:00",
-    "series_index": null,
-    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
     "size": 113969,
-    "book_producer": null,
-    "languages": [
-      "eng"
-    ],
-    "tags": [
-      "Fantasy"
-    ],
-    "author_sort": "Carroll, Lewis",
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "rating": null,
-    "title": "Alice's Adventures in Wonderland",
-    "authors": [
-      "Lewis Carroll"
-    ],
+    "timestamp": "2020-11-16T13:28:43+00:00",
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -74,7 +51,7 @@
         "is_multiple2": {}
       },
       "#gr_rating": {
-        "table": "custom_column_12",
+        "table": "custom_column_2",
         "column": "value",
         "datatype": "rating",
         "is_multiple": null,
@@ -84,7 +61,7 @@
           "#gr_rating"
         ],
         "label": "gr_rating",
-        "colnum": 12,
+        "colnum": 2,
         "display": {
           "description": "",
           "allow_half_stars": false
@@ -129,7 +106,7 @@
         "is_multiple2": {}
       },
       "#gr_shelf": {
-        "table": "custom_column_5",
+        "table": "custom_column_4",
         "column": "value",
         "datatype": "text",
         "is_multiple": null,
@@ -139,7 +116,7 @@
           "#gr_shelf"
         ],
         "label": "gr_shelf",
-        "colnum": 5,
+        "colnum": 4,
         "display": {
           "use_decorations": 0,
           "description": ""
@@ -156,7 +133,7 @@
         "is_multiple2": {}
       },
       "#ko_md5": {
-        "table": "custom_column_15",
+        "table": "custom_column_5",
         "column": "value",
         "datatype": "text",
         "is_multiple": null,
@@ -166,7 +143,7 @@
           "#ko_md5"
         ],
         "label": "ko_md5",
-        "colnum": 15,
+        "colnum": 5,
         "display": {
           "use_decorations": 0,
           "description": ""
@@ -183,7 +160,7 @@
         "is_multiple2": {}
       },
       "#ko_sidecar": {
-        "table": "custom_column_14",
+        "table": "custom_column_6",
         "column": "value",
         "datatype": "comments",
         "is_multiple": null,
@@ -193,7 +170,7 @@
           "#ko_sidecar"
         ],
         "label": "ko_sidecar",
-        "colnum": 14,
+        "colnum": 6,
         "display": {
           "heading_position": "above",
           "interpret_as": "long-text",
@@ -211,7 +188,7 @@
         "is_multiple2": {}
       },
       "#mm_annotations": {
-        "table": "custom_column_2",
+        "table": "custom_column_7",
         "column": "value",
         "datatype": "comments",
         "is_multiple": null,
@@ -221,7 +198,7 @@
           "#mm_annotations"
         ],
         "label": "mm_annotations",
-        "colnum": 2,
+        "colnum": 7,
         "display": {},
         "is_custom": true,
         "is_category": false,
@@ -235,7 +212,7 @@
         "is_multiple2": {}
       },
       "#read_first": {
-        "table": "custom_column_13",
+        "table": "custom_column_8",
         "column": "value",
         "datatype": "datetime",
         "is_multiple": null,
@@ -245,7 +222,7 @@
           "#read_first"
         ],
         "label": "read_first",
-        "colnum": 13,
+        "colnum": 8,
         "display": {
           "description": "The date on which I added this book to my Goodreads Currently Reading shelf",
           "date_format": null
@@ -262,7 +239,7 @@
         "is_multiple2": {}
       },
       "#read_last": {
-        "table": "custom_column_6",
+        "table": "custom_column_9",
         "column": "value",
         "datatype": "datetime",
         "is_multiple": null,
@@ -272,7 +249,7 @@
           "#read_last"
         ],
         "label": "read_last",
-        "colnum": 6,
+        "colnum": 9,
         "display": {
           "description": "The date on which I last opened this book on my e-reader",
           "date_format": null
@@ -289,7 +266,7 @@
         "is_multiple2": {}
       },
       "#read_location": {
-        "table": "custom_column_9",
+        "table": "custom_column_10",
         "column": "value",
         "datatype": "text",
         "is_multiple": null,
@@ -299,7 +276,7 @@
           "#read_location"
         ],
         "label": "read_location",
-        "colnum": 9,
+        "colnum": 10,
         "display": {
           "description": "",
           "use_decorations": 0
@@ -316,7 +293,7 @@
         "is_multiple2": {}
       },
       "#read_progress": {
-        "table": "custom_column_7",
+        "table": "custom_column_11",
         "column": "value",
         "datatype": "float",
         "is_multiple": null,
@@ -326,7 +303,7 @@
           "#read_progress"
         ],
         "label": "read_progress",
-        "colnum": 7,
+        "colnum": 11,
         "display": {
           "description": "",
           "number_format": "{:.0%}"
@@ -343,7 +320,7 @@
         "is_multiple2": {}
       },
       "#read_status": {
-        "table": "custom_column_11",
+        "table": "custom_column_12",
         "column": "value",
         "datatype": "composite",
         "is_multiple": null,
@@ -353,7 +330,7 @@
           "#read_status"
         ],
         "label": "read_status",
-        "colnum": 11,
+        "colnum": 12,
         "display": {
           "use_decorations": 0,
           "contains_html": false,
@@ -374,9 +351,32 @@
         "is_multiple2": {}
       }
     },
+    "cover": null,
+    "languages": [
+      "eng"
+    ],
+    "last_modified": "2020-11-16T18:58:34+00:00",
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "mime": null,
+    "book_producer": null,
+    "comments": null,
     "publication_type": null,
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "rating": null,
+    "title": "Alice's Adventures in Wonderland",
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "user_categories": {},
+    "application_id": 2,
+    "tags": [
+      "Fantasy"
+    ],
+    "series": null,
+    "author_sort": "Carroll, Lewis",
     "title_sort": "Alice's Adventures in Wonderland",
-    "publisher": null,
-    "mime": null
+    "publisher": null
   }
 ]

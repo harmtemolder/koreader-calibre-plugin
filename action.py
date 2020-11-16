@@ -10,7 +10,7 @@ import re
 import sys
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.gui2 import error_dialog
+from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
@@ -27,11 +27,13 @@ module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
 
 class KoreaderAction(InterfaceAction):
     name = KoreaderSync.name
-    action_spec = (name, None, KoreaderSync.description, None)
+    action_spec = (name, 'copy-to-library.png', KoreaderSync.description, None)
+    action_add_menu = True
+    action_menu_clone_qaction = 'Sync from KOReader'
     dont_add_to = frozenset([
-        'context-menu', 'context-menu-device','toolbar-child', 'menubar',
+        'context-menu', 'context-menu-device', 'toolbar-child', 'menubar',
         'menubar-device', 'context-menu-cover-browser', 'context-menu-split'])
-    dont_remove_from = frozenset(['toolbar', 'toolbar-device'])
+    dont_remove_from = InterfaceAction.all_locations - dont_add_to
     action_type = 'current'
 
     def genesis(self):
@@ -41,10 +43,22 @@ class KoreaderAction(InterfaceAction):
         base = self.interface_action_base_plugin
         self.version = '{} {}.{}.{}'.format(base.name, *base.version)
 
+        # Overwrite icon with actual KOReader logo
         icon = get_icons('images/icon.png')
         self.qaction.setIcon(icon)
 
-        self.qaction.triggered.connect(self.show_config)
+        # Left-click action
+        self.qaction.triggered.connect(self.sync_to_calibre)
+
+        # Right-click menu (already includes left-click action)
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Configure KOReader Sync',
+            'Configure',
+            icon='config.png',
+            description=None,
+            triggered=self.show_config
+        )
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
@@ -70,8 +84,14 @@ class KoreaderAction(InterfaceAction):
 
         if not is_device_present:
             debug_print('is_device_present = ', is_device_present)
-            error_dialog(self.gui, 'No device found', 'No device found',
-                         show=True)
+            error_dialog(
+                self.gui,
+                'No device found',
+                'No device found',
+                det_msg='',
+                show=True,
+                show_copy_button=False
+            )
             return None
 
         try:
@@ -79,8 +99,14 @@ class KoreaderAction(InterfaceAction):
             connected_device_type = connected_device.__class__.__name__
         except:
             debug_print('could not get connected_device')
-            error_dialog(self.gui, 'Could not connect to device',
-                         'Could not connect to device', show=True)
+            error_dialog(
+                self.gui,
+                'Could not connect to device',
+                'Could not connect to device',
+                det_msg='',
+                show=True,
+                show_copy_button=False
+            )
             return None
 
         debug_print('connected_device_type = ', connected_device_type)
@@ -204,9 +230,10 @@ class KoreaderAction(InterfaceAction):
                 'plugin. Please check if there already is a feature request '
                 'for this <a href="https://todo.sr.ht/~harmtemolder/koreader'
                 '-calibre-plugin">here</a>. If not, feel free to create '
-                'one.'.format(
-                    device_class),
-                show=True)
+                'one.'.format(device_class),
+                det_msg='',
+                show=True,
+                show_copy_button=False)
             return None
 
         sidecar_paths = self.get_paths(device)
@@ -235,6 +262,9 @@ class KoreaderAction(InterfaceAction):
                         value = None
                         break
 
+                if not value:
+                    break
+
                 # Transform value if required
                 if 'transform' in column:
                     value = column['transform'](value)
@@ -242,3 +272,11 @@ class KoreaderAction(InterfaceAction):
                 keys_values_to_update[target] = value
 
             self.update_metadata(book_uuid, keys_values_to_update)
+            info_dialog(
+                self.gui,
+                'Successfully synced metadata from KOReader',
+                'Successfully synced metadata from KOReader',
+                det_msg='',
+                show=True,
+                show_copy_button=False
+            )

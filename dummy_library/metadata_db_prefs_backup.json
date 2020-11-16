@@ -1,0 +1,1445 @@
+{
+  "bools_are_tristate": true,
+  "user_categories": {},
+  "saved_searches": {},
+  "grouped_search_terms": {},
+  "tag_browser_hidden_categories": [
+    "#read_location",
+    "rating",
+    "news"
+  ],
+  "library_view books view state": {
+    "column_alignment": {
+      "#read_progress": "right",
+      "#read_status": "center",
+      "pubdate": "center",
+      "size": "center",
+      "timestamp": "center"
+    },
+    "column_positions": {
+      "#formats": 12,
+      "#gr_rating": 10,
+      "#gr_review": 11,
+      "#gr_shelf": 9,
+      "#ko_md5": 22,
+      "#ko_sidecar": 23,
+      "#mm_annotations": 13,
+      "#read_first": 6,
+      "#read_last": 7,
+      "#read_location": 8,
+      "#read_progress": 5,
+      "#read_status": 4,
+      "authors": 1,
+      "languages": 20,
+      "last_modified": 19,
+      "ondevice": 0,
+      "pubdate": 18,
+      "publisher": 17,
+      "rating": 21,
+      "series": 3,
+      "size": 15,
+      "tags": 16,
+      "timestamp": 14,
+      "title": 2
+    },
+    "column_sizes": {
+      "#formats": 100,
+      "#gr_rating": 100,
+      "#gr_review": 100,
+      "#gr_shelf": 137,
+      "#ko_md5": 100,
+      "#ko_sidecar": 100,
+      "#mm_annotations": 100,
+      "#read_first": 100,
+      "#read_last": 100,
+      "#read_location": 100,
+      "#read_progress": 100,
+      "#read_status": 109,
+      "authors": 214,
+      "languages": 0,
+      "last_modified": 0,
+      "pubdate": 0,
+      "publisher": 0,
+      "rating": 0,
+      "series": 441,
+      "size": 0,
+      "tags": 0,
+      "timestamp": 111,
+      "title": 397
+    },
+    "hidden_columns": [
+      "size",
+      "rating",
+      "tags",
+      "publisher",
+      "pubdate",
+      "last_modified",
+      "languages"
+    ],
+    "languages_injected": true,
+    "last_modified_injected": true,
+    "sort_history": [
+      [
+        "date",
+        false
+      ],
+      [
+        "authors",
+        true
+      ],
+      [
+        "series",
+        true
+      ],
+      [
+        "title",
+        true
+      ]
+    ]
+  },
+  "field_metadata": {
+    "#formats": {
+      "category_sort": "value",
+      "colnum": 1,
+      "column": "value",
+      "datatype": "composite",
+      "display": {
+        "composite_sort": "text",
+        "composite_template": "{:'re(approximate_formats(), ',', ', ')'}",
+        "contains_html": false,
+        "description": "",
+        "make_category": false,
+        "use_decorations": 0
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "formats",
+      "link_column": "value",
+      "name": "Formats",
+      "rec_index": 22,
+      "search_terms": [
+        "#formats"
+      ],
+      "table": "custom_column_1"
+    },
+    "#gr_rating": {
+      "category_sort": "value",
+      "colnum": 2,
+      "column": "value",
+      "datatype": "rating",
+      "display": {
+        "allow_half_stars": false,
+        "description": ""
+      },
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "gr_rating",
+      "link_column": "value",
+      "name": "Goodreads Rating",
+      "rec_index": 23,
+      "search_terms": [
+        "#gr_rating"
+      ],
+      "table": "custom_column_2"
+    },
+    "#gr_review": {
+      "category_sort": "value",
+      "colnum": 3,
+      "column": "value",
+      "datatype": "comments",
+      "display": {
+        "description": "",
+        "heading_position": "hide",
+        "interpret_as": "long-text"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "gr_review",
+      "link_column": "value",
+      "name": "Goodreads Review",
+      "rec_index": 24,
+      "search_terms": [
+        "#gr_review"
+      ],
+      "table": "custom_column_3"
+    },
+    "#gr_shelf": {
+      "category_sort": "value",
+      "colnum": 4,
+      "column": "value",
+      "datatype": "text",
+      "display": {
+        "description": "",
+        "use_decorations": 0
+      },
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "gr_shelf",
+      "link_column": "value",
+      "name": "Goodreads Shelf",
+      "rec_index": 25,
+      "search_terms": [
+        "#gr_shelf"
+      ],
+      "table": "custom_column_4"
+    },
+    "#ko_md5": {
+      "category_sort": "value",
+      "colnum": 5,
+      "column": "value",
+      "datatype": "text",
+      "display": {
+        "description": "",
+        "use_decorations": 0
+      },
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "ko_md5",
+      "link_column": "value",
+      "name": "KOReader Sync Server MD5 Hash",
+      "rec_index": 26,
+      "search_terms": [
+        "#ko_md5"
+      ],
+      "table": "custom_column_5"
+    },
+    "#ko_sidecar": {
+      "category_sort": "value",
+      "colnum": 6,
+      "column": "value",
+      "datatype": "comments",
+      "display": {
+        "description": "The entire dict from KOReader\u2019s metadata.epub.lua",
+        "heading_position": "above",
+        "interpret_as": "long-text"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "ko_sidecar",
+      "link_column": "value",
+      "name": "KOReader Sidecar",
+      "rec_index": 27,
+      "search_terms": [
+        "#ko_sidecar"
+      ],
+      "table": "custom_column_6"
+    },
+    "#mm_annotations": {
+      "category_sort": "value",
+      "colnum": 7,
+      "column": "value",
+      "datatype": "comments",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "mm_annotations",
+      "link_column": "value",
+      "name": "Annotations",
+      "rec_index": 28,
+      "search_terms": [
+        "#mm_annotations"
+      ],
+      "table": "custom_column_7"
+    },
+    "#read_first": {
+      "category_sort": "value",
+      "colnum": 8,
+      "column": "value",
+      "datatype": "datetime",
+      "display": {
+        "date_format": null,
+        "description": "The date on which I added this book to my Goodreads Currently Reading shelf"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "read_first",
+      "link_column": "value",
+      "name": "Read First",
+      "rec_index": 29,
+      "search_terms": [
+        "#read_first"
+      ],
+      "table": "custom_column_8"
+    },
+    "#read_last": {
+      "category_sort": "value",
+      "colnum": 9,
+      "column": "value",
+      "datatype": "datetime",
+      "display": {
+        "date_format": null,
+        "description": "The date on which I last opened this book on my e-reader"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "read_last",
+      "link_column": "value",
+      "name": "Read Last",
+      "rec_index": 30,
+      "search_terms": [
+        "#read_last"
+      ],
+      "table": "custom_column_9"
+    },
+    "#read_location": {
+      "category_sort": "value",
+      "colnum": 10,
+      "column": "value",
+      "datatype": "text",
+      "display": {
+        "description": "",
+        "use_decorations": 0
+      },
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "read_location",
+      "link_column": "value",
+      "name": "Read Location",
+      "rec_index": 31,
+      "search_terms": [
+        "#read_location"
+      ],
+      "table": "custom_column_10"
+    },
+    "#read_progress": {
+      "category_sort": "value",
+      "colnum": 11,
+      "column": "value",
+      "datatype": "float",
+      "display": {
+        "description": "",
+        "number_format": "{:.0%}"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "read_progress",
+      "link_column": "value",
+      "name": "Read Progress",
+      "rec_index": 32,
+      "search_terms": [
+        "#read_progress"
+      ],
+      "table": "custom_column_11"
+    },
+    "#read_status": {
+      "category_sort": "value",
+      "colnum": 12,
+      "column": "value",
+      "datatype": "composite",
+      "display": {
+        "composite_sort": "text",
+        "composite_template": "{#read_progress:get_read_status()}",
+        "contains_html": false,
+        "description": "",
+        "make_category": true,
+        "use_decorations": 0
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "read_status",
+      "link_column": "value",
+      "name": "Read Status",
+      "rec_index": 33,
+      "search_terms": [
+        "#read_status"
+      ],
+      "table": "custom_column_12"
+    },
+    "au_map": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": null,
+        "ui_to_list": null
+      },
+      "kind": "field",
+      "label": "au_map",
+      "name": null,
+      "rec_index": 18,
+      "search_terms": [],
+      "table": null
+    },
+    "author_sort": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "author_sort",
+      "name": "Author sort",
+      "rec_index": 12,
+      "search_terms": [
+        "author_sort"
+      ],
+      "table": null
+    },
+    "authors": {
+      "category_sort": "sort",
+      "column": "name",
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": " & ",
+        "ui_to_list": "&"
+      },
+      "kind": "field",
+      "label": "authors",
+      "link_column": "author",
+      "name": "Authors",
+      "rec_index": 2,
+      "search_terms": [
+        "authors",
+        "author"
+      ],
+      "table": "authors"
+    },
+    "comments": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "comments",
+      "name": "Comments",
+      "rec_index": 7,
+      "search_terms": [
+        "comments",
+        "comment"
+      ],
+      "table": null
+    },
+    "cover": {
+      "column": null,
+      "datatype": "int",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "cover",
+      "name": "Cover",
+      "rec_index": 17,
+      "search_terms": [
+        "cover"
+      ],
+      "table": null
+    },
+    "formats": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": ", ",
+        "ui_to_list": ","
+      },
+      "kind": "field",
+      "label": "formats",
+      "name": "Formats",
+      "rec_index": 13,
+      "search_terms": [
+        "formats",
+        "format"
+      ],
+      "table": null
+    },
+    "id": {
+      "column": null,
+      "datatype": "int",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "id",
+      "name": null,
+      "rec_index": 0,
+      "search_terms": [
+        "id"
+      ],
+      "table": null
+    },
+    "identifiers": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": true,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": ", ",
+        "ui_to_list": ","
+      },
+      "kind": "field",
+      "label": "identifiers",
+      "name": "Identifiers",
+      "rec_index": 20,
+      "search_terms": [
+        "identifiers",
+        "identifier",
+        "isbn"
+      ],
+      "table": null
+    },
+    "languages": {
+      "category_sort": "lang_code",
+      "column": "lang_code",
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": ", ",
+        "ui_to_list": ","
+      },
+      "kind": "field",
+      "label": "languages",
+      "link_column": "lang_code",
+      "name": "Languages",
+      "rec_index": 21,
+      "search_terms": [
+        "languages",
+        "language"
+      ],
+      "table": "languages"
+    },
+    "last_modified": {
+      "column": null,
+      "datatype": "datetime",
+      "display": {
+        "date_format": "dd MMM yyyy"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "last_modified",
+      "name": "Modified",
+      "rec_index": 19,
+      "search_terms": [
+        "last_modified"
+      ],
+      "table": null
+    },
+    "marked": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "marked",
+      "name": null,
+      "rec_index": 35,
+      "search_terms": [
+        "marked"
+      ],
+      "table": null
+    },
+    "news": {
+      "category_sort": "name",
+      "column": "name",
+      "datatype": null,
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "category",
+      "label": "news",
+      "name": "News",
+      "search_terms": [],
+      "table": "news"
+    },
+    "ondevice": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "ondevice",
+      "name": "On device",
+      "rec_index": 34,
+      "search_terms": [
+        "ondevice"
+      ],
+      "table": null
+    },
+    "path": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "path",
+      "name": "Path",
+      "rec_index": 14,
+      "search_terms": [],
+      "table": null
+    },
+    "pubdate": {
+      "column": null,
+      "datatype": "datetime",
+      "display": {
+        "date_format": "MMM yyyy"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "pubdate",
+      "name": "Published",
+      "rec_index": 15,
+      "search_terms": [
+        "pubdate"
+      ],
+      "table": null
+    },
+    "publisher": {
+      "category_sort": "name",
+      "column": "name",
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "publisher",
+      "link_column": "publisher",
+      "name": "Publisher",
+      "rec_index": 9,
+      "search_terms": [
+        "publisher"
+      ],
+      "table": "publishers"
+    },
+    "rating": {
+      "category_sort": "rating",
+      "column": "rating",
+      "datatype": "rating",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "rating",
+      "link_column": "rating",
+      "name": "Rating",
+      "rec_index": 5,
+      "search_terms": [
+        "rating"
+      ],
+      "table": "ratings"
+    },
+    "series": {
+      "category_sort": "(title_sort(name))",
+      "column": "name",
+      "datatype": "series",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "series",
+      "link_column": "series",
+      "name": "Series",
+      "rec_index": 8,
+      "search_terms": [
+        "series"
+      ],
+      "table": "series"
+    },
+    "series_index": {
+      "column": null,
+      "datatype": "float",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "series_index",
+      "name": null,
+      "rec_index": 10,
+      "search_terms": [
+        "series_index"
+      ],
+      "table": null
+    },
+    "series_sort": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "series_sort",
+      "name": "Series sort",
+      "rec_index": 36,
+      "search_terms": [
+        "series_sort"
+      ],
+      "table": null
+    },
+    "size": {
+      "column": null,
+      "datatype": "float",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "size",
+      "name": "Size",
+      "rec_index": 4,
+      "search_terms": [
+        "size"
+      ],
+      "table": null
+    },
+    "sort": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "sort",
+      "name": "Title sort",
+      "rec_index": 11,
+      "search_terms": [
+        "title_sort"
+      ],
+      "table": null
+    },
+    "tags": {
+      "category_sort": "name",
+      "column": "name",
+      "datatype": "text",
+      "display": {},
+      "is_category": true,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {
+        "cache_to_list": ",",
+        "list_to_ui": ", ",
+        "ui_to_list": ","
+      },
+      "kind": "field",
+      "label": "tags",
+      "link_column": "tag",
+      "name": "Tags",
+      "rec_index": 6,
+      "search_terms": [
+        "tags",
+        "tag"
+      ],
+      "table": "tags"
+    },
+    "timestamp": {
+      "column": null,
+      "datatype": "datetime",
+      "display": {
+        "date_format": "dd MMM yyyy"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "timestamp",
+      "name": "Date",
+      "rec_index": 3,
+      "search_terms": [
+        "date"
+      ],
+      "table": null
+    },
+    "title": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "title",
+      "name": "Title",
+      "rec_index": 1,
+      "search_terms": [
+        "title"
+      ],
+      "table": null
+    },
+    "uuid": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "uuid",
+      "name": null,
+      "rec_index": 16,
+      "search_terms": [
+        "uuid"
+      ],
+      "table": null
+    }
+  },
+  "books view split pane state": {
+    "column_positions": {
+      "#formats": 12,
+      "#gr_rating": 20,
+      "#gr_review": 14,
+      "#gr_shelf": 16,
+      "#ko_md5": 22,
+      "#ko_sidecar": 23,
+      "#mm_annotations": 13,
+      "#read_first": 21,
+      "#read_last": 15,
+      "#read_location": 19,
+      "#read_progress": 17,
+      "#read_status": 18,
+      "authors": 2,
+      "languages": 11,
+      "last_modified": 10,
+      "ondevice": 0,
+      "pubdate": 9,
+      "publisher": 8,
+      "rating": 5,
+      "series": 7,
+      "size": 4,
+      "tags": 6,
+      "timestamp": 3,
+      "title": 1
+    },
+    "column_sizes": {
+      "#formats": 100,
+      "#gr_rating": 100,
+      "#gr_review": 100,
+      "#gr_shelf": 100,
+      "#ko_md5": 100,
+      "#ko_sidecar": 100,
+      "#mm_annotations": 100,
+      "#read_first": 100,
+      "#read_last": 100,
+      "#read_location": 100,
+      "#read_progress": 100,
+      "#read_status": 100,
+      "authors": 100,
+      "languages": 100,
+      "last_modified": 100,
+      "pubdate": 100,
+      "publisher": 100,
+      "rating": 100,
+      "series": 100,
+      "size": 100,
+      "tags": 100,
+      "timestamp": 100,
+      "title": 100
+    },
+    "hidden_columns": []
+  },
+  "book_display_fields": [
+    [
+      "title",
+      true
+    ],
+    [
+      "authors",
+      true
+    ],
+    [
+      "series",
+      true
+    ],
+    [
+      "identifiers",
+      true
+    ],
+    [
+      "tags",
+      false
+    ],
+    [
+      "formats",
+      true
+    ],
+    [
+      "path",
+      true
+    ],
+    [
+      "publisher",
+      false
+    ],
+    [
+      "rating",
+      false
+    ],
+    [
+      "author_sort",
+      false
+    ],
+    [
+      "sort",
+      false
+    ],
+    [
+      "timestamp",
+      false
+    ],
+    [
+      "uuid",
+      false
+    ],
+    [
+      "comments",
+      true
+    ],
+    [
+      "id",
+      false
+    ],
+    [
+      "pubdate",
+      false
+    ],
+    [
+      "last_modified",
+      false
+    ],
+    [
+      "size",
+      false
+    ],
+    [
+      "languages",
+      true
+    ],
+    [
+      "#formats",
+      true
+    ],
+    [
+      "#mm_annotations",
+      true
+    ],
+    [
+      "#read_status",
+      true
+    ],
+    [
+      "#gr_review",
+      true
+    ],
+    [
+      "#read_location",
+      true
+    ],
+    [
+      "#read_last",
+      true
+    ],
+    [
+      "#gr_shelf",
+      true
+    ],
+    [
+      "#read_progress",
+      true
+    ]
+  ],
+  "qv_display_fields": [
+    [
+      "title",
+      true
+    ],
+    [
+      "authors",
+      true
+    ],
+    [
+      "series",
+      true
+    ],
+    [
+      "languages",
+      false
+    ],
+    [
+      "formats",
+      false
+    ],
+    [
+      "publisher",
+      false
+    ],
+    [
+      "rating",
+      false
+    ],
+    [
+      "tags",
+      false
+    ],
+    [
+      "identifiers",
+      false
+    ],
+    [
+      "author_sort",
+      false
+    ],
+    [
+      "id",
+      false
+    ],
+    [
+      "last_modified",
+      false
+    ],
+    [
+      "path",
+      false
+    ],
+    [
+      "pubdate",
+      false
+    ],
+    [
+      "sort",
+      false
+    ],
+    [
+      "size",
+      false
+    ],
+    [
+      "timestamp",
+      false
+    ],
+    [
+      "uuid",
+      false
+    ],
+    [
+      "#formats",
+      false
+    ],
+    [
+      "#gr_shelf",
+      false
+    ],
+    [
+      "#read_last",
+      false
+    ],
+    [
+      "#read_location",
+      false
+    ],
+    [
+      "#read_progress",
+      false
+    ],
+    [
+      "#read_status",
+      false
+    ]
+  ],
+  "column_color_rules": [],
+  "column_icon_rules": [
+    [
+      "icon_only",
+      "#read_status",
+      "program:\n# BasicColorRule():5b226f6b2e706e67222c205b5b2223726561645f737461747573222c20226973222c202272656164225d5d5d\ntest(strcmp(field('#read_status'), \"read\", '', '1', ''), 'ok.png', '');\n"
+    ],
+    [
+      "icon_only",
+      "#read_status",
+      "program:\n# BasicColorRule():5b22717569636b766965772e706e67222c205b5b2223726561645f737461747573222c20226973222c202263757272656e746c792d72656164696e67225d5d5d\ntest(strcmp(field('#read_status'), \"currently-reading\", '', '1', ''), 'quickview.png', '');\n"
+    ]
+  ],
+  "cover_grid_icon_rules": [],
+  "gui_view_history": [
+    [
+      7540,
+      "Out of Africa ; and, Shadows on the grass"
+    ],
+    [
+      7539,
+      "Out of Africa & Shadows on the Grass (English, 2.27Mb)"
+    ],
+    [
+      7531,
+      "Robinson Crusoe"
+    ],
+    [
+      7535,
+      "Out of Africa and Shadows on the Grass"
+    ],
+    [
+      7524,
+      "Beyond the Limits: Confronting Global Collapse, Envisioning a Sustainable Future"
+    ],
+    [
+      7523,
+      "Schismatrix Plus"
+    ],
+    [
+      7513,
+      "Fokke en Sukke [Wed, 05 Aug 2020]"
+    ],
+    [
+      2614,
+      "Problemski Hotel"
+    ],
+    [
+      542,
+      "Zoenen Met Rommel"
+    ],
+    [
+      4224,
+      "Angst"
+    ],
+    [
+      4877,
+      "Schindlers List"
+    ],
+    [
+      5,
+      "Buonanotte, Signor Lenin"
+    ],
+    [
+      1426,
+      "Opuscula Selecta Neerlandicorum De Arte"
+    ],
+    [
+      4067,
+      "Encomium Artis Medicae _ De Lof Der Geneeskunde"
+    ],
+    [
+      924,
+      "Oproep Van De Nar De"
+    ]
+  ],
+  "update_all_last_mod_dates_on_start": false,
+  "plugboards": {},
+  "namespaced:KoboUtilitiesPlugin:settings": {
+    "SchemaVersion": 0.1,
+    "profiles": {
+      "Default": {
+        "customColumnOptions": {
+          "currentReadingLocationColumn": "#read_location",
+          "lastReadColumn": "#read_last",
+          "percentReadColumn": "#read_progress",
+          "ratingColumn": "#gr_rating"
+        },
+        "forDevice": "*Any Device",
+        "profileName": "Default",
+        "storeOptionsStore": {
+          "doNotStoreIfReopened": true,
+          "promptToStore": true,
+          "storeIfMoreRecent": true,
+          "storeOnConnect": true
+        },
+        "updateOptionsStore": {
+          "doEarlyFirmwareUpdate": false,
+          "doFirmwareUpdateCheck": false,
+          "firmwareUpdateCheckLastTime": 0
+        }
+      }
+    },
+    "readingPositionChangesStore": {
+      "selectBooksInLibrary": false,
+      "updeateGoodreadsProgress": true
+    }
+  },
+  "user_template_functions": [
+    [
+      "get_read_status",
+      "get_read_status(progress_field)\nreturn '\u2610' if `progress_field`< 100, '' if empty, else '\u2611\ufe0e'",
+      1,
+      "def evaluate(self, formatter, kwargs, mi, locals, progress_field):\n\tif progress_field:\n\t\tif float(progress_field.strip('%').strip()) < 100:\n\t\t\treturn '\u2610'\n\t\treturn '\u2611\ufe0e'\n\treturn ''"
+    ]
+  ],
+  "virtual_libraries": {
+    "On Device": "ondevice:\"True\"",
+    "Want to Read": "formats:\"=EPUB\" and #gr_shelf:\"=to-read\""
+  },
+  "virt_libs_hidden": [],
+  "namespaced:FindDuplicatesPlugin:settings": {
+    "SchemaVersion": 1.6,
+    "authorExemptions": [],
+    "bookExemptions": [],
+    "lastLibraryCompare": ""
+  },
+  "namespaced:ImportListPlugin:settings": {
+    "clipboardRegexes": [],
+    "csvFiles": [],
+    "current": {
+      "clipboard": {
+        "regex": "",
+        "reverseList": false,
+        "text": ""
+      },
+      "csv": {
+        "columnData": [
+          {
+            "field": "title",
+            "index": 1
+          },
+          {
+            "field": "authors",
+            "index": 2
+          }
+        ],
+        "delimiter": ",",
+        "file": "",
+        "match_by_identifier": null,
+        "reverseList": false,
+        "skipFirst": true,
+        "unquote": true
+      },
+      "importType": "web",
+      "readingList": {
+        "clearList": true,
+        "name": ""
+      },
+      "web": {
+        "categories": [
+          "Social Websites"
+        ],
+        "encoding": "utf-8",
+        "javascript": true,
+        "reverseList": true,
+        "url": "https://www.goodreads.com/review/list/38080398-harm?shelf=to-read&per_page=100",
+        "xpathData": [
+          {
+            "field": "rows",
+            "xpath": "//tbody[@id=\"booksBody\"]/tr"
+          },
+          {
+            "field": "title",
+            "isRegexStrip": true,
+            "regex": "\\([^\\)]+\\)",
+            "xpath": "td[@class=\"field title\"]//a/text()"
+          },
+          {
+            "field": "authors",
+            "isRegexStrip": true,
+            "regex": "",
+            "xpath": "td[@class=\"field author\"]//a/text()"
+          },
+          {
+            "field": "series",
+            "isRegexStrip": false,
+            "regex": "\\(([^,\\.#]+)",
+            "xpath": "td[@class=\"field title\"]//a/span/text()"
+          },
+          {
+            "field": "series_index",
+            "isRegexStrip": false,
+            "regex": "#([\\d\\.]+)",
+            "xpath": "td[@class=\"field title\"]//a/span/text()"
+          },
+          {
+            "field": "identifier:goodreads",
+            "isRegexStrip": false,
+            "regex": "/review/show/(\\d+)",
+            "xpath": "td[@class=\"field actions\"]//a/@href"
+          }
+        ]
+      }
+    },
+    "javascriptDelay": 3,
+    "lastCSVSetting": "",
+    "lastClipboardSetting": "",
+    "lastPredefinedSetting": "Goodreads: Shelves: To Read",
+    "lastTab": 4,
+    "lastUserSetting": "Goodreads Want to Read",
+    "lastViewType": "list",
+    "lastWebSetting": "Goodreads Want to Read",
+    "savedSettings": {
+      "Goodreads Want to Read": {
+        "categories": [
+          "Social Websites"
+        ],
+        "encoding": "utf-8",
+        "importType": "web",
+        "javascript": true,
+        "readingList": {
+          "clearList": true,
+          "name": ""
+        },
+        "reverseList": true,
+        "url": "https://www.goodreads.com/review/list/38080398-harm?shelf=to-read&per_page=100",
+        "xpathData": [
+          {
+            "field": "rows",
+            "xpath": "//tbody[@id=\"booksBody\"]/tr"
+          },
+          {
+            "field": "title",
+            "isRegexStrip": true,
+            "regex": "\\([^\\)]+\\)",
+            "xpath": "td[@class=\"field title\"]//a/text()"
+          },
+          {
+            "field": "authors",
+            "isRegexStrip": true,
+            "regex": "",
+            "xpath": "td[@class=\"field author\"]//a/text()"
+          },
+          {
+            "field": "series",
+            "isRegexStrip": false,
+            "regex": "\\(([^,\\.#]+)",
+            "xpath": "td[@class=\"field title\"]//a/span/text()"
+          },
+          {
+            "field": "series_index",
+            "isRegexStrip": false,
+            "regex": "#([\\d\\.]+)",
+            "xpath": "td[@class=\"field title\"]//a/span/text()"
+          },
+          {
+            "field": "identifier:goodreads",
+            "isRegexStrip": false,
+            "regex": "/review/show/(\\d+)",
+            "xpath": "td[@class=\"field actions\"]//a/@href"
+          }
+        ]
+      }
+    },
+    "schemaVersion": 1.2,
+    "webUrls": [
+      "https://www.goodreads.com/review/list/38080398-harm?shelf=to-read&per_page=100",
+      "https://www.goodreads.com/review/list/38080398-harm?shelf=to-read&per_page=infinite",
+      "https://www.goodreads.com/review/list/38080398-harm?utf8=%E2%9C%93&shelf=to-read&title=harm&per_page=infinite",
+      "https://www.goodreads.com/review/list/38080398-harm?shelf=to-read",
+      "http://www.goodreads.com/shelf/show/to-read"
+    ]
+  },
+  "news_to_be_synced": []
+}

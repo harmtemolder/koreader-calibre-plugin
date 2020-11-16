@@ -38,41 +38,40 @@ COLUMNS = [{
 }, {
     'name': 'column_last_read_location',
     'label': 'Last read location column:',
-    'tooltip': 'Used to store the location you last stopped reading at. It '
+    'tooltip': 'Used to store the location you last stopped reading at. It\n'
                'must be of the type “Text”.',
     'type': 'text',
     'sidecar_property': ['last_xpointer'],
 }, {
-    'name': 'column_date_status_modified',
-    'label': 'Status modified date column:',
-    'tooltip': 'Used to store the date on which the book’s status was\n'
-               'last modified. This is probably the date on which you\n'
-               'marked it as read. It must be of the type “Date”.',
-    'type': 'datetime',
-    'sidecar_property': ['summary', 'modified'],
-}, {
-    'name': 'column_review',
-    'label': 'Review column:',
-    'tooltip': 'Used to store your review of the book, as entered on the book '
-               'status page. It must be of the type “Long text”.',
-    'type': 'comments',
-    'sidecar_property': ['summary', 'note'],
-}, {
     'name': 'column_rating',
     'label': 'Rating column:',
-    'tooltip': 'Used to store your rating of the book, as entered on the book '
+    'tooltip': 'Used to store your rating of the book, as entered on the book\n'
                'status page. It must be of the type “Rating”.',
     'type': 'rating',
     'sidecar_property': ['summary', 'rating'],
     'transform': (lambda value: value * 2),  # calibre uses a 10-point scale
 }, {
+    'name': 'column_review',
+    'label': 'Review column:',
+    'tooltip': 'Used to store your review of the book, as entered on the book\n'
+               'status page. It must be of the type “Long text”.',
+    'type': 'comments',
+    'sidecar_property': ['summary', 'note'],
+}, {
     'name': 'column_status',
     'label': 'Reading status column:',
-    'tooltip': 'Used to store the reading status of the book, as entered on '
-               'the book status page (...). It must be of the type '  # TODO
-               '“Text”.',
+    'tooltip': 'Used to store the reading status of the book, as entered on\n'
+               'the book status page (...). It must be of the type “Text”.',
     'type': 'text',
     'sidecar_property': ['summary', 'status'],
+}, {
+    'name': 'column_date_status_modified',
+    'label': 'Status modified date column:',
+    'tooltip': 'Used to store the date on which the book’s status was\n'
+               'last modified. (This is probably the date on which you\n'
+               'marked it as read.) It must be of the type “Date”.',
+    'type': 'datetime',
+    'sidecar_property': ['summary', 'modified'],
 }, {
 #     'sidecar_property': 'bookmarks',  # TODO
 # }, {
@@ -88,8 +87,8 @@ COLUMNS = [{
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
     'tooltip': 'Used to store the entire contents of the sidecar\n'
-               '(converted to a Python dict). Useful for debugging, but\n'
-               'not much else. It must be of the type “Long text”.',
+               '(converted to JSON). Useful for debugging, but not much\n'
+               'else, probably. It must be of the type “Long text”.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict
     'transform': (lambda value: json.dumps(value, indent=4)),
@@ -113,7 +112,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         self.setLayout(layout)
 
         # Add icon and title
-        title_layout = TitleLayout(self, 'images/icon.png', 'KOReader Sync')
+        title_layout = TitleLayout(
+            self, 'images/icon.png', 'Configure KOReader Sync')
         layout.addLayout(title_layout)
 
         # Add custom column dropdowns
