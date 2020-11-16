@@ -147,15 +147,11 @@ class KoreaderAction(InterfaceAction):
 
         return decoded_lua
 
-    def update_metadata(self, uuid, key, value):
-        """Update a single column for the given book.
-
-        TODO Change the workings of this so that all changes for a book are
-        updated in one go. Maybe from a dict?
+    def update_metadata(self, uuid, keys_values_to_update):
+        """Update multiple metadata columns for the given book.
 
         :param uuid: identifier for the book
-        :param key: the column to update
-        :param value: the value to update the column with
+        :param keys_values_to_update: a dict of keys to update with values
         :return: None
         """
         debug_print = partial(module_debug_print,
@@ -175,10 +171,12 @@ class KoreaderAction(InterfaceAction):
         metadata = db.get_metadata(book_id)
 
         # Update that metadata locally
-        metadata.set(key, value)
+        for key, value in keys_values_to_update.items():
+            metadata.set(key, value)
 
         # Write the updated metadata back to the library
         db.set_metadata(book_id, metadata, set_title=False, set_authors=False)
+        debug_print('updated metadata for uuid = ', uuid, ', id = ', book_id)
 
     def sync_to_calibre(self):
         """This plugin’s main purpose. It syncs the contents of
@@ -215,6 +213,7 @@ class KoreaderAction(InterfaceAction):
 
         for book_uuid, sidecar_path in sidecar_paths.items():
             sidecar_contents = self.get_sidecar(device, sidecar_path)
+            keys_values_to_update = {}
 
             for column in COLUMNS:
                 name = column['name']
@@ -240,6 +239,6 @@ class KoreaderAction(InterfaceAction):
                 if 'transform' in column:
                     value = column['transform'](value)
 
-                self.update_metadata(book_uuid, target, value)
+                keys_values_to_update[target] = value
 
-            debug_print('updated metadata for ', book_uuid)
+            self.update_metadata(book_uuid, keys_values_to_update)
