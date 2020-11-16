@@ -6,12 +6,11 @@ __docformat__ = 'restructuredtext en'
 
 from functools import partial
 import io
-import json
 import re
 import sys
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.gui2 import error_dialog, info_dialog
+from calibre.gui2 import error_dialog
 from calibre.gui2.actions import InterfaceAction
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
@@ -149,6 +148,16 @@ class KoreaderAction(InterfaceAction):
         return decoded_lua
 
     def update_metadata(self, uuid, key, value):
+        """Update a single column for the given book.
+
+        TODO Change the workings of this so that all changes for a book are
+        updated in one go. Maybe from a dict?
+
+        :param uuid: identifier for the book
+        :param key: the column to update
+        :param value: the value to update the column with
+        :return: None
+        """
         debug_print = partial(module_debug_print,
                               'KoreaderAction:update_metadata:')
 
@@ -162,8 +171,13 @@ class KoreaderAction(InterfaceAction):
             debug_print('could not find {} in calibre’s library'.format(uuid))
             return None
 
+        # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
-        metadata.set(key, value, extra='test value for extra')
+
+        # Update that metadata locally
+        metadata.set(key, value)
+
+        # Write the updated metadata back to the library
         db.set_metadata(book_id, metadata, set_title=False, set_authors=False)
 
     def sync_to_calibre(self):
@@ -175,9 +189,26 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:sync_to_calibre:')
 
+        supported_devices = ['FOLDER_DEVICE']
         device = self.get_connected_device()
 
         if not device:
+            return None
+
+        device_class = device.__class__.__name__
+
+        if device_class not in supported_devices:
+            debug_print('unsupported device, device_class = ', device_class)
+            error_dialog(
+                self.gui,
+                'Unsupported device',
+                'Devices of the type {} are not (yet) supported by this '
+                'plugin. Please check if there already is a feature request '
+                'for this <a href="https://todo.sr.ht/~harmtemolder/koreader'
+                '-calibre-plugin">here</a>. If not, feel free to create '
+                'one.'.format(
+                    device_class),
+                show=True)
             return None
 
         sidecar_paths = self.get_paths(device)
@@ -194,13 +225,20 @@ class KoreaderAction(InterfaceAction):
                     continue
 
                 property = column['sidecar_property']
-                if property == '*':
-                    value = json.dumps(sidecar_contents, indent=4)
-                else:
-                    property_split = property.split('.')
-                    value = sidecar_contents
-                    for subproperty in property_split:
+                value = sidecar_contents
+
+                for subproperty in property:
+                    if subproperty in value:
                         value = value[subproperty]
+                    else:
+                        debug_print('{} not in {}'.format(
+                            subproperty, value.keys()))
+                        value = None
+                        break
+
+                # Transform value if required
+                if 'transform' in column:
+                    value = column['transform'](value)
 
                 self.update_metadata(book_uuid, target, value)
 

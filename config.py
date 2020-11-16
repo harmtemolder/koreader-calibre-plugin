@@ -5,6 +5,7 @@ __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 from functools import partial
+import json
 import os
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
@@ -33,7 +34,14 @@ COLUMNS = [{
     'tooltip': 'Used to store the current percent read. It must be of\n'
                'the type “Floating point numbers”.',
     'type': 'float',
-    'sidecar_property': 'percent_finished',
+    'sidecar_property': ['percent_finished'],
+}, {
+    'name': 'column_last_read_location',
+    'label': 'Last read location column:',
+    'tooltip': 'Used to store the location you last stopped reading at. It '
+               'must be of the type “Text”.',
+    'type': 'text',
+    'sidecar_property': ['last_xpointer'],
 }, {
     'name': 'column_date_status_modified',
     'label': 'Status modified date column:',
@@ -41,26 +49,31 @@ COLUMNS = [{
                'last modified. This is probably the date on which you\n'
                'marked it as read. It must be of the type “Date”.',
     'type': 'datetime',
-    'sidecar_property': 'summary.modified',
+    'sidecar_property': ['summary', 'modified'],
 }, {
-#     'name': 'column_review',
-#     'label': '',
-#     'tooltip': '',
-#     'type': 'comments',
-#     'sidecar_property': 'summary.note',  # TODO
-# }, {
-#     'name': 'column_rating',
-#     'label': '',
-#     'tooltip': '',
-#     'type': 'rating',
-#     'sidecar_property': 'summary.rating',  # TODO
-# }, {
-#     'name': 'column_status',
-#     'label': '',
-#     'tooltip': '',
-#     'type': 'text',
-#     'sidecar_property': 'summary.status',  # TODO
-# }, {
+    'name': 'column_review',
+    'label': 'Review column:',
+    'tooltip': 'Used to store your review of the book, as entered on the book '
+               'status page. It must be of the type “Long text”.',
+    'type': 'comments',
+    'sidecar_property': ['summary', 'note'],
+}, {
+    'name': 'column_rating',
+    'label': 'Rating column:',
+    'tooltip': 'Used to store your rating of the book, as entered on the book '
+               'status page. It must be of the type “Rating”.',
+    'type': 'rating',
+    'sidecar_property': ['summary', 'rating'],
+    'transform': (lambda value: value * 2),  # calibre uses a 10-point scale
+}, {
+    'name': 'column_status',
+    'label': 'Reading status column:',
+    'tooltip': 'Used to store the reading status of the book, as entered on '
+               'the book status page (...). It must be of the type '  # TODO
+               '“Text”.',
+    'type': 'text',
+    'sidecar_property': ['summary', 'status'],
+}, {
 #     'sidecar_property': 'bookmarks',  # TODO
 # }, {
 #     'sidecar_property': 'highlight',  # TODO
@@ -70,7 +83,7 @@ COLUMNS = [{
     'tooltip': 'Used to store the MD5 hash KOReader’s sync server uses\n'
                'to sync progress. It must be of the type “Text”.',
     'type': 'text',
-    'sidecar_property': 'partial_md5_checksum',
+    'sidecar_property': ['partial_md5_checksum'],
 }, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
@@ -78,7 +91,8 @@ COLUMNS = [{
                '(converted to a Python dict). Useful for debugging, but\n'
                'not much else. It must be of the type “Long text”.',
     'type': 'comments',
-    'sidecar_property': '*',
+    'sidecar_property': [],  # `[]` gives the entire sidecar dict
+    'transform': (lambda value: json.dumps(value, indent=4)),
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
