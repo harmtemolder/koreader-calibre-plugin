@@ -1,0 +1,4 @@
+-- we can read Lua syntax here!
+return {
+    ["partial_md5_checksum"] = "9c928bc227e2011e85f931ca159ff710"
+}
