@@ -1,35 +1,34 @@
 [
   {
-    "title_sort": "Alice's Adventures in Wonderland",
-    "tags": [
-      "Fantasy fiction",
-      "Children's stories",
-      "Imaginary places -- Juvenile fiction",
-      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
-    ],
-    "cover": null,
-    "db_id": null,
-    "rights": null,
-    "publisher": null,
-    "series": null,
+    "title": "Alice's Adventures in Wonderland",
     "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
+    "pubdate": "2008-06-27T04:00:00+00:00",
+    "user_categories": {},
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "rights": null,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "db_id": null,
+    "size": 253703,
     "authors": [
       "Lewis Carroll"
     ],
-    "comments": null,
+    "book_producer": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/11"
+    },
+    "application_id": 4,
     "series_index": null,
-    "publication_type": null,
     "thumbnail": [
       49,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADEDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAIFBgcBAwQI/8QANBAAAgEDAwIEBAQFBQAAAAAAAQIDAAQRBRIhMUEGE1FhFCIycSNCgaEkM0OCwZGSo7Hw/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJREAAwACAAUDBQAAAAAAAAAAAAECAxESEyExcQSh0QVBUWGB/9oADAMBAAIRAxEAPwB61AXvxEPw8ZeEY8wKQD9SnufQMP7hWm1XUBPGbhZNoLbvmBGOMd/vTxUF07xVpl1dQ2Vzq+pRXL4Vn2oI/MJA2j5SRz3Ix71mlbL09D4kWsfAD8QC4VgQGYcjacg/r/iiUauDJ5Z7jbyPUc/b6uvtTkdHYSBDql7uIyBvTJH+2oH4a8RXuq609pfaiYIQjEMWCnIIwMkGmaSWznFvoSyFtRS5t2kEhiCDzVyOWwff7URHVjPH5n0iRQ3I5XkN+wBHua49buotPhg+G1x5ZZXA2qyuQvdsAdqddHmafSopHlMrF3XzCMFgHIBx9hSKlS2hvvocttFY4opRhVefZ7FnnkfeACxOK9BVVssmljS7c/CyLKoXzJFjPfqc459aeb4en5EuHSbTS17+BjstHvY3jnS+kiuE5RkJ+XHvmlaPol3LqT/xDQ+V/MkU4PPYfeprpOg2lzpiytcSyrM7BZFcLtAJx+wrntdJuJrSzntFmlkWV0lztVSoBLEcZPGD+lQ5t7aNObFh4E8a0+/k0pFZ29wzPdo0wwSZpMt/7Hapd4fAOiQFSCN8mCOh/EaoJDbwzareRhVeYsAQ6Mw2gDGe3ap34eUpoUCMApDSAgDAHzt27U2Ps/4ZI77HTmij9aKcqLqrIdSihs7a2iiVpptqs7LnaDxVp1U4hs57e2ikhR5mRRveTpxngLz/AKkfaluU56hO+ZOh7W5SOyhWGOMlIwp/DwQQeFyRkkev71YmmW0drbW7XqJGx3Z3Nnlt2QTk89utVxD5VvJC0iM0Ue1nCDHAPOPc5qxX1vRZBFMbtlEZDjajAnA6Hj3rHhaabPU+o4eBzMr2+BgsfCcPlrcrcyIZCGkV4+d3AP8A1it+jR+XpcaD8sko/wCRqjOt6hrV1fTWsaO9pMwltzjbhc8EYxzz39vapJoCvHokCSZ3qzhsnJzvar4Za22zzKmVrS0OWTRRRVzguop4e8LQv4divbd8alLArRTTE7YzweAPbjPWpXTOlhJa2sdmms3CRRoI1XZHwABxnb6YqeSaqdSxoamtsi81lrw1K4jk03zJXILGBcRucAZDEAe/Na9N0+d/G+nPd2U8EYL43rhWdQTx2I6HNS+KCZQQmuT9Mk7Iicev01l0mVlaTXJdyggFoocjpn8n2qc4KXbXb9/Bov1bqFDfReDq1UtvAnbFu/yhRIBu9iDyM9Mg1zaIu3SYl44eQcdPrbpWiTSzdAxvrF0x6HGwH17L7U42dotlZx26OzKmfmbqcnP+abFieNdWQu1T2jdRWcUVUQVSDDEWLGNCT1JHWiiugY8iIf0k6Y+kfag28J6xIf7RRRRsAEEQOREmfXaKWaKKADFFFFcA/9k="
     ],
-    "pubdate": "2008-06-27T04:00:00+00:00",
-    "timestamp": "2020-11-16T21:46:44+00:00",
-    "languages": [
-      "eng"
-    ],
-    "book_producer": null,
+    "series": null,
+    "publisher": null,
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -363,27 +362,401 @@
         "is_multiple2": {}
       }
     },
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "author_sort": "Carroll, Lewis",
+    "title_sort": "Alice's Adventures in Wonderland",
+    "timestamp": "2020-11-16T21:46:44+00:00",
+    "languages": [
+      "eng"
+    ],
+    "publication_type": null,
     "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/11"
-    },
-    "title": "Alice's Adventures in Wonderland",
     "rating": null,
-    "size": 253703,
-    "application_id": 4,
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
     "last_modified": "2020-11-16T21:46:44+00:00",
-    "user_categories": {},
-    "mime": null
+    "cover": null,
+    "author_sort": "Carroll, Lewis",
+    "mime": null,
+    "tags": [
+      "Fantasy fiction",
+      "Children's stories",
+      "Imaginary places -- Juvenile fiction",
+      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
+    ],
+    "comments": null
   },
   {
+    "title": "Walden, and On The Duty Of Civil Disobedience",
+    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
+    "pubdate": "1995-01-01T03:00:00+00:00",
+    "user_categories": {},
+    "author_link_map": {
+      "Henry David Thoreau": ""
+    },
+    "rights": null,
+    "author_sort_map": {
+      "Henry David Thoreau": "Thoreau, Henry David"
+    },
+    "db_id": null,
+    "size": 612096,
+    "authors": [
+      "Henry David Thoreau"
+    ],
+    "book_producer": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/205"
+    },
+    "application_id": 3,
+    "series_index": null,
+    "thumbnail": [
+      47,
+      68,
+      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
+    ],
+    "series": null,
+    "publisher": null,
+    "user_metadata": {
+      "#formats": {
+        "table": "custom_column_1",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Formats",
+        "search_terms": [
+          "#formats"
+        ],
+        "label": "formats",
+        "colnum": 1,
+        "display": {
+          "contains_html": false,
+          "make_category": false,
+          "composite_sort": "text",
+          "use_decorations": 0,
+          "composite_template": "{:'re(approximate_formats(), ',', ', ')'}",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 22,
+        "#value#": "EPUB",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_rating": {
+        "table": "custom_column_2",
+        "column": "value",
+        "datatype": "rating",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Rating",
+        "search_terms": [
+          "#gr_rating"
+        ],
+        "label": "gr_rating",
+        "colnum": 2,
+        "display": {
+          "description": "",
+          "allow_half_stars": false
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 23,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_review": {
+        "table": "custom_column_3",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Review",
+        "search_terms": [
+          "#gr_review"
+        ],
+        "label": "gr_review",
+        "colnum": 3,
+        "display": {
+          "heading_position": "hide",
+          "interpret_as": "long-text",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 24,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#gr_shelf": {
+        "table": "custom_column_4",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Shelf",
+        "search_terms": [
+          "#gr_shelf"
+        ],
+        "label": "gr_shelf",
+        "colnum": 4,
+        "display": {
+          "use_decorations": 0,
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 25,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#ko_md5": {
+        "table": "custom_column_5",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Sync Server MD5 Hash",
+        "search_terms": [
+          "#ko_md5"
+        ],
+        "label": "ko_md5",
+        "colnum": 5,
+        "display": {
+          "use_decorations": 0,
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 26,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#ko_sidecar": {
+        "table": "custom_column_6",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Sidecar",
+        "search_terms": [
+          "#ko_sidecar"
+        ],
+        "label": "ko_sidecar",
+        "colnum": 6,
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "long-text",
+          "description": "The entire dict from KOReader\u2019s metadata.epub.lua"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 27,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#mm_annotations": {
+        "table": "custom_column_7",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Annotations",
+        "search_terms": [
+          "#mm_annotations"
+        ],
+        "label": "mm_annotations",
+        "colnum": 7,
+        "display": {},
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 28,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_first": {
+        "table": "custom_column_8",
+        "column": "value",
+        "datatype": "datetime",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read First",
+        "search_terms": [
+          "#read_first"
+        ],
+        "label": "read_first",
+        "colnum": 8,
+        "display": {
+          "description": "The date on which I added this book to my Goodreads Currently Reading shelf",
+          "date_format": null
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 29,
+        "#value#": "None",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_last": {
+        "table": "custom_column_9",
+        "column": "value",
+        "datatype": "datetime",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Last",
+        "search_terms": [
+          "#read_last"
+        ],
+        "label": "read_last",
+        "colnum": 9,
+        "display": {
+          "description": "The date on which I last opened this book on my e-reader",
+          "date_format": null
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 30,
+        "#value#": "None",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_location": {
+        "table": "custom_column_10",
+        "column": "value",
+        "datatype": "text",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Location",
+        "search_terms": [
+          "#read_location"
+        ],
+        "label": "read_location",
+        "colnum": 10,
+        "display": {
+          "description": "",
+          "use_decorations": 0
+        },
+        "is_custom": true,
+        "is_category": true,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 31,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_progress": {
+        "table": "custom_column_11",
+        "column": "value",
+        "datatype": "float",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Progress",
+        "search_terms": [
+          "#read_progress"
+        ],
+        "label": "read_progress",
+        "colnum": 11,
+        "display": {
+          "description": "",
+          "number_format": "{:.0%}"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 32,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#read_status": {
+        "table": "custom_column_12",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Read Status",
+        "search_terms": [
+          "#read_status"
+        ],
+        "label": "read_status",
+        "colnum": 12,
+        "display": {
+          "use_decorations": 0,
+          "contains_html": false,
+          "description": "",
+          "composite_template": "{#read_progress:get_read_status()}",
+          "composite_sort": "text",
+          "make_category": true
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 33,
+        "#value#": "",
+        "#extra#": null,
+        "is_multiple2": {}
+      }
+    },
     "title_sort": "Walden, and On The Duty Of Civil Disobedience",
+    "timestamp": "2020-11-16T21:45:41+00:00",
+    "languages": [
+      "eng"
+    ],
+    "publication_type": null,
+    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
+    "rating": null,
+    "last_modified": "2020-11-16T21:45:41+00:00",
+    "cover": null,
+    "author_sort": "Thoreau, Henry David",
+    "mime": null,
     "tags": [
       "Civil disobedience",
       "Authors",
@@ -398,379 +771,6 @@
       "Resistance to",
       "Walden Woods (Mass.) -- Social life and customs"
     ],
-    "cover": null,
-    "db_id": null,
-    "rights": null,
-    "publisher": null,
-    "series": null,
-    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
-    "authors": [
-      "Henry David Thoreau"
-    ],
-    "comments": null,
-    "series_index": null,
-    "publication_type": null,
-    "thumbnail": [
-      47,
-      68,
-      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
-    ],
-    "pubdate": "1995-01-01T03:00:00+00:00",
-    "timestamp": "2020-11-16T21:45:41+00:00",
-    "languages": [
-      "eng"
-    ],
-    "book_producer": null,
-    "user_metadata": {
-      "#formats": {
-        "table": "custom_column_1",
-        "column": "value",
-        "datatype": "composite",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Formats",
-        "search_terms": [
-          "#formats"
-        ],
-        "label": "formats",
-        "colnum": 1,
-        "display": {
-          "contains_html": false,
-          "make_category": false,
-          "composite_sort": "text",
-          "use_decorations": 0,
-          "composite_template": "{:'re(approximate_formats(), ',', ', ')'}",
-          "description": ""
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 22,
-        "#value#": "EPUB",
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#gr_rating": {
-        "table": "custom_column_2",
-        "column": "value",
-        "datatype": "rating",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Goodreads Rating",
-        "search_terms": [
-          "#gr_rating"
-        ],
-        "label": "gr_rating",
-        "colnum": 2,
-        "display": {
-          "description": "",
-          "allow_half_stars": false
-        },
-        "is_custom": true,
-        "is_category": true,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 23,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#gr_review": {
-        "table": "custom_column_3",
-        "column": "value",
-        "datatype": "comments",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Goodreads Review",
-        "search_terms": [
-          "#gr_review"
-        ],
-        "label": "gr_review",
-        "colnum": 3,
-        "display": {
-          "heading_position": "hide",
-          "interpret_as": "long-text",
-          "description": ""
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 24,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#gr_shelf": {
-        "table": "custom_column_4",
-        "column": "value",
-        "datatype": "text",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Goodreads Shelf",
-        "search_terms": [
-          "#gr_shelf"
-        ],
-        "label": "gr_shelf",
-        "colnum": 4,
-        "display": {
-          "use_decorations": 0,
-          "description": ""
-        },
-        "is_custom": true,
-        "is_category": true,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 25,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#ko_md5": {
-        "table": "custom_column_5",
-        "column": "value",
-        "datatype": "text",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "KOReader Sync Server MD5 Hash",
-        "search_terms": [
-          "#ko_md5"
-        ],
-        "label": "ko_md5",
-        "colnum": 5,
-        "display": {
-          "use_decorations": 0,
-          "description": ""
-        },
-        "is_custom": true,
-        "is_category": true,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 26,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#ko_sidecar": {
-        "table": "custom_column_6",
-        "column": "value",
-        "datatype": "comments",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "KOReader Sidecar",
-        "search_terms": [
-          "#ko_sidecar"
-        ],
-        "label": "ko_sidecar",
-        "colnum": 6,
-        "display": {
-          "heading_position": "above",
-          "interpret_as": "long-text",
-          "description": "The entire dict from KOReader\u2019s metadata.epub.lua"
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 27,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#mm_annotations": {
-        "table": "custom_column_7",
-        "column": "value",
-        "datatype": "comments",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Annotations",
-        "search_terms": [
-          "#mm_annotations"
-        ],
-        "label": "mm_annotations",
-        "colnum": 7,
-        "display": {},
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 28,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#read_first": {
-        "table": "custom_column_8",
-        "column": "value",
-        "datatype": "datetime",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Read First",
-        "search_terms": [
-          "#read_first"
-        ],
-        "label": "read_first",
-        "colnum": 8,
-        "display": {
-          "description": "The date on which I added this book to my Goodreads Currently Reading shelf",
-          "date_format": null
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 29,
-        "#value#": "None",
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#read_last": {
-        "table": "custom_column_9",
-        "column": "value",
-        "datatype": "datetime",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Read Last",
-        "search_terms": [
-          "#read_last"
-        ],
-        "label": "read_last",
-        "colnum": 9,
-        "display": {
-          "description": "The date on which I last opened this book on my e-reader",
-          "date_format": null
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 30,
-        "#value#": "None",
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#read_location": {
-        "table": "custom_column_10",
-        "column": "value",
-        "datatype": "text",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Read Location",
-        "search_terms": [
-          "#read_location"
-        ],
-        "label": "read_location",
-        "colnum": 10,
-        "display": {
-          "description": "",
-          "use_decorations": 0
-        },
-        "is_custom": true,
-        "is_category": true,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 31,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#read_progress": {
-        "table": "custom_column_11",
-        "column": "value",
-        "datatype": "float",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Read Progress",
-        "search_terms": [
-          "#read_progress"
-        ],
-        "label": "read_progress",
-        "colnum": 11,
-        "display": {
-          "description": "",
-          "number_format": "{:.0%}"
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 32,
-        "#value#": null,
-        "#extra#": null,
-        "is_multiple2": {}
-      },
-      "#read_status": {
-        "table": "custom_column_12",
-        "column": "value",
-        "datatype": "composite",
-        "is_multiple": null,
-        "kind": "field",
-        "name": "Read Status",
-        "search_terms": [
-          "#read_status"
-        ],
-        "label": "read_status",
-        "colnum": 12,
-        "display": {
-          "use_decorations": 0,
-          "contains_html": false,
-          "description": "",
-          "composite_template": "{#read_progress:get_read_status()}",
-          "composite_sort": "text",
-          "make_category": true
-        },
-        "is_custom": true,
-        "is_category": false,
-        "link_column": "value",
-        "category_sort": "value",
-        "is_csp": false,
-        "is_editable": true,
-        "rec_index": 33,
-        "#value#": "",
-        "#extra#": null,
-        "is_multiple2": {}
-      }
-    },
-    "author_sort_map": {
-      "Henry David Thoreau": "Thoreau, Henry David"
-    },
-    "author_sort": "Thoreau, Henry David",
-    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/205"
-    },
-    "title": "Walden, and On The Duty Of Civil Disobedience",
-    "rating": null,
-    "size": 612096,
-    "application_id": 3,
-    "author_link_map": {
-      "Henry David Thoreau": ""
-    },
-    "last_modified": "2020-11-16T21:45:41+00:00",
-    "user_categories": {},
-    "mime": null
+    "comments": null
   }
 ]
