@@ -1,5 +1,7 @@
 # KOReader calibre plugin
 
+A calibre plugin to synchronize metadata from KOReader to calibre.
+
 [KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre’s metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware (“Nickel”) and custom columns in calibre.
 
 Note that at the moment the sync is one-way: from the KOReader device to calibre.
@@ -12,7 +14,7 @@ Note that at the moment the sync is one-way: from the KOReader device to calibre
   - A “Floating point numbers” column for **percentage read**, with “Format for numbers” set to `{:.0%}`
   - A “Long text” column for the **raw contents of the metadata sidecar**, with “Interpret this column as” set to “Plain text”
   - A regular “Text” column for the MD5 hash KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (“Progress sync” in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
-  -
+  - ...
 
 ### Issues
 
@@ -47,6 +49,6 @@ Contributing patches on sourcehut works through `git send-email`. You can find t
 
 ## Acknowledgements
 
-- Contains (SirAnthony’s SLPP)[https://github.com/SirAnthony/slpp].
+- Contains [SirAnthony’s SLPP](https://github.com/SirAnthony/slpp).
 - Some code borrowed from—and heavily inspired by—the great [Kobo Utilities](https://www.mobileread.com/forums/showthread.php?t=215339) calibre plugin.
 -
