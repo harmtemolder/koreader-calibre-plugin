@@ -1,5 +1,46 @@
 [
   {
+    "application_id": 6397,
+    "user_categories": {},
+    "comments": null,
+    "last_modified": "2020-11-16T13:23:12+00:00",
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/ebooks/11"
+    },
+    "db_id": null,
+    "thumbnail": [
+      51,
+      68,
+      "/9j/4AAQSkZJRgABAQEASABIAAD//gAgR2VuZXJhdGVkIGNvdmVyOiBjYWxpYnJlIDUuNS4w/9sAQwADAgIDAgIDAwMDBAMDBAUIBQUEBAUKBwcGCAwKDAwLCgsLDQ4SEA0OEQ4LCxAWEBETFBUVFQwPFxgWFBgSFBUU/9sAQwEDBAQFBAUJBQUJFA0LDRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU/8AAEQgARAAzAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A+4PFWty+HdAu7+CzfUbmNQIbOMkNNISAq5AOMkjJwcDJxxXE2PxwtbmS6L6Fqf2dIftEMsEYbzYy7KMh9m1iArbckgFicKhavTAcVxwbxxda5rVoz2dnoskLrYX64a4hkIYKdpJBUYU4KnJJyccV9VT5LNSX42PHqc6acX+FyLXPiUNE0/U5m0e8nudPmjSaGNSwZGQys6MAd22IMxGPvDbxkNVGy+MkFzLqAfw7rKQ286xQypAGWZT5SkkkgIVaZQVJ4Bz1DBYLeX4sW9rbNLFoF1cyynz1LtshjIRht5UswLyIcnDeUGG3dgy2dz8U5L52nt9GigmuFADt5ot4t8a5UB1LHYZHOT95QBgc1soQS1t95i5zb0v9xAvx80ZrdZf7G10E20VyYvsqb1WR2VFI3/eOxjj0B9DjpPDfj+28S6m1gml6nYzqJiftcKhR5bIrZKswGS42/wB4AkZHJ52y1D4sW0dvDJp+j3KxWI8y5mn/AHk1wIl6hWVQN5fOBjHAx1ruvDS6nD4c0uPWZvO1ZbWMXki7cNNtG8jbxjdnpUVFCK0S++5dOU5PVv7rGhRRRXKdYUUUUAFFFFABRRRQAUUUUAFFct/ws/wz/wBBP/yBL/8AE0f8LP8ADP8A0E//ACBL/wDE10fVq/8AI/uZl7Wn/MvvOporlv8AhZ/hn/oJ/wDkCX/4mj/hZ/hn/oJ/+QJf/iaPq1f+R/cw9rT/AJl951NFct/ws/wz/wBBP/yBL/8AE0f8LP8ADP8A0E//ACBL/wDE0fVq/wDI/uYe1p/zL7zqaK5b/hZ/hn/oJ/8AkCX/AOJoo+rV/wCR/cw9rT/mX3ngdFFFfenz4UUVXvLtrUR7LW4umcsNttHvIwjNkj0+XH1Io2AsUVnLqd3mTdouooq7QP3SksS5QgAMenBz6Gmw6lqF1cWUUWg6hGJypeS6VYlhQnBZuScjjjHNRzx7gadFFFWAUUUUAFFFFABRRRQAUUUUAf/Z"
+    ],
+    "cover": null,
+    "rights": null,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "timestamp": "2018-12-07T11:12:11+00:00",
+    "series": null,
+    "pubdate": "2008-06-26T22:00:00+00:00",
+    "series_index": null,
+    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
+    "size": 113969,
+    "book_producer": null,
+    "languages": [
+      "eng"
+    ],
+    "tags": [
+      "Fantasy"
+    ],
+    "author_sort": "Carroll, Lewis",
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "rating": null,
+    "title": "Alice's Adventures in Wonderland",
+    "authors": [
+      "Lewis Carroll"
+    ],
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -55,7 +96,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 23,
-        "#value#": null,
+        "#value#": 10,
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -83,7 +124,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 24,
-        "#value#": null,
+        "#value#": "It\u2019s a classic for a reason",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -243,7 +284,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 30,
-        "#value#": "None",
+        "#value#": "2020-11-14T03:00:00+00:00",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -270,7 +311,7 @@
         "is_csp": false,
         "is_editable": true,
         "rec_index": 31,
-        "#value#": null,
+        "#value#": "/body/DocFragment[4]/body/div[4]/text()[298].42",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -333,50 +374,9 @@
         "is_multiple2": {}
       }
     },
-    "size": 113969,
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "authors": [
-      "Lewis Carroll"
-    ],
-    "author_sort": "Carroll, Lewis",
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/ebooks/11"
-    },
     "publication_type": null,
     "title_sort": "Alice's Adventures in Wonderland",
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
-    "application_id": 6397,
-    "rights": null,
-    "series": null,
-    "rating": null,
-    "title": "Alice's Adventures in Wonderland",
-    "db_id": null,
-    "comments": null,
-    "uuid": "cdf342ab-b8d4-4471-808f-d74adbba909e",
-    "user_categories": {},
-    "thumbnail": [
-      53,
-      68,
-      "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADUDASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAIDBAUBBgf/xAAzEAABAwMCBAQFAQkAAAAAAAABAgMRAAQhEjEFFEFREyJhgSNxkaHBBhYkMkJSYoKx8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD9nPEfjKbTdLnWUHDZ0Z3Oe01FPEgECb1StX8JhvtPf2+dWKtbPU4TzMlRBhg9f8cjf61VydghAaKbogJieVO0kxhHc/YUEkcRD7zaGbta1KxpSGz77/8ARUBxRLhSeccbAgHUGvNJA7+h+9SctLKUoPNZAGLSRuNzoxsKtY4RZuIQ58RaRsl5pIOD1BSDQQ59UaOZc1wDAQ3OZzE9IIrVZXAuiHEXgcTmWxpMdOk1dyFpIPLNSBpB0jaIips2rFuVFllDZXGopTEx3oLaUpQcRZu0KcCeHvrCyRIvF9xn09vltVyOYQ8FJs3fLpgquVKGU5wcYOKsXZoS8VjhlupR1SsKH5HX81NtLlqCLfhzSQTHkWBIG3SgMP8AEnWkLctGG1EHUhTxlJkxskziK2N+IWx4oSF9QkyKzl+7DgAswUdVeKMe0UQ/dkDVZBJJg/FBgd/9/Sg1UrJ4954kckNExq8Ubd4rw3F6FECwBEYPjDP2oNlKg2XFJJcQlJnACpx9KUFJt7jWSLxenoNCcfaht7iDF65uDOhP02rTSgzcvcY/fF4/sTn7VJll5twqculOpIwkoSIPsKvpQKUpQKUpQKUrLc8RtLN1Lb76ULUhSwnJJSkSTig1UrnJ47w1WqLkAJSVklCgICdU5H9Oair9Q8KQSFXaQQQk+VWCZjp6H6UHTpXL/aPhIKAbqCtRQmW1CSIkbeoroW9w1dMJeZXrbVsrvQWUpSgVh4rbtv2DgUIOIUnChkbGlKDlv8EbR503t6CoJSYcA2Sc4G5jP4rCvhpaIAvrwpbUVhJcESCobR6zjqB8qUoNtvw5Ll6y45c3C9SyShShpP8APERtJI+VfRJSlCQlICQNgBFKUHtKUoP/2Q=="
-    ],
-    "cover": null,
-    "last_modified": "2020-11-14T19:26:33+00:00",
-    "timestamp": "2018-12-07T11:12:11+00:00",
-    "tags": [
-      "Fantasy"
-    ],
-    "languages": [
-      "eng"
-    ],
-    "pubdate": "2008-06-26T22:00:00+00:00",
-    "mime": null,
-    "series_index": null,
-    "book_producer": null,
     "publisher": null,
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub"
+    "mime": null
   }
 ]
