@@ -21,7 +21,6 @@ from PyQt5.Qt import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -113,22 +112,12 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Add icon and title
         title_layout = TitleLayout(
-            self, 'images/icon.png', 'Configure KOReader Sync')
+            self, 'images/icon.png', 'Configure {}'.format(self.action.version))
         layout.addLayout(title_layout)
 
         # Add custom column dropdowns
         custom_columns_layout = CustomColumnsLayout(self)
         layout.addLayout(custom_columns_layout)
-
-        # Add sync button
-        sync_from_koreader_button = QPushButton('Sync from KOReader', self)
-        sync_from_koreader_button.clicked.connect(self.save_and_sync)
-        layout.addWidget(sync_from_koreader_button, Qt.AlignRight)
-
-        # Add about button
-        about_button = QPushButton('About', self)
-        about_button.clicked.connect(self.about)
-        layout.addWidget(about_button, Qt.AlignRight)
 
     def save_settings(self):
         debug_print = partial(module_debug_print, 'ConfigWidget:save_settings:')
@@ -138,17 +127,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             CONFIG[column['name']] = column['combo'].get_selected_column()
 
         debug_print('new CONFIG = ', CONFIG)
-
-    def save_and_sync(self):
-        self.save_settings()
-        self.action.sync_to_calibre()
-
-    def about(self):
-        debug_print = partial(module_debug_print, 'ConfigWidget:about:')
-        debug_print('start')
-        text = get_resources('about.txt').decode('utf-8')
-        QMessageBox.about(self, 'About the KOReader Sync plugin', text)
-
 
 class TitleLayout(QHBoxLayout):
     """A sub-layout to the main layout used in ConfigWidget that contains an
@@ -163,7 +141,7 @@ class TitleLayout(QHBoxLayout):
         pixmap = QPixmap()
         pixmap.loadFromData(get_resources(icon))
         icon_label.setPixmap(pixmap)
-        icon_label.setMaximumSize(32, 32)
+        icon_label.setMaximumSize(64, 64)
         icon_label.setScaledContents(True)
         self.addWidget(icon_label)
 
@@ -173,6 +151,14 @@ class TitleLayout(QHBoxLayout):
         title_label = QLabel(title, parent)
         title_label.setFont(title_font)
         self.addWidget(title_label)
+
+        # Add hyperlink
+        about_label = QLabel('<a href="#">About</a>', parent)
+        about_label.setTextInteractionFlags(
+            Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        about_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        about_label.linkActivated.connect(parent.action.show_about)
+        self.addWidget(about_label)
 
 
 class CustomColumnsLayout(QGridLayout):

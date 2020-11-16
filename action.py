@@ -12,6 +12,7 @@ import sys
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.actions import InterfaceAction
+from calibre.gui2.dialogs.message_box import MessageBox
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
 from calibre_plugins.koreader.slpp import slpp as lua
@@ -41,7 +42,7 @@ class KoreaderAction(InterfaceAction):
         debug_print('start')
 
         base = self.interface_action_base_plugin
-        self.version = '{} {}.{}.{}'.format(base.name, *base.version)
+        self.version = '{} (v{}.{}.{})'.format(base.name, *base.version)
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons('images/icon.png')
@@ -54,14 +55,41 @@ class KoreaderAction(InterfaceAction):
         self.create_menu_action(
             self.qaction.menu(),
             'Configure KOReader Sync',
-            'Configure',
+            'Configure...',
             icon='config.png',
-            description=None,
+            description='Configure KOReader Sync',
             triggered=self.show_config
+        )
+
+        self.create_menu_action(
+            self.qaction.menu(),
+            'About KOReader Sync',
+            'About...',
+            icon='dialog_question.png',
+            description='About KOReader Sync',
+            triggered=self.show_about
         )
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
+
+    def show_about(self):
+        debug_print = partial(module_debug_print, 'ConfigWidget:show_about:')
+        debug_print('start')
+        text = get_resources('about.txt').decode('utf-8')
+        icon = get_icons('images/icon.png')
+
+        about_dialog = MessageBox(
+            MessageBox.INFO,
+            'About {}'.format(self.version),
+            text,
+            det_msg='',
+            q_icon=icon,
+            show_copy_button=False,
+            parent=None,
+        )
+
+        return about_dialog.exec_()
 
     def apply_settings(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:apply_settings:')
@@ -272,11 +300,12 @@ class KoreaderAction(InterfaceAction):
                 keys_values_to_update[target] = value
 
             self.update_metadata(book_uuid, keys_values_to_update)
-            info_dialog(
-                self.gui,
-                'Successfully synced metadata from KOReader',
-                'Successfully synced metadata from KOReader',
-                det_msg='',
-                show=True,
-                show_copy_button=False
-            )
+
+        info_dialog(
+            self.gui,
+            'Successfully synced metadata from KOReader',
+            'Successfully synced metadata from KOReader',
+            det_msg='',
+            show=True,
+            show_copy_button=False
+        )

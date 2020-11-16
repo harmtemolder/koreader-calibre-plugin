@@ -16,7 +16,7 @@ debug_print = partial(_debug_print, ' koreader:__init__:', sep='')
 
 class KoreaderSync(InterfaceActionBase):
     name                    = 'KOReader Sync'
-    description             = 'Get read progress from a locally connected KOReader device'
+    description             = 'Get metadata from a locally connected KOReader device'
     author                  = 'harmtemolder'
     version                 = (0, 1, 0)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
