@@ -1,4 +1,4 @@
-version = 0.1.0-alpha
+version = 0.1.1-alpha
 zip_file = releases/KOReader Sync v$(version).zip
 zip_contents = *.py LICENSE *.md *.txt images/*.png
 

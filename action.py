@@ -15,10 +15,9 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, warning_dialog, info_dialog, open_url
 from calibre.gui2.actions import InterfaceAction
 from calibre.gui2.dialogs.message_box import MessageBox
-from calibre_plugins.koreader import KoreaderSync
+from calibre_plugins.koreader import DEBUG, DRY_RUN, PYDEVD, KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
 from calibre_plugins.koreader.slpp import slpp as lua
-from polyglot.builtins import hasenv
 
 from PyQt5.Qt import QUrl
 
@@ -27,7 +26,7 @@ if numeric_version >= (5, 5, 0):
 else:
     module_debug_print = partial(root_debug_print, 'koreader:action:')
 
-if hasenv('CALIBRE_PYDEVD'):
+if DEBUG and PYDEVD:
     try:
         sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
                         '-pycharm.egg')
@@ -184,8 +183,8 @@ class KoreaderAction(InterfaceAction):
                               'KoreaderAction:get_paths:')
 
         paths = {
-            book.uuid: device._main_prefix + book.lpath.replace(
-                '.epub', '.sdr/metadata.epub.lua')
+            book.uuid: device._main_prefix + re.sub(
+                '\.(\w+)$', '.sdr/metadata.\\1.lua', book.lpath)
             for book in device.books()
         }
 
@@ -263,8 +262,14 @@ class KoreaderAction(InterfaceAction):
             metadata.set(key, value)
 
         # Write the updated metadata back to the library
-        db.set_metadata(book_id, metadata, set_title=False, set_authors=False)
-        debug_print('updated metadata for uuid = ', uuid, ', id = ', book_id)
+        if DEBUG and DRY_RUN:
+            debug_print('would have updated metadata for uuid = ', uuid,
+                        ', id = ', book_id)
+        else:
+            db.set_metadata(book_id, metadata, set_title=False,
+                            set_authors=False)
+            debug_print('updated metadata for uuid = ', uuid, ', id = ',
+                        book_id)
 
         return True, {
             'result': 'success',
