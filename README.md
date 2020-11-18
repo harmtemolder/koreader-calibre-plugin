@@ -6,8 +6,13 @@ A calibre plugin to synchronize metadata from KOReader to calibre.
 Note that at the moment the sync is one-way—from the KOReader device to calibre—and only works for USB devices. Support for smart devices is on [the to-do list](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/TODO).
 
 ## Using this plugin
+### Download and install
+1. Download the latest release from [here](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/releases).
+1. Go to your calibre’s “Preferences” > “Plugins” > “Load plugin from file” and point it to the downloaded ZIP file
+1. Restart calibre
+
 ### Setup
-1. Pick and choose the metadata you would like to sync and create the appropriate columns in calibre:
+1. Pick and choose the metadata you would like to sync and create the appropriate columns in calibre. These are your options:
   - A “Floating point numbers” column to store the **current percent read**, with “Format for numbers” set to `{:.0%}`.
   - A regular “Text” column to store the **location you last stopped reading at**.
   - A “Rating” column to store your **rating** of the book, as entered on the book’s status page.
@@ -60,7 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.0] - 2020-11-18
+## [0.1.0-alpha] - 2020-11-18
 ### Added
 - Everything needed for a first working version of the plugin
 - `dummy_device` and `dummy_library` for easy debugging
@@ -68,3 +73,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `TODO` to keep to-dos in one place
 - `environment.yml`, in case anyone wants to recreate my Conda environment
 - This `README.md`
+
+[Unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
+[0.1.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/bf7a90655c01de3daba27af63d782605db9011a6
