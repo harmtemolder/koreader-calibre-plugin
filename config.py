@@ -29,45 +29,46 @@ from PyQt5.Qt import (
 COLUMNS = [{
     'name': 'column_percent_read',
     'label': 'Percent read column:',
-    'tooltip': 'Used to store the current percent read. It must be of\n'
-               'the type “Floating point numbers”.',
+    'tooltip': 'A “Floating point numbers” column to store the current\n'
+               'percent read, with “Format for numbers” set to `{:.0%}`.',
     'type': 'float',
     'sidecar_property': ['percent_finished'],
 }, {
     'name': 'column_last_read_location',
     'label': 'Last read location column:',
-    'tooltip': 'Used to store the location you last stopped reading at. It\n'
-               'must be of the type “Text”.',
+    'tooltip': 'A regular “Text” column to store the location you last\n'
+               'stopped reading at.',
     'type': 'text',
     'sidecar_property': ['last_xpointer'],
 }, {
     'name': 'column_rating',
     'label': 'Rating column:',
-    'tooltip': 'Used to store your rating of the book, as entered on the book\n'
-               'status page. It must be of the type “Rating”.',
+    'tooltip': 'A “Rating” column to store your rating of the book,\n'
+               'as entered on the book’s status page.',
     'type': 'rating',
     'sidecar_property': ['summary', 'rating'],
     'transform': (lambda value: value * 2),  # calibre uses a 10-point scale
 }, {
     'name': 'column_review',
     'label': 'Review column:',
-    'tooltip': 'Used to store your review of the book, as entered on the book\n'
-               'status page. It must be of the type “Long text”.',
+    'tooltip': 'A “Long text” column to store your review of the book,\n'
+               'as entered on the book’s status page.',
     'type': 'comments',
     'sidecar_property': ['summary', 'note'],
 }, {
     'name': 'column_status',
     'label': 'Reading status column:',
-    'tooltip': 'Used to store the reading status of the book, as entered on\n'
-               'the book status page (...). It must be of the type “Text”.',
+    'tooltip': 'A regular “Text” column to store the reading status of the\n'
+               'book, as entered on the book status page (“Finished”,\n'
+               '“Reading”, “On hold”).',
     'type': 'text',
     'sidecar_property': ['summary', 'status'],
 }, {
     'name': 'column_date_status_modified',
     'label': 'Status modified date column:',
-    'tooltip': 'Used to store the date on which the book’s status was\n'
-               'last modified. (This is probably the date on which you\n'
-               'marked it as read.) It must be of the type “Date”.',
+    'tooltip': 'A “Date” column to store the date on which the book’s status\n'
+               'was last modified. (This is probably the date on which you\n'
+               'marked it as read.)',
     'type': 'datetime',
     'sidecar_property': ['summary', 'modified'],
 }, {
@@ -77,16 +78,19 @@ COLUMNS = [{
 # }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',
-    'tooltip': 'Used to store the MD5 hash KOReader’s sync server uses\n'
-               'to sync progress. It must be of the type “Text”.',
+    'tooltip': 'A regular “Text” column to store the MD5 hash KOReader uses\n'
+               'to sync progress to a KOReader Sync Server. (“Progress sync”\n'
+               'in the KOReader app.) This might allow for syncing progress\n'
+               'to calibre without having to connect your KOReader device,\n'
+               'in the future.',
     'type': 'text',
     'sidecar_property': ['partial_md5_checksum'],
 }, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
-    'tooltip': 'Used to store the entire contents of the sidecar\n'
-               '(converted to JSON). Useful for debugging, but not much\n'
-               'else, probably. It must be of the type “Long text”.',
+    'tooltip': 'A “Long text” column to store the raw contents of the\n'
+               'metadata sidecar, with “Interpret this column as” set to\n'
+               '“Plain text”.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict
     'transform': (lambda value: json.dumps(value, indent=4)),
