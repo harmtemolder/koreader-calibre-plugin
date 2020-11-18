@@ -1,6 +1,5 @@
-# Project-specific
+# Downloaded from `make dependencies`
 slpp.py
-*.zip
 
 # PyCharm & VSCodium
 .idea
