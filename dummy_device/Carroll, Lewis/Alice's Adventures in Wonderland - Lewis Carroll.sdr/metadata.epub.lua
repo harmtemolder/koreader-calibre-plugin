@@ -136,7 +136,8 @@ return {
         ["language"] = "en",
         ["keywords"] = "Fantasy fiction\
 Children's stories\
-Imaginary places -- Juvenile fiction\
+Imaginary places
+-- Juvenile fiction\
 Alice (Fictitious character from Carroll) -- Juvenile fiction"
     },
     ["hyph_force_algorithmic"] = false,
