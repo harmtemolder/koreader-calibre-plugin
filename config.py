@@ -12,7 +12,6 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 
 from PyQt5.QtGui import (
-    QFont,
     QPixmap
 )
 
@@ -21,7 +20,6 @@ from PyQt5.Qt import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
-    QPushButton,
     QVBoxLayout,
     QWidget,
     Qt,
@@ -146,17 +144,23 @@ class TitleLayout(QHBoxLayout):
         self.addWidget(icon_label)
 
         # Add title
-        title_font = QFont()
-        title_font.setPointSize(16)
-        title_label = QLabel(title, parent)
-        title_label.setFont(title_font)
+        title_label = QLabel('<h2>{}</h2>'.format(title), parent)
         self.addWidget(title_label)
 
-        # Add hyperlink
+        # Add empty space
+        self.addStretch()
+
+        # Add Readme hyperlink
+        readme_label = QLabel('<a href="#">Readme</a>', parent)
+        readme_label.setTextInteractionFlags(
+            Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
+        readme_label.linkActivated.connect(parent.action.show_readme)
+        self.addWidget(readme_label)
+
+        # Add About hyperlink
         about_label = QLabel('<a href="#">About</a>', parent)
         about_label.setTextInteractionFlags(
             Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
-        about_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         about_label.linkActivated.connect(parent.action.show_about)
         self.addWidget(about_label)
 

@@ -6,17 +6,19 @@ __docformat__ = 'restructuredtext en'
 
 from functools import partial
 import io
+import json
 import re
 import sys
 
 from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.gui2 import error_dialog, info_dialog
+from calibre.gui2 import error_dialog, warning_dialog, info_dialog, open_url
 from calibre.gui2.actions import InterfaceAction
 from calibre.gui2.dialogs.message_box import MessageBox
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
 from calibre_plugins.koreader.slpp import slpp as lua
 
+from PyQt5.Qt import QUrl
 
 sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
 import pydevd_pycharm
@@ -55,7 +57,7 @@ class KoreaderAction(InterfaceAction):
         self.create_menu_action(
             self.qaction.menu(),
             'Configure KOReader Sync',
-            'Configure...',
+            'Configure',
             icon='config.png',
             description='Configure KOReader Sync',
             triggered=self.show_config
@@ -63,9 +65,18 @@ class KoreaderAction(InterfaceAction):
 
         self.create_menu_action(
             self.qaction.menu(),
-            'About KOReader Sync',
-            'About...',
+            'Readme for KOReader Sync',
+            'Readme',
             icon='dialog_question.png',
+            description='About KOReader Sync',
+            triggered=self.show_readme
+        )
+
+        self.create_menu_action(
+            self.qaction.menu(),
+            'About KOReader Sync',
+            'About',
+            icon='dialog_information.png',
             description='About KOReader Sync',
             triggered=self.show_about
         )
@@ -73,8 +84,15 @@ class KoreaderAction(InterfaceAction):
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
 
+    def show_readme(self):
+        debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
+        debug_print('start')
+        readme_url = QUrl('https://git.sr.ht/~harmtemolder/koreader-calibre'
+                          '-plugin#koreader-calibre-plugin')
+        open_url(readme_url)
+
     def show_about(self):
-        debug_print = partial(module_debug_print, 'ConfigWidget:show_about:')
+        debug_print = partial(module_debug_print, 'KoreaderAction:show_about:')
         debug_print('start')
         text = get_resources('about.txt').decode('utf-8')
         icon = get_icons('images/icon.png')
@@ -194,7 +212,8 @@ class KoreaderAction(InterfaceAction):
                               'KoreaderAction:parse_sidecar_lua:')
 
         try:
-            decoded_lua = lua.decode(re.sub('^[^{]*', '', sidecar_lua))
+            clean_lua = re.sub('^[^{]*', '', sidecar_lua).strip()
+            decoded_lua = lua.decode(clean_lua)
         except:
             debug_print('could not decode sidecar_lua')
             decoded_lua = None
@@ -206,7 +225,7 @@ class KoreaderAction(InterfaceAction):
 
         :param uuid: identifier for the book
         :param keys_values_to_update: a dict of keys to update with values
-        :return: None
+        :return: a dict of values that can be used to report back to the user
         """
         debug_print = partial(module_debug_print,
                               'KoreaderAction:update_metadata:')
@@ -219,7 +238,7 @@ class KoreaderAction(InterfaceAction):
 
         if not book_id:
             debug_print('could not find {} in calibre’s library'.format(uuid))
-            return None
+            return False, {'result': 'could not find uuid in calibre’s library'}
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
@@ -231,6 +250,11 @@ class KoreaderAction(InterfaceAction):
         # Write the updated metadata back to the library
         db.set_metadata(book_id, metadata, set_title=False, set_authors=False)
         debug_print('updated metadata for uuid = ', uuid, ', id = ', book_id)
+
+        return True, {
+            'result': 'success',
+            'book_id': book_id,
+        }
 
     def sync_to_calibre(self):
         """This plugin’s main purpose. It syncs the contents of
@@ -266,8 +290,23 @@ class KoreaderAction(InterfaceAction):
 
         sidecar_paths = self.get_paths(device)
 
+        results = []
+        has_success = False
+        has_fail = False
+
         for book_uuid, sidecar_path in sidecar_paths.items():
             sidecar_contents = self.get_sidecar(device, sidecar_path)
+
+            if not sidecar_contents:
+                debug_print('skipping uuid = ', book_uuid)
+                results.append({
+                    'result': 'could not get sidecar contents',
+                    'book_uuid': book_uuid,
+                    'sidecar_path': sidecar_path,
+                })
+                has_fail = True
+                continue
+
             keys_values_to_update = {}
 
             for column in COLUMNS:
@@ -299,13 +338,43 @@ class KoreaderAction(InterfaceAction):
 
                 keys_values_to_update[target] = value
 
-            self.update_metadata(book_uuid, keys_values_to_update)
+            success, result = self.update_metadata(book_uuid, keys_values_to_update)
+            results.append({
+                **result,
+                'book_uuid': book_uuid,
+                'sidecar_path': sidecar_path,
+                'updated': keys_values_to_update,
+            })
+            if success:
+                has_success = True
+            else:
+                has_fail = True
 
-        info_dialog(
-            self.gui,
-            'Successfully synced metadata from KOReader',
-            'Successfully synced metadata from KOReader',
-            det_msg='',
-            show=True,
-            show_copy_button=False
-        )
+        if has_success and has_fail:
+            warning_dialog(
+                self.gui,
+                'Metadata for some books could not be synced',
+                'Metadata for some books could not be synced. See below for '
+                'details.',
+                det_msg=json.dumps(results, indent=4),
+                show=True,
+                show_copy_button=False
+            )
+        elif has_success:
+            info_dialog(
+                self.gui,
+                'Metadata synced for all books',
+                'Metadata synced for all books. See below for details.',
+                det_msg=json.dumps(results, indent=4),
+                show=True,
+                show_copy_button=False
+            )
+        else:
+            error_dialog(
+                self.gui,
+                'No metadata could be synced',
+                'No metadata could be synced. See below for details.',
+                det_msg=json.dumps(results, indent=4),
+                show=True,
+                show_copy_button=False
+            )
