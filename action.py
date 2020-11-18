@@ -17,15 +17,22 @@ from calibre.gui2.dialogs.message_box import MessageBox
 from calibre_plugins.koreader import KoreaderSync
 from calibre_plugins.koreader.config import COLUMNS, CONFIG
 from calibre_plugins.koreader.slpp import slpp as lua
+from polyglot.builtins import hasenv
 
 from PyQt5.Qt import QUrl
 
-sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
-import pydevd_pycharm
-pydevd_pycharm.settrace('localhost', stdoutToServer=True, stderrToServer=True,
-                        suspend=False)
 
 module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
+if hasenv('CALIBRE_PYDEVD'):
+    try:
+        sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
+                        '-pycharm.egg')
+        import pydevd_pycharm
+        pydevd_pycharm.settrace(
+            'localhost', stdoutToServer=True, stderrToServer=True,
+            suspend=False)
+    except Exception as e:
+        module_debug_print('could not start pydevd_pycharm, e = ', e)
 
 
 class KoreaderAction(InterfaceAction):
