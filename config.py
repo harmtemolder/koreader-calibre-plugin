@@ -8,6 +8,7 @@ from functools import partial
 import json
 import os
 
+from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 
@@ -95,7 +96,10 @@ CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 for column in COLUMNS:
     CONFIG.defaults[column['name']] = ''
 
-module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
+if numeric_version >= (5, 5, 0):
+    module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
+else:
+    module_debug_print = partial(root_debug_print, 'koreader:config:')
 
 class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     def __init__(self, plugin_action):

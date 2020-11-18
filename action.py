@@ -10,6 +10,7 @@ import json
 import re
 import sys
 
+from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import error_dialog, warning_dialog, info_dialog, open_url
 from calibre.gui2.actions import InterfaceAction
@@ -21,8 +22,11 @@ from polyglot.builtins import hasenv
 
 from PyQt5.Qt import QUrl
 
+if numeric_version >= (5, 5, 0):
+    module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
+else:
+    module_debug_print = partial(root_debug_print, 'koreader:action:')
 
-module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
 if hasenv('CALIBRE_PYDEVD'):
     try:
         sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
@@ -335,8 +339,9 @@ class KoreaderAction(InterfaceAction):
                     if subproperty in value:
                         value = value[subproperty]
                     else:
-                        debug_print('{} not in {}'.format(
-                            subproperty, value.keys()))
+                        debug_print(
+                            'subproperty "{}" not found in value'.format(
+                                subproperty))
                         value = None
                         break
 
@@ -372,7 +377,7 @@ class KoreaderAction(InterfaceAction):
                 show=True,
                 show_copy_button=False
             )
-        elif has_success:
+        elif has_success:  # and not has_fail
             info_dialog(
                 self.gui,
                 'Metadata synced for all books',
@@ -381,7 +386,7 @@ class KoreaderAction(InterfaceAction):
                 show=True,
                 show_copy_button=False
             )
-        else:
+        else:  # not has_success
             error_dialog(
                 self.gui,
                 'No metadata could be synced',
