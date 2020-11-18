@@ -54,6 +54,8 @@ class KoreaderAction(InterfaceAction):
         self.qaction.triggered.connect(self.sync_to_calibre)
 
         # Right-click menu (already includes left-click action)
+        self.qaction.menu().addSeparator()
+
         self.create_menu_action(
             self.qaction.menu(),
             'Configure KOReader Sync',
@@ -62,6 +64,8 @@ class KoreaderAction(InterfaceAction):
             description='Configure KOReader Sync',
             triggered=self.show_config
         )
+
+        self.qaction.menu().addSeparator()
 
         self.create_menu_action(
             self.qaction.menu(),
@@ -354,8 +358,9 @@ class KoreaderAction(InterfaceAction):
             warning_dialog(
                 self.gui,
                 'Metadata for some books could not be synced',
-                'Metadata for some books could not be synced. See below for '
-                'details.',
+                'Metadata for some books could not be synced. This might just '
+                'be because you have not opened every book in KOReader yet. '
+                'See below for details.',
                 det_msg=json.dumps(results, indent=4),
                 show=True,
                 show_copy_button=False
