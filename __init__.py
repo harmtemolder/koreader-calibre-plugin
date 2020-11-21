@@ -11,7 +11,7 @@ from calibre.customize import InterfaceActionBase
 from calibre.utils.config import JSONConfig
 
 DEBUG = _DEBUG
-DRY_RUN = True  # Used during debugging to skip the actual updating of metadata
+DRY_RUN = False  # Used during debugging to skip the actual updating of metadata
 PYDEVD = True  # Used during debugging to connect to PyCharm’s remote debugging
 
 
@@ -20,7 +20,7 @@ class KoreaderSync(InterfaceActionBase):
     description             = ('Get metadata from a locally connected '
                                'KOReader device ')
     author                  = 'harmtemolder'
-    version                 = (0, 1, 1)
+    version                 = (0, 1, 2)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     config                  = JSONConfig(os.path.join(
                                   'plugins', 'KOReader Sync.json'))

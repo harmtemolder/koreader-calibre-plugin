@@ -65,6 +65,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## 0.1.2-alpha: 2020-11-21
+- Added support for KOBO and KOBOTOUCH devices
+
 ## [0.1.1-alpha]: 2020-11-18
 - Added support for all possible filetypes
 - Added variables to easily enable a dry-run when debugging and remote debugging

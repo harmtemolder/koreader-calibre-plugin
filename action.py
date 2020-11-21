@@ -285,7 +285,7 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:sync_to_calibre:')
 
-        supported_devices = ['FOLDER_DEVICE']
+        supported_devices = ['FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH']
         device = self.get_connected_device()
 
         if not device:
