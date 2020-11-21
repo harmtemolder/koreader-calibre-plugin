@@ -5,6 +5,8 @@ A calibre plugin to synchronize metadata from KOReader to calibre.
 
 Note that at the moment the sync is one-way—from the KOReader device to calibre—and only works for USB devices. Support for smart devices is on [the to-do list](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/TODO).
 
+Releases will also be uploaded to [this plugin’s thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?p=4060141). If you are on there as well, please let me know what you think of the plugin in that thread.
+
 ## Using this plugin
 ### Download and install
 1. Download the latest release from [here](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/releases).
