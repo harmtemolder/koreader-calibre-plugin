@@ -65,12 +65,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## 0.1.2-alpha: 2020-11-21
-- Added support for KOBO and KOBOTOUCH devices
+## [0.1.2-alpha]: 2020-11-21
+### Added
+- Support for KOBO and KOBOTOUCH devices
 
 ## [0.1.1-alpha]: 2020-11-18
-- Added support for all possible filetypes
-- Added variables to easily enable a dry-run when debugging and remote debugging
+### Added
+- Support for all possible filetypes
+- Variables to easily enable a dry-run when debugging and remote debugging
 
 ## [0.1.0-alpha]: 2020-11-18
 ### Added
@@ -84,3 +86,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [Unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
 [0.1.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/bf7a90655c01de3daba27af63d782605db9011a6
 [0.1.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/c572732406499b0cc7a202a2af68324cfbe2e277
+[0.1.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/4e8ca617d5fe02063325645ab60124054cbdea10

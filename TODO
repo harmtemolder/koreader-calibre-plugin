@@ -1,5 +1,4 @@
 # TODO
-- ~~Add and test support for `calibre.devices.kobo.driver.KOBO` and `calibre.devices.kobo.driver.KOBOTOUCH`~~
 - Add `last_page` for PDFs instead of `last_xpointer`
 - Add support for wireless devices (depends on KOReader’s calibre plugin, see https://github.com/koreader/koreader/issues/6399#issuecomment-725622329)
 - Add support for highlights and bookmarks
