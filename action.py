@@ -182,8 +182,9 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:get_paths:')
 
+        prefix = getattr(device, '_main_prefix', '')
         paths = {
-            book.uuid: device._main_prefix + re.sub(
+            book.uuid: prefix + re.sub(
                 '\.(\w+)$', '.sdr/metadata.\\1.lua', book.lpath)
             for book in device.books()
         }
@@ -285,7 +286,7 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:sync_to_calibre:')
 
-        supported_devices = ['FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH']
+        supported_devices = ['FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
         device = self.get_connected_device()
 
         if not device:

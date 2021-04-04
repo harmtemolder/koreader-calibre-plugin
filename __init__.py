@@ -20,7 +20,7 @@ class KoreaderSync(InterfaceActionBase):
     description             = ('Get metadata from a locally connected '
                                'KOReader device ')
     author                  = 'harmtemolder'
-    version                 = (0, 1, 2)
+    version                 = (0, 1, 3)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     config                  = JSONConfig(os.path.join(
                                   'plugins', 'KOReader Sync.json'))
