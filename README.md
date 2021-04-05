@@ -3,7 +3,7 @@ A calibre plugin to synchronize metadata from KOReader to calibre.
 
 [KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre’s metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware (“Nickel”) and custom columns in calibre.
 
-Note that at the moment the sync is one-way—from the KOReader device to calibre—and only works for USB devices. Support for smart devices is on [the to-do list](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/TODO).
+Note that at the moment the sync is one-way—from the KOReader device to calibre—and only works for USB devices. Support for [KOReader's wireless connnection](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection) is built-in, but will not work until [this pull request](https://github.com/koreader/koreader/pull/7492) is part of your KOReader app.
 
 Releases will also be uploaded to [this plugin’s thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?p=4060141). If you are on there as well, please let me know what you think of the plugin in that thread.
 
@@ -39,7 +39,6 @@ If you encounter any issues with the plugin, please submit them <a href="https:/
 ## Contributing to this plugin
 ### Notes & Tips
 - My first attempt was actually to sync calibre with KOReader’s read progress through the progress sync plugin and a [sync server](https://github.com/koreader/koreader-sync-server). Read [here](https://github.com/koreader/koreader/issues/6399#issuecomment-721826362) why that did not work. This plugin might actually make that possible now by allowing you to store KOReader’s MD5 hash in calibre.
-- Right now this plugin only supports KOReader devices connected by USB. Adding support for wirelessly connected devices (using [the calibre plugin](https://github.com/koreader/koreader/tree/master/plugins/calibre.koplugin)) is next on the list. (See [calibre’s repository](https://github.com/kovidgoyal/calibre/tree/master/src/calibre/devices/smart_device_app) for their end of the latter.)
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under “Preferences” > “Tweaks”, search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - I work in PyCharm, which offers a remote debugging server. Follow [these steps](https://harmtemolder.com/calibre-development-in-pycharm/) to set that up. To enable that in this plugin, add `CALIBRE_PYDEVD=1` to your `env`.
 -
@@ -67,7 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.1.2-alpha]: 2020-11-21
+## [0.1.3-alpha]: 2021-04-04
 ### Added
 - Support for SMART_DEVICE_APP devices, i.e. [KOReader's wireless connnection](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection)
 
@@ -90,6 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - This `README.md`
 
 [Unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
-[0.1.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/bf7a90655c01de3daba27af63d782605db9011a6
-[0.1.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/c572732406499b0cc7a202a2af68324cfbe2e277
-[0.1.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/4e8ca617d5fe02063325645ab60124054cbdea10
+[0.1.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.0-alpha.zip
+[0.1.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.1-alpha.zip
+[0.1.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.2-alpha.zip
+[0.1.3-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.3-alpha.zip
