@@ -258,12 +258,18 @@ class KoreaderAction(InterfaceAction):
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
 
+        hasUpdates = False
         # Update that metadata locally
         for key, value in keys_values_to_update.items():
-            metadata.set(key, value)
+            if value != metadata.get(key):
+                hasUpdates = True
+                metadata.set(key, value)
 
         # Write the updated metadata back to the library
-        if DEBUG and DRY_RUN:
+        if not hasUpdates:
+            debug_print('no changed metadata for uuid = ', uuid,
+                        ', id = ', book_id)
+        elif DEBUG and DRY_RUN:
             debug_print('would have updated metadata for uuid = ', uuid,
                         ', id = ', book_id)
         else:
