@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
 
-__license__   = 'GNU GPLv3'
-__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
-__docformat__ = 'restructuredtext en'
-
-from functools import partial
-import json
-import os
-
-from calibre.constants import numeric_version
-from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.utils.config import JSONConfig
-
-from PyQt5.QtGui import (
-    QPixmap
-)
-
 from PyQt5.Qt import (
     QComboBox,
     QGridLayout,
@@ -25,6 +9,19 @@ from PyQt5.Qt import (
     QWidget,
     Qt,
 )
+from PyQt5.QtGui import (
+    QPixmap
+)
+from calibre.utils.config import JSONConfig
+from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.constants import numeric_version
+import os
+import json
+from functools import partial
+__license__ = 'GNU GPLv3'
+__copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
+__docformat__ = 'restructuredtext en'
+
 
 COLUMNS = [{
     'name': 'column_percent_read',
@@ -72,10 +69,10 @@ COLUMNS = [{
     'type': 'datetime',
     'sidecar_property': ['summary', 'modified'],
 }, {
-#     'sidecar_property': 'bookmarks',  # TODO
-# }, {
-#     'sidecar_property': 'highlight',  # TODO
-# }, {
+    #     'sidecar_property': 'bookmarks',  # TODO
+    # }, {
+    #     'sidecar_property': 'highlight',  # TODO
+    # }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',
     'tooltip': 'A regular “Text” column to store the MD5 hash KOReader uses\n'
@@ -105,6 +102,7 @@ if numeric_version >= (5, 5, 0):
 else:
     module_debug_print = partial(root_debug_print, 'koreader:config:')
 
+
 class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     def __init__(self, plugin_action):
         QWidget.__init__(self)
@@ -126,13 +124,15 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout.addLayout(custom_columns_layout)
 
     def save_settings(self):
-        debug_print = partial(module_debug_print, 'ConfigWidget:save_settings:')
+        debug_print = partial(module_debug_print,
+                              'ConfigWidget:save_settings:')
         debug_print('old CONFIG = ', CONFIG)
 
         for column in COLUMNS:
             CONFIG[column['name']] = column['combo'].get_selected_column()
 
         debug_print('new CONFIG = ', CONFIG)
+
 
 class TitleLayout(QHBoxLayout):
     """A sub-layout to the main layout used in ConfigWidget that contains an

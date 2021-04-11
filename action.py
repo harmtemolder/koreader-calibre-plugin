@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __license__   = 'GNU GPLv3'
-__copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
+__copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 from functools import partial
