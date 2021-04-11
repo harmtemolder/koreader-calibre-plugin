@@ -358,7 +358,7 @@ class KoreaderAction(InterfaceAction):
                         break
 
                 if not value:
-                    break
+                    continue
 
                 # Transform value if required
                 if 'transform' in column:
