@@ -5,7 +5,7 @@
         <dc:identifier opf:scheme="uuid" id="uuid_id">43bd8264-96fa-461a-a05e-1d1cb245d34f</dc:identifier>
         <dc:title>Alice's Adventures in Wonderland</dc:title>
         <dc:creator opf:file-as="Carroll, Lewis" opf:role="aut">Lewis Carroll</dc:creator>
-        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (5.4.2) [https://calibre-ebook.com]</dc:contributor>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (5.16.1) [https://calibre-ebook.com]</dc:contributor>
         <dc:date>2008-06-27T04:00:00+00:00</dc:date>
         <dc:identifier opf:scheme="URI">http://www.gutenberg.org/11</dc:identifier>
         <dc:language>eng</dc:language>

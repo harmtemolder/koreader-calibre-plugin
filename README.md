@@ -60,7 +60,7 @@ If you encounter any issues with the plugin, please submit them [here](https://t
 - My first attempt was actually to sync calibre with KOReader's read progress through the progress sync plugin and a [sync server](https://github.com/koreader/koreader-sync-server). Read [here](https://github.com/koreader/koreader/issues/6399#issuecomment-721826362) why that did not work. This plugin might actually make that possible now by allowing you to store KOReader's MD5 hash in calibre...
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under "Preferences" > "Tweaks", search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
-- I work in PyCharm, which offers a remote debugging server. Follow [these steps](https://harmtemolder.com/calibre-development-in-pycharm/) to set that up. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.
+- I work in PyCharm, which offers a remote debugging server. Follow [these steps](https://harmtemolder.com/calibre-development-in-pycharm/) to set that up. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
 
 ### Downloading dependencies
 
@@ -96,9 +96,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- An `.editorconfig` and `.pylintrc` to define code layout
+
 ### Changed
 
-- README.md to reflect current state of development
+- `README.md` to reflect current state of development
 
 ## [0.1.4-alpha] 2021-04-11
 
@@ -110,13 +114,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Support for SMART_DEVICE_APP devices, i.e. [KOReader's wireless connnection](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection)
+- Support for `SMART_DEVICE_APP` devices, i.e. [KOReader's wireless connnection](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection)
 
 ## [0.1.2-alpha] 2020-11-21
 
 ### Added
 
-- Support for KOBO and KOBOTOUCH devices
+- Support for `KOBO` and `KOBOTOUCH` devices
 
 ## [0.1.1-alpha] 2020-11-18
 

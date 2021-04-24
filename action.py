@@ -28,14 +28,14 @@ else:
 
 if DEBUG and PYDEVD:
     try:
-        sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
-                        '-pycharm.egg')
+        sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
         import pydevd_pycharm  # pylint: disable=import-error
         pydevd_pycharm.settrace(
             'localhost', stdoutToServer=True, stderrToServer=True,
             suspend=False)
     except Exception as e:
         module_debug_print('could not start pydevd_pycharm, e = ', e)
+        PYDEVD = False
 
 
 class KoreaderAction(InterfaceAction):
@@ -258,15 +258,15 @@ class KoreaderAction(InterfaceAction):
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
 
-        hasUpdates = False
+        has_updates = False
         # Update that metadata locally
         for key, value in keys_values_to_update.items():
             if value != metadata.get(key):
-                hasUpdates = True
+                has_updates = True
                 metadata.set(key, value)
 
         # Write the updated metadata back to the library
-        if not hasUpdates:
+        if not has_updates:
             debug_print('no changed metadata for uuid = ', uuid,
                         ', id = ', book_id)
         elif DEBUG and DRY_RUN:
@@ -292,8 +292,8 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:sync_to_calibre:')
 
-        supported_devices = ['FOLDER_DEVICE',
-                             'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
+        supported_devices = [
+            'FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
         device = self.get_connected_device()
 
         if not device:

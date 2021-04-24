@@ -1,6 +1,6 @@
 version = 0.2.0-alpha
 zip_file = releases/KOReader Sync v$(version).zip
-zip_contents = *.py LICENSE *.md plugin-import-name-koreader.txt images/*.png
+zip_contents = about.txt LICENSE plugin-import-name-koreader.txt *.py *.md  images/*.png
 
 all: zip
 

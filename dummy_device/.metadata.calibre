@@ -1,7 +1,19 @@
 [
   {
-    "series": null,
-    "title": "Alice's Adventures in Wonderland",
+    "rating": null,
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "author_link_map": {
+      "Lewis Carroll": ""
+    },
+    "db_id": null,
+    "tags": [
+      "Fantasy fiction",
+      "Children's stories",
+      "Imaginary places -- Juvenile fiction",
+      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
+    ],
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -335,56 +347,64 @@
         "is_multiple2": {}
       }
     },
-    "db_id": null,
-    "title_sort": "Alice's Adventures in Wonderland",
-    "timestamp": "2020-11-16T21:46:44+00:00",
-    "tags": [
-      "Fantasy fiction",
-      "Children's stories",
-      "Imaginary places -- Juvenile fiction",
-      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
-    ],
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/11"
+    },
     "publisher": null,
-    "application_id": 4,
-    "user_categories": {},
-    "rights": null,
-    "mime": null,
-    "rating": null,
-    "author_sort": "Carroll, Lewis",
-    "last_modified": "2020-11-18T17:21:34+00:00",
-    "authors": [
-      "Lewis Carroll"
+    "languages": [
+      "eng"
     ],
+    "pubdate": "2008-06-27T04:00:00+00:00",
+    "last_modified": "2020-11-18T17:21:34+00:00",
+    "book_producer": null,
+    "publication_type": null,
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "cover": null,
+    "series": null,
+    "series_index": null,
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
     "thumbnail": [
       49,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADEDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAIFBgcBAwQI/8QANBAAAgEDAwIEBAQFBQAAAAAAAQIDAAQRBRIhMUEGE1FhFCIycSNCgaEkM0OCwZGSo7Hw/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJREAAwACAAUDBQAAAAAAAAAAAAECAxESEyExcQSh0QVBUWGB/9oADAMBAAIRAxEAPwB61AXvxEPw8ZeEY8wKQD9SnufQMP7hWm1XUBPGbhZNoLbvmBGOMd/vTxUF07xVpl1dQ2Vzq+pRXL4Vn2oI/MJA2j5SRz3Ix71mlbL09D4kWsfAD8QC4VgQGYcjacg/r/iiUauDJ5Z7jbyPUc/b6uvtTkdHYSBDql7uIyBvTJH+2oH4a8RXuq609pfaiYIQjEMWCnIIwMkGmaSWznFvoSyFtRS5t2kEhiCDzVyOWwff7URHVjPH5n0iRQ3I5XkN+wBHua49buotPhg+G1x5ZZXA2qyuQvdsAdqddHmafSopHlMrF3XzCMFgHIBx9hSKlS2hvvocttFY4opRhVefZ7FnnkfeACxOK9BVVssmljS7c/CyLKoXzJFjPfqc459aeb4en5EuHSbTS17+BjstHvY3jnS+kiuE5RkJ+XHvmlaPol3LqT/xDQ+V/MkU4PPYfeprpOg2lzpiytcSyrM7BZFcLtAJx+wrntdJuJrSzntFmlkWV0lztVSoBLEcZPGD+lQ5t7aNObFh4E8a0+/k0pFZ29wzPdo0wwSZpMt/7Hapd4fAOiQFSCN8mCOh/EaoJDbwzareRhVeYsAQ6Mw2gDGe3ap34eUpoUCMApDSAgDAHzt27U2Ps/4ZI77HTmij9aKcqLqrIdSihs7a2iiVpptqs7LnaDxVp1U4hs57e2ikhR5mRRveTpxngLz/AKkfaluU56hO+ZOh7W5SOyhWGOMlIwp/DwQQeFyRkkev71YmmW0drbW7XqJGx3Z3Nnlt2QTk89utVxD5VvJC0iM0Ue1nCDHAPOPc5qxX1vRZBFMbtlEZDjajAnA6Hj3rHhaabPU+o4eBzMr2+BgsfCcPlrcrcyIZCGkV4+d3AP8A1it+jR+XpcaD8sko/wCRqjOt6hrV1fTWsaO9pMwltzjbhc8EYxzz39vapJoCvHokCSZ3qzhsnJzvar4Za22zzKmVrS0OWTRRRVzguop4e8LQv4divbd8alLArRTTE7YzweAPbjPWpXTOlhJa2sdmms3CRRoI1XZHwABxnb6YqeSaqdSxoamtsi81lrw1K4jk03zJXILGBcRucAZDEAe/Na9N0+d/G+nPd2U8EYL43rhWdQTx2I6HNS+KCZQQmuT9Mk7Iicev01l0mVlaTXJdyggFoocjpn8n2qc4KXbXb9/Bov1bqFDfReDq1UtvAnbFu/yhRIBu9iDyM9Mg1zaIu3SYl44eQcdPrbpWiTSzdAxvrF0x6HGwH17L7U42dotlZx26OzKmfmbqcnP+abFieNdWQu1T2jdRWcUVUQVSDDEWLGNCT1JHWiiugY8iIf0k6Y+kfag28J6xIf7RRRRsAEEQOREmfXaKWaKKADFFFFcA/9k="
     ],
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
-    "pubdate": "2008-06-27T04:00:00+00:00",
-    "series_index": null,
-    "author_link_map": {
-      "Lewis Carroll": ""
-    },
-    "comments": null,
-    "cover": null,
-    "publication_type": null,
-    "languages": [
-      "eng"
-    ],
-    "size": 253703,
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/11"
-    },
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
+    "rights": null,
     "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
-    "book_producer": null
+    "size": 253703,
+    "application_id": 4,
+    "mime": null,
+    "title_sort": "Alice's Adventures in Wonderland",
+    "user_categories": {},
+    "author_sort": "Carroll, Lewis",
+    "title": "Alice's Adventures in Wonderland",
+    "comments": null,
+    "timestamp": "2020-11-16T21:46:44+00:00"
   },
   {
-    "series": null,
-    "title": "Walden, and On The Duty Of Civil Disobedience",
+    "rating": null,
+    "authors": [
+      "Henry David Thoreau"
+    ],
+    "author_link_map": {
+      "Henry David Thoreau": ""
+    },
+    "db_id": null,
+    "tags": [
+      "Civil disobedience",
+      "Authors",
+      "American -- 19th century -- Biography",
+      "Thoreau",
+      "Henry David",
+      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
+      "Wilderness areas -- Massachusetts -- Walden Woods",
+      "Natural history -- Massachusetts -- Walden Woods",
+      "Solitude",
+      "Government",
+      "Resistance to",
+      "Walden Woods (Mass.) -- Social life and customs"
+    ],
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -718,59 +738,39 @@
         "is_multiple2": {}
       }
     },
-    "db_id": null,
-    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
-    "timestamp": "2020-11-16T21:45:41+00:00",
-    "tags": [
-      "Civil disobedience",
-      "Authors",
-      "American -- 19th century -- Biography",
-      "Thoreau",
-      "Henry David",
-      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
-      "Wilderness areas -- Massachusetts -- Walden Woods",
-      "Natural history -- Massachusetts -- Walden Woods",
-      "Solitude",
-      "Government",
-      "Resistance to",
-      "Walden Woods (Mass.) -- Social life and customs"
-    ],
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/205"
+    },
     "publisher": null,
-    "application_id": 3,
-    "user_categories": {},
-    "rights": null,
-    "mime": null,
-    "rating": null,
-    "author_sort": "Thoreau, Henry David",
-    "last_modified": "2020-11-16T21:45:41+00:00",
-    "authors": [
-      "Henry David Thoreau"
+    "languages": [
+      "eng"
     ],
+    "pubdate": "1995-01-01T03:00:00+00:00",
+    "last_modified": "2020-11-16T21:45:41+00:00",
+    "book_producer": null,
+    "publication_type": null,
+    "author_sort_map": {
+      "Henry David Thoreau": "Thoreau, Henry David"
+    },
+    "cover": null,
+    "series": null,
+    "series_index": null,
+    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
     "thumbnail": [
       47,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
     ],
-    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
-    "pubdate": "1995-01-01T03:00:00+00:00",
-    "series_index": null,
-    "author_link_map": {
-      "Henry David Thoreau": ""
-    },
-    "comments": null,
-    "cover": null,
-    "publication_type": null,
-    "languages": [
-      "eng"
-    ],
-    "size": 612096,
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/205"
-    },
-    "author_sort_map": {
-      "Henry David Thoreau": "Thoreau, Henry David"
-    },
+    "rights": null,
     "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
-    "book_producer": null
+    "size": 612096,
+    "application_id": 3,
+    "mime": null,
+    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
+    "user_categories": {},
+    "author_sort": "Thoreau, Henry David",
+    "title": "Walden, and On The Duty Of Civil Disobedience",
+    "comments": null,
+    "timestamp": "2020-11-16T21:45:41+00:00"
   }
 ]
