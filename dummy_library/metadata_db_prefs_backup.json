@@ -4,9 +4,9 @@
   "saved_searches": {},
   "grouped_search_terms": {},
   "tag_browser_hidden_categories": [
-    "rating",
+    "#read_location",
     "news",
-    "#read_location"
+    "rating"
   ],
   "library_view books view state": {
     "column_alignment": {
@@ -17,36 +17,40 @@
       "timestamp": "center"
     },
     "column_positions": {
-      "#formats": 12,
+      "#formats": 13,
       "#gr_rating": 10,
+      "#gr_read_progress": 12,
       "#gr_review": 11,
       "#gr_shelf": 9,
-      "#ko_md5": 22,
-      "#ko_sidecar": 23,
-      "#mm_annotations": 13,
+      "#ko_annotations": 15,
+      "#ko_md5": 16,
+      "#ko_sidecar": 17,
+      "#mm_annotations": 14,
       "#read_first": 6,
       "#read_last": 7,
       "#read_location": 8,
       "#read_progress": 5,
       "#read_status": 4,
       "authors": 1,
-      "languages": 20,
-      "last_modified": 19,
+      "languages": 24,
+      "last_modified": 23,
       "ondevice": 0,
-      "pubdate": 18,
-      "publisher": 17,
-      "rating": 21,
+      "pubdate": 22,
+      "publisher": 21,
+      "rating": 25,
       "series": 3,
-      "size": 15,
-      "tags": 16,
-      "timestamp": 14,
+      "size": 19,
+      "tags": 20,
+      "timestamp": 18,
       "title": 2
     },
     "column_sizes": {
       "#formats": 100,
       "#gr_rating": 100,
+      "#gr_read_progress": 100,
       "#gr_review": 100,
       "#gr_shelf": 137,
+      "#ko_annotations": 100,
       "#ko_md5": 100,
       "#ko_sidecar": 100,
       "#mm_annotations": 100,
@@ -150,6 +154,34 @@
       ],
       "table": "custom_column_2"
     },
+    "#gr_read_progress": {
+      "category_sort": "value",
+      "colnum": 15,
+      "column": "value",
+      "datatype": "composite",
+      "display": {
+        "composite_sort": "number",
+        "composite_template": "{#read_progress:multiply(100):ceil()}",
+        "contains_html": false,
+        "description": "Convert #read_progress to integers for Goodreads",
+        "make_category": false,
+        "use_decorations": 0
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "gr_read_progress",
+      "link_column": "value",
+      "name": "Goodreads Read Progress",
+      "rec_index": 24,
+      "search_terms": [
+        "#gr_read_progress"
+      ],
+      "table": "custom_column_15"
+    },
     "#gr_review": {
       "category_sort": "value",
       "colnum": 3,
@@ -169,7 +201,7 @@
       "label": "gr_review",
       "link_column": "value",
       "name": "Goodreads Review",
-      "rec_index": 24,
+      "rec_index": 25,
       "search_terms": [
         "#gr_review"
       ],
@@ -193,11 +225,36 @@
       "label": "gr_shelf",
       "link_column": "value",
       "name": "Goodreads Shelf",
-      "rec_index": 25,
+      "rec_index": 26,
       "search_terms": [
         "#gr_shelf"
       ],
       "table": "custom_column_4"
+    },
+    "#ko_annotations": {
+      "category_sort": "value",
+      "colnum": 13,
+      "column": "value",
+      "datatype": "comments",
+      "display": {
+        "description": "",
+        "heading_position": "above",
+        "interpret_as": "markdown"
+      },
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": true,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "ko_annotations",
+      "link_column": "value",
+      "name": "KOReader Annotations",
+      "rec_index": 27,
+      "search_terms": [
+        "#ko_annotations"
+      ],
+      "table": "custom_column_13"
     },
     "#ko_md5": {
       "category_sort": "value",
@@ -217,7 +274,7 @@
       "label": "ko_md5",
       "link_column": "value",
       "name": "KOReader Sync Server MD5 Hash",
-      "rec_index": 26,
+      "rec_index": 28,
       "search_terms": [
         "#ko_md5"
       ],
@@ -242,7 +299,7 @@
       "label": "ko_sidecar",
       "link_column": "value",
       "name": "KOReader Sidecar",
-      "rec_index": 27,
+      "rec_index": 29,
       "search_terms": [
         "#ko_sidecar"
       ],
@@ -253,7 +310,11 @@
       "colnum": 7,
       "column": "value",
       "datatype": "comments",
-      "display": {},
+      "display": {
+        "description": "",
+        "heading_position": "above",
+        "interpret_as": "html"
+      },
       "is_category": false,
       "is_csp": false,
       "is_custom": true,
@@ -262,8 +323,8 @@
       "kind": "field",
       "label": "mm_annotations",
       "link_column": "value",
-      "name": "Annotations",
-      "rec_index": 28,
+      "name": "Kobo Annotations",
+      "rec_index": 30,
       "search_terms": [
         "#mm_annotations"
       ],
@@ -287,7 +348,7 @@
       "label": "read_first",
       "link_column": "value",
       "name": "Read First",
-      "rec_index": 29,
+      "rec_index": 31,
       "search_terms": [
         "#read_first"
       ],
@@ -311,7 +372,7 @@
       "label": "read_last",
       "link_column": "value",
       "name": "Read Last",
-      "rec_index": 30,
+      "rec_index": 32,
       "search_terms": [
         "#read_last"
       ],
@@ -335,7 +396,7 @@
       "label": "read_location",
       "link_column": "value",
       "name": "Read Location",
-      "rec_index": 31,
+      "rec_index": 33,
       "search_terms": [
         "#read_location"
       ],
@@ -348,7 +409,7 @@
       "datatype": "float",
       "display": {
         "description": "",
-        "number_format": "{:.0%}"
+        "number_format": null
       },
       "is_category": false,
       "is_csp": false,
@@ -359,7 +420,7 @@
       "label": "read_progress",
       "link_column": "value",
       "name": "Read Progress",
-      "rec_index": 32,
+      "rec_index": 34,
       "search_terms": [
         "#read_progress"
       ],
@@ -387,7 +448,7 @@
       "label": "read_status",
       "link_column": "value",
       "name": "Read Status",
-      "rec_index": 33,
+      "rec_index": 35,
       "search_terms": [
         "#read_status"
       ],
@@ -615,7 +676,7 @@
       "kind": "field",
       "label": "marked",
       "name": null,
-      "rec_index": 35,
+      "rec_index": 37,
       "search_terms": [
         "marked"
       ],
@@ -649,7 +710,7 @@
       "kind": "field",
       "label": "ondevice",
       "name": "On device",
-      "rec_index": 34,
+      "rec_index": 36,
       "search_terms": [
         "ondevice"
       ],
@@ -781,7 +842,7 @@
       "kind": "field",
       "label": "series_sort",
       "name": "Series sort",
-      "rec_index": 36,
+      "rec_index": 38,
       "search_terms": [
         "series_sort"
       ],
@@ -909,8 +970,10 @@
     "column_positions": {
       "#formats": 12,
       "#gr_rating": 20,
+      "#gr_read_progress": 25,
       "#gr_review": 14,
       "#gr_shelf": 16,
+      "#ko_annotations": 24,
       "#ko_md5": 22,
       "#ko_sidecar": 23,
       "#mm_annotations": 13,
@@ -935,8 +998,10 @@
     "column_sizes": {
       "#formats": 100,
       "#gr_rating": 100,
+      "#gr_read_progress": 100,
       "#gr_review": 100,
       "#gr_shelf": 100,
+      "#ko_annotations": 100,
       "#ko_md5": 100,
       "#ko_sidecar": 100,
       "#mm_annotations": 100,

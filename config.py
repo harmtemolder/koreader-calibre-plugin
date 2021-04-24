@@ -15,9 +15,10 @@ from PyQt5.Qt import (  # pylint: disable=no-name-in-module
 )
 
 from PyQt5.QtGui import QPixmap   # pylint: disable=no-name-in-module
-from calibre.utils.config import JSONConfig  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
 from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.utils.config import JSONConfig  # pylint: disable=no-name-in-module, disable=import-error
+from calibre_plugins.koreader import clean_bookmarks  # pylint: disable=import-error
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -31,6 +32,7 @@ COLUMNS = [{
                'percent read, with “Format for numbers” set to `{:.0%}`.',
     'type': 'float',
     'sidecar_property': ['percent_finished'],
+    'transform': (lambda value: float(value))
 }, {
     'name': 'column_last_read_location',
     'label': 'Last read location column:',
@@ -70,10 +72,22 @@ COLUMNS = [{
     'type': 'datetime',
     'sidecar_property': ['summary', 'modified'],
 }, {
-    #     'sidecar_property': 'bookmarks',  # TODO
-    # }, {
-    #     'sidecar_property': 'highlight',  # TODO
-    # }, {
+    'name': 'column_bookmarks',
+    'label': 'Bookmarks column',
+    'tooltip': 'A “Long text” column to store your bookmarks.',
+    'type': 'comments',
+    'sidecar_property': ['bookmarks'],
+    'transform': clean_bookmarks,
+}, {
+# Ignore the sidecar's `highlight` property, because highlights are part of
+# `bookmarks` as well
+#     'name': 'column_highlights',
+#     'label': 'Highlights column',
+#     'tooltip': 'A “Long text” column to store your highlights.',
+#     'type': 'comments',
+#     'sidecar_property': ['highlight'],
+#     'transform': clean_highlights,
+# }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',
     'tooltip': 'A regular “Text” column to store the MD5 hash KOReader uses\n'
@@ -91,7 +105,7 @@ COLUMNS = [{
                '“Plain text”.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict
-    'transform': (lambda value: json.dumps(value, indent=4)),
+    'transform': (lambda value: json.dumps(value, indent=2)),
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))

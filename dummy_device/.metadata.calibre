@@ -1,19 +1,14 @@
 [
   {
-    "rating": null,
-    "authors": [
-      "Lewis Carroll"
-    ],
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "timestamp": "2020-11-16T21:46:44+00:00",
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
     "author_link_map": {
       "Lewis Carroll": ""
     },
-    "db_id": null,
-    "tags": [
-      "Fantasy fiction",
-      "Children's stories",
-      "Imaginary places -- Juvenile fiction",
-      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
-    ],
+    "comments": null,
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -73,6 +68,37 @@
         "#extra#": null,
         "is_multiple2": {}
       },
+      "#gr_read_progress": {
+        "table": "custom_column_15",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Read Progress",
+        "search_terms": [
+          "#gr_read_progress"
+        ],
+        "label": "gr_read_progress",
+        "colnum": 15,
+        "display": {
+          "composite_template": "{#read_progress:multiply(100):ceil()}",
+          "composite_sort": "number",
+          "make_category": false,
+          "contains_html": false,
+          "use_decorations": 0,
+          "description": "Convert #read_progress to integers for Goodreads"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 24,
+        "#value#": "TEMPLATE ERROR could not convert string to float: ':ceil('",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
       "#gr_review": {
         "table": "custom_column_3",
         "column": "value",
@@ -96,7 +122,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 24,
+        "rec_index": 25,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -123,8 +149,36 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 25,
+        "rec_index": 26,
         "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#ko_annotations": {
+        "table": "custom_column_13",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Annotations",
+        "search_terms": [
+          "#ko_annotations"
+        ],
+        "label": "ko_annotations",
+        "colnum": 13,
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "markdown",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 27,
+        "#value#": "- in CHAPTER VI. Pig and Pepper <!-- datetime: 2020-11-16 18:52:11, page: /body/DocFragment[8]/body/div/h2/text()[1].0, chapter: CHAPTER VI. Pig and Pepper -->\n- \u201cYou!\u201d said the Caterpillar contemptuously. \u201cWho are you?\u201d <!-- text: Higlight with note: Page 48 \u201cYou!\u201d said the Caterpillar contemptuously. \u201cWho are you?\u201d @ 2020-11-16 18:51:04, page: /body/DocFragment[7]/body/div/p[12]/text()[1].0, chapter: CHAPTER V. Advice from a Caterpillar, highlighted: True, datetime: 2020-11-16 18:51:04, pos0: /body/DocFragment[7]/body/div/p[12]/text()[1].0, pos1: /body/DocFragment[7]/body/div/p[12]/text()[2].1 -->\n- CHAPTER V. Advice from a Caterpillar <!-- page: /body/DocFragment[7]/body/div/h2/text()[1].0, chapter: CHAPTER V. Advice from a Caterpillar, highlighted: True, datetime: 2020-11-16 18:50:53, pos0: /body/DocFragment[7]/body/div/h2/text()[1].0, pos1: /body/DocFragment[7]/body/div/h2/text()[2].26 -->",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -150,8 +204,8 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 26,
-        "#value#": null,
+        "rec_index": 28,
+        "#value#": "9c928bc227e2011e85f931ca159ff710",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -178,8 +232,8 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 27,
-        "#value#": null,
+        "rec_index": 29,
+        "#value#": "{\n  \"highlights_imported\": true,\n  \"render_mode\": 0,\n  \"embedded_css\": true,\n  \"disable_fuzzy_search\": false,\n  \"embedded_fonts\": true,\n  \"copt_block_rendering_mode\": 3,\n  \"smooth_scaling\": false,\n  \"page_overlap_style\": \"dim\",\n  \"nightmode_images\": true,\n  \"cre_dom_version\": 20200824,\n  \"last_xpointer\": \"/body/DocFragment[9]/body/div/h2/text()[1].0\",\n  \"highlight_disabled\": false,\n  \"bookmarks\": {\n    \"1\": {\n      \"datetime\": \"2020-11-16 18:52:11\",\n      \"page\": \"/body/DocFragment[8]/body/div/h2/text()[1].0\",\n      \"chapter\": \"CHAPTER VI. Pig and Pepper\"\n    },\n    \"2\": {\n      \"text\": \"Higlight with note: Page 48 \\u201cYou!\\u201d said the Caterpillar contemptuously. \\u201cWho are you?\\u201d @ 2020-11-16 18:51:04\",\n      \"page\": \"/body/DocFragment[7]/body/div/p[12]/text()[1].0\",\n      \"chapter\": \"CHAPTER V. Advice from a Caterpillar\",\n      \"highlighted\": true,\n      \"datetime\": \"2020-11-16 18:51:04\",\n      \"pos0\": \"/body/DocFragment[7]/body/div/p[12]/text()[1].0\",\n      \"pos1\": \"/body/DocFragment[7]/body/div/p[12]/text()[2].1\"\n    },\n    \"3\": {\n      \"page\": \"/body/DocFragment[7]/body/div/h2/text()[1].0\",\n      \"chapter\": \"CHAPTER V. Advice from a Caterpillar\",\n      \"highlighted\": true,\n      \"datetime\": \"2020-11-16 18:50:53\",\n      \"pos0\": \"/body/DocFragment[7]/body/div/h2/text()[1].0\",\n      \"pos1\": \"/body/DocFragment[7]/body/div/h2/text()[2].26\"\n    }\n  },\n  \"inverse_reading_order\": false,\n  \"line_space_percent\": 100,\n  \"css\": \"./data/epub.css\",\n  \"percent_finished\": 0.45512820512821,\n  \"rotation_mode\": 0,\n  \"partial_md5_checksum\": \"9c928bc227e2011e85f931ca159ff710\",\n  \"font_size\": 22,\n  \"copt_embedded_fonts\": 1,\n  \"copt_embedded_css\": 1,\n  \"copt_rotation_mode\": 0,\n  \"copt_render_dpi\": 96,\n  \"copt_sync_t_b_page_margins\": 0,\n  \"copt_h_page_margins\": {\n    \"1\": 10,\n    \"2\": 10\n  },\n  \"copt_t_page_margin\": 15,\n  \"copt_smooth_scaling\": 0,\n  \"copt_word_spacing\": {\n    \"1\": 95,\n    \"2\": 75\n  },\n  \"copt_nightmode_images\": 1,\n  \"word_spacing\": {\n    \"1\": 95,\n    \"2\": 75\n  },\n  \"header_font_face\": \"Noto Sans\",\n  \"copt_font_size\": 22,\n  \"font_embolden\": 0,\n  \"text_lang\": \"en-US\",\n  \"copt_font_hinting\": 2,\n  \"copt_font_kerning\": 3,\n  \"copt_word_expansion\": 0,\n  \"copt_line_spacing\": 100,\n  \"copt_font_gamma\": 15,\n  \"gamma\": 1,\n  \"render_dpi\": 96,\n  \"font_face\": \"Noto Serif\",\n  \"visible_pages\": 1,\n  \"show_overlap_enable\": false,\n  \"copt_view_mode\": 0,\n  \"highlight\": {\n    \"47\": {\n      \"1\": {\n        \"drawer\": \"lighten\",\n        \"chapter\": \"CHAPTER V. Advice from a Caterpillar\",\n        \"datetime\": \"2020-11-16 18:50:53\",\n        \"pos0\": \"/body/DocFragment[7]/body/div/h2/text()[1].0\",\n        \"text\": \"CHAPTER V. Advice from a Caterpillar\",\n        \"pos1\": \"/body/DocFragment[7]/body/div/h2/text()[2].26\"\n      }\n    },\n    \"48\": {\n      \"1\": {\n        \"drawer\": \"lighten\",\n        \"chapter\": \"CHAPTER V. Advice from a Caterpillar\",\n        \"datetime\": \"2020-11-16 18:51:04\",\n        \"pos0\": \"/body/DocFragment[7]/body/div/p[12]/text()[1].0\",\n        \"text\": \"\\u201cYou!\\u201d said the Caterpillar contemptuously. \\u201cWho are you?\\u201d\",\n        \"pos1\": \"/body/DocFragment[7]/body/div/p[12]/text()[2].1\"\n      }\n    }\n  },\n  \"copt_status_line\": 1,\n  \"copt_b_page_margin\": 15,\n  \"readermenu_tab_index\": 4,\n  \"copt_font_weight\": 0,\n  \"bookmarks_sorted\": true,\n  \"stats\": {\n    \"authors\": \"Lewis Carroll\",\n    \"series\": \"\",\n    \"title\": \"Alice's Adventures in Wonderland\",\n    \"highlights\": 2,\n    \"notes\": 0,\n    \"md5\": \"9c928bc227e2011e85f931ca159ff710\",\n    \"language\": \"en\",\n    \"pages\": 156\n  },\n  \"hyph_soft_hyphens_only\": false,\n  \"font_hinting\": 2,\n  \"doc_pages\": 156,\n  \"copt_visible_pages\": 1,\n  \"text_lang_embedded_langs\": true,\n  \"config_panel_index\": 1,\n  \"gamma_index\": 15,\n  \"font_kerning\": 3,\n  \"hyphenation\": true,\n  \"hyph_trust_soft_hyphens\": false,\n  \"doc_props\": {\n    \"authors\": \"Lewis Carroll\",\n    \"series\": \"\",\n    \"title\": \"Alice's Adventures in Wonderland\",\n    \"description\": \"\",\n    \"language\": \"en\",\n    \"keywords\": \"Fantasy fiction\\\\\\nChildren's stories\\\\\\nImaginary places\\n-- Juvenile fiction\\\\\\nAlice (Fictitious character from Carroll) -- Juvenile fiction\"\n  },\n  \"hyph_force_algorithmic\": false,\n  \"floating_punctuation\": 0,\n  \"word_expansion\": 0,\n  \"highlight_drawer\": \"lighten\"\n}",
         "#extra#": null,
         "is_multiple2": {}
       },
@@ -189,20 +243,24 @@
         "datatype": "comments",
         "is_multiple": null,
         "kind": "field",
-        "name": "Annotations",
+        "name": "Kobo Annotations",
         "search_terms": [
           "#mm_annotations"
         ],
         "label": "mm_annotations",
         "colnum": 7,
-        "display": {},
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "html",
+          "description": ""
+        },
         "is_custom": true,
         "is_category": false,
         "link_column": "value",
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 28,
+        "rec_index": 30,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -229,7 +287,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 29,
+        "rec_index": 31,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -256,7 +314,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 30,
+        "rec_index": 32,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -283,7 +341,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 31,
+        "rec_index": 33,
         "#value#": "/body/DocFragment[9]/body/div/h2/text()[1].0",
         "#extra#": null,
         "is_multiple2": {}
@@ -302,7 +360,7 @@
         "colnum": 11,
         "display": {
           "description": "",
-          "number_format": "{:.0%}"
+          "number_format": null
         },
         "is_custom": true,
         "is_category": false,
@@ -310,7 +368,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 32,
+        "rec_index": 34,
         "#value#": 0.45512820512821,
         "#extra#": null,
         "is_multiple2": {}
@@ -341,70 +399,62 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 33,
+        "rec_index": 35,
         "#value#": "\u2610",
         "#extra#": null,
         "is_multiple2": {}
       }
     },
+    "tags": [
+      "Fantasy fiction",
+      "Children's stories",
+      "Imaginary places -- Juvenile fiction",
+      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
+    ],
+    "publisher": null,
+    "series_index": null,
+    "title": "Alice's Adventures in Wonderland",
+    "cover": null,
+    "rating": null,
+    "db_id": null,
+    "title_sort": "Alice's Adventures in Wonderland",
+    "rights": null,
+    "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
     "identifiers": {
       "uri": "http://www.gutenberg.org/11"
     },
-    "publisher": null,
-    "languages": [
-      "eng"
-    ],
-    "pubdate": "2008-06-27T04:00:00+00:00",
-    "last_modified": "2020-11-18T17:21:34+00:00",
-    "book_producer": null,
     "publication_type": null,
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
-    },
-    "cover": null,
-    "series": null,
-    "series_index": null,
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "mime": null,
+    "last_modified": "2021-04-24T20:22:48+00:00",
+    "pubdate": "2008-06-27T04:00:00+00:00",
+    "author_sort": "Carroll, Lewis",
     "thumbnail": [
       49,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADEDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAIFBgcBAwQI/8QANBAAAgEDAwIEBAQFBQAAAAAAAQIDAAQRBRIhMUEGE1FhFCIycSNCgaEkM0OCwZGSo7Hw/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJREAAwACAAUDBQAAAAAAAAAAAAECAxESEyExcQSh0QVBUWGB/9oADAMBAAIRAxEAPwB61AXvxEPw8ZeEY8wKQD9SnufQMP7hWm1XUBPGbhZNoLbvmBGOMd/vTxUF07xVpl1dQ2Vzq+pRXL4Vn2oI/MJA2j5SRz3Ix71mlbL09D4kWsfAD8QC4VgQGYcjacg/r/iiUauDJ5Z7jbyPUc/b6uvtTkdHYSBDql7uIyBvTJH+2oH4a8RXuq609pfaiYIQjEMWCnIIwMkGmaSWznFvoSyFtRS5t2kEhiCDzVyOWwff7URHVjPH5n0iRQ3I5XkN+wBHua49buotPhg+G1x5ZZXA2qyuQvdsAdqddHmafSopHlMrF3XzCMFgHIBx9hSKlS2hvvocttFY4opRhVefZ7FnnkfeACxOK9BVVssmljS7c/CyLKoXzJFjPfqc459aeb4en5EuHSbTS17+BjstHvY3jnS+kiuE5RkJ+XHvmlaPol3LqT/xDQ+V/MkU4PPYfeprpOg2lzpiytcSyrM7BZFcLtAJx+wrntdJuJrSzntFmlkWV0lztVSoBLEcZPGD+lQ5t7aNObFh4E8a0+/k0pFZ29wzPdo0wwSZpMt/7Hapd4fAOiQFSCN8mCOh/EaoJDbwzareRhVeYsAQ6Mw2gDGe3ap34eUpoUCMApDSAgDAHzt27U2Ps/4ZI77HTmij9aKcqLqrIdSihs7a2iiVpptqs7LnaDxVp1U4hs57e2ikhR5mRRveTpxngLz/AKkfaluU56hO+ZOh7W5SOyhWGOMlIwp/DwQQeFyRkkev71YmmW0drbW7XqJGx3Z3Nnlt2QTk89utVxD5VvJC0iM0Ue1nCDHAPOPc5qxX1vRZBFMbtlEZDjajAnA6Hj3rHhaabPU+o4eBzMr2+BgsfCcPlrcrcyIZCGkV4+d3AP8A1it+jR+XpcaD8sko/wCRqjOt6hrV1fTWsaO9pMwltzjbhc8EYxzz39vapJoCvHokCSZ3qzhsnJzvar4Za22zzKmVrS0OWTRRRVzguop4e8LQv4divbd8alLArRTTE7YzweAPbjPWpXTOlhJa2sdmms3CRRoI1XZHwABxnb6YqeSaqdSxoamtsi81lrw1K4jk03zJXILGBcRucAZDEAe/Na9N0+d/G+nPd2U8EYL43rhWdQTx2I6HNS+KCZQQmuT9Mk7Iicev01l0mVlaTXJdyggFoocjpn8n2qc4KXbXb9/Bov1bqFDfReDq1UtvAnbFu/yhRIBu9iDyM9Mg1zaIu3SYl44eQcdPrbpWiTSzdAxvrF0x6HGwH17L7U42dotlZx26OzKmfmbqcnP+abFieNdWQu1T2jdRWcUVUQVSDDEWLGNCT1JHWiiugY8iIf0k6Y+kfag28J6xIf7RRRRsAEEQOREmfXaKWaKKADFFFFcA/9k="
     ],
-    "rights": null,
-    "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
-    "size": 253703,
+    "authors": [
+      "Lewis Carroll"
+    ],
     "application_id": 4,
-    "mime": null,
-    "title_sort": "Alice's Adventures in Wonderland",
+    "series": null,
     "user_categories": {},
-    "author_sort": "Carroll, Lewis",
-    "title": "Alice's Adventures in Wonderland",
-    "comments": null,
-    "timestamp": "2020-11-16T21:46:44+00:00"
+    "size": 253703,
+    "languages": [
+      "eng"
+    ],
+    "book_producer": null
   },
   {
-    "rating": null,
-    "authors": [
-      "Henry David Thoreau"
-    ],
+    "author_sort_map": {
+      "Henry David Thoreau": "Thoreau, Henry David"
+    },
+    "timestamp": "2020-11-16T21:45:41+00:00",
+    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
     "author_link_map": {
       "Henry David Thoreau": ""
     },
-    "db_id": null,
-    "tags": [
-      "Civil disobedience",
-      "Authors",
-      "American -- 19th century -- Biography",
-      "Thoreau",
-      "Henry David",
-      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
-      "Wilderness areas -- Massachusetts -- Walden Woods",
-      "Natural history -- Massachusetts -- Walden Woods",
-      "Solitude",
-      "Government",
-      "Resistance to",
-      "Walden Woods (Mass.) -- Social life and customs"
-    ],
+    "comments": null,
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -464,6 +514,37 @@
         "#extra#": null,
         "is_multiple2": {}
       },
+      "#gr_read_progress": {
+        "table": "custom_column_15",
+        "column": "value",
+        "datatype": "composite",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "Goodreads Read Progress",
+        "search_terms": [
+          "#gr_read_progress"
+        ],
+        "label": "gr_read_progress",
+        "colnum": 15,
+        "display": {
+          "composite_template": "{#read_progress:multiply(100):ceil()}",
+          "composite_sort": "number",
+          "make_category": false,
+          "contains_html": false,
+          "use_decorations": 0,
+          "description": "Convert #read_progress to integers for Goodreads"
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 24,
+        "#value#": "TEMPLATE ERROR could not convert string to float: ':ceil('",
+        "#extra#": null,
+        "is_multiple2": {}
+      },
       "#gr_review": {
         "table": "custom_column_3",
         "column": "value",
@@ -487,7 +568,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 24,
+        "rec_index": 25,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -514,7 +595,35 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 25,
+        "rec_index": 26,
+        "#value#": null,
+        "#extra#": null,
+        "is_multiple2": {}
+      },
+      "#ko_annotations": {
+        "table": "custom_column_13",
+        "column": "value",
+        "datatype": "comments",
+        "is_multiple": null,
+        "kind": "field",
+        "name": "KOReader Annotations",
+        "search_terms": [
+          "#ko_annotations"
+        ],
+        "label": "ko_annotations",
+        "colnum": 13,
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "markdown",
+          "description": ""
+        },
+        "is_custom": true,
+        "is_category": false,
+        "link_column": "value",
+        "category_sort": "value",
+        "is_csp": false,
+        "is_editable": true,
+        "rec_index": 27,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -541,7 +650,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 26,
+        "rec_index": 28,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -569,7 +678,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 27,
+        "rec_index": 29,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -580,20 +689,24 @@
         "datatype": "comments",
         "is_multiple": null,
         "kind": "field",
-        "name": "Annotations",
+        "name": "Kobo Annotations",
         "search_terms": [
           "#mm_annotations"
         ],
         "label": "mm_annotations",
         "colnum": 7,
-        "display": {},
+        "display": {
+          "heading_position": "above",
+          "interpret_as": "html",
+          "description": ""
+        },
         "is_custom": true,
         "is_category": false,
         "link_column": "value",
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 28,
+        "rec_index": 30,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -620,7 +733,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 29,
+        "rec_index": 31,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -647,7 +760,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 30,
+        "rec_index": 32,
         "#value#": "None",
         "#extra#": null,
         "is_multiple2": {}
@@ -674,7 +787,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 31,
+        "rec_index": 33,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -693,7 +806,7 @@
         "colnum": 11,
         "display": {
           "description": "",
-          "number_format": "{:.0%}"
+          "number_format": null
         },
         "is_custom": true,
         "is_category": false,
@@ -701,7 +814,7 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 32,
+        "rec_index": 34,
         "#value#": null,
         "#extra#": null,
         "is_multiple2": {}
@@ -732,45 +845,58 @@
         "category_sort": "value",
         "is_csp": false,
         "is_editable": true,
-        "rec_index": 33,
+        "rec_index": 35,
         "#value#": "",
         "#extra#": null,
         "is_multiple2": {}
       }
     },
+    "tags": [
+      "Civil disobedience",
+      "Authors",
+      "American -- 19th century -- Biography",
+      "Thoreau",
+      "Henry David",
+      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
+      "Wilderness areas -- Massachusetts -- Walden Woods",
+      "Natural history -- Massachusetts -- Walden Woods",
+      "Solitude",
+      "Government",
+      "Resistance to",
+      "Walden Woods (Mass.) -- Social life and customs"
+    ],
+    "publisher": null,
+    "series_index": null,
+    "title": "Walden, and On The Duty Of Civil Disobedience",
+    "cover": null,
+    "rating": null,
+    "db_id": null,
+    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
+    "rights": null,
+    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
     "identifiers": {
       "uri": "http://www.gutenberg.org/205"
     },
-    "publisher": null,
-    "languages": [
-      "eng"
-    ],
-    "pubdate": "1995-01-01T03:00:00+00:00",
-    "last_modified": "2020-11-16T21:45:41+00:00",
-    "book_producer": null,
     "publication_type": null,
-    "author_sort_map": {
-      "Henry David Thoreau": "Thoreau, Henry David"
-    },
-    "cover": null,
-    "series": null,
-    "series_index": null,
-    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
+    "mime": null,
+    "last_modified": "2021-04-24T19:14:18+00:00",
+    "pubdate": "1995-01-01T03:00:00+00:00",
+    "author_sort": "Thoreau, Henry David",
     "thumbnail": [
       47,
       68,
       "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
     ],
-    "rights": null,
-    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
-    "size": 612096,
+    "authors": [
+      "Henry David Thoreau"
+    ],
     "application_id": 3,
-    "mime": null,
-    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
+    "series": null,
     "user_categories": {},
-    "author_sort": "Thoreau, Henry David",
-    "title": "Walden, and On The Duty Of Civil Disobedience",
-    "comments": null,
-    "timestamp": "2020-11-16T21:45:41+00:00"
+    "size": 612096,
+    "languages": [
+      "eng"
+    ],
+    "book_producer": null
   }
 ]

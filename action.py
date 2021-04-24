@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import sys
-import re
-import json
-import io
 from functools import partial
+import difflib
+import io
+import json
+import re
+import sys
 
 from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
 from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
@@ -258,25 +259,25 @@ class KoreaderAction(InterfaceAction):
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
 
-        has_updates = False
+        updates = []
         # Update that metadata locally
-        for key, value in keys_values_to_update.items():
-            if value != metadata.get(key):
-                has_updates = True
-                metadata.set(key, value)
+        for key, new_value in keys_values_to_update.items():
+            if new_value != metadata.get(key):
+                updates.append(key)
+                metadata.set(key, new_value)
 
         # Write the updated metadata back to the library
-        if not has_updates:
+        if len(updates) == 0:
             debug_print('no changed metadata for uuid = ', uuid,
                         ', id = ', book_id)
         elif DEBUG and DRY_RUN:
-            debug_print('would have updated metadata for uuid = ', uuid,
-                        ', id = ', book_id)
+            debug_print('would have updated the following fields for uuid = ',
+                        uuid, ', id = ', book_id, ': ', updates)
         else:
             db.set_metadata(book_id, metadata, set_title=False,
                             set_authors=False)
-            debug_print('updated metadata for uuid = ', uuid, ', id = ',
-                        book_id)
+            debug_print('updated the following fields for uuid = ', uuid,
+                        ', id = ', book_id, ': ', updates)
 
         return True, {
             'result': 'success',
@@ -319,8 +320,8 @@ class KoreaderAction(InterfaceAction):
         sidecar_paths = self.get_paths(device)
 
         results = []
-        has_success = False
-        has_fail = False
+        num_success = 0
+        num_fail = 0
 
         for book_uuid, sidecar_path in sidecar_paths.items():
             sidecar_contents = self.get_sidecar(device, sidecar_path)
@@ -332,7 +333,7 @@ class KoreaderAction(InterfaceAction):
                     'book_uuid': book_uuid,
                     'sidecar_path': sidecar_path,
                 })
-                has_fail = True
+                num_fail += 1
                 continue
 
             keys_values_to_update = {}
@@ -376,36 +377,44 @@ class KoreaderAction(InterfaceAction):
                 'updated': keys_values_to_update,
             })
             if success:
-                has_success = True
+                num_success += 1
             else:
-                has_fail = True
+                num_fail += 1
 
-        if has_success and has_fail:
+        if num_success > 0 and num_fail > 0:
             warning_dialog(
                 self.gui,
                 'Metadata for some books could not be synced',
-                'Metadata for some books could not be synced. This might just '
-                'be because you have not opened every book in KOReader yet. '
-                'See below for details.',
-                det_msg=json.dumps(results, indent=4),
+                'Metadata was synced successfully for {}, but failed for {}. '
+                'This might just be because you have not opened every book in '
+                'KOReader yet. See below for details.'.format(
+                    '{} book{}'.format(
+                        num_success, 's' if num_success > 1 else ''),
+                    '{} other{}'.format(
+                        num_fail, 's' if num_fail > 1 else '')
+                ),
+                det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
-        elif has_success:  # and not has_fail
+        elif num_success > 0:  # and num_fail == 0
             info_dialog(
                 self.gui,
                 'Metadata synced for all books',
-                'Metadata synced for all books. See below for details.',
-                det_msg=json.dumps(results, indent=4),
+                'Metadata synced for {}. See below for details.'.format(
+                    '{} book{}'.format(
+                        num_success, 's' if num_success > 1 else '')
+                ),
+                det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
-        else:  # not has_success
+        else:  # not num_success
             error_dialog(
                 self.gui,
                 'No metadata could be synced',
                 'No metadata could be synced. See below for details.',
-                det_msg=json.dumps(results, indent=4),
+                det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
