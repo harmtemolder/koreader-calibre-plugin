@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 
-__license__   = 'GNU GPLv3'
+import sys
+import re
+import json
+import io
+from functools import partial
+
+from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
+from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
+from calibre_plugins.koreader.config import COLUMNS, CONFIG  # pylint: disable=import-error
+from calibre_plugins.koreader import DEBUG, DRY_RUN, PYDEVD, KoreaderSync  # pylint: disable=import-error
+from calibre.gui2.dialogs.message_box import MessageBox  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.gui2.actions import InterfaceAction  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.gui2 import error_dialog, warning_dialog, info_dialog, open_url  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
+
+__license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
-from functools import partial
-import io
-import json
-import re
-import sys
-
-from calibre.constants import numeric_version
-from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.gui2 import error_dialog, warning_dialog, info_dialog, open_url
-from calibre.gui2.actions import InterfaceAction
-from calibre.gui2.dialogs.message_box import MessageBox
-from calibre_plugins.koreader import DEBUG, DRY_RUN, PYDEVD, KoreaderSync
-from calibre_plugins.koreader.config import COLUMNS, CONFIG
-from calibre_plugins.koreader.slpp import slpp as lua
-
-from PyQt5.Qt import QUrl
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
@@ -30,7 +30,7 @@ if DEBUG and PYDEVD:
     try:
         sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
                         '-pycharm.egg')
-        import pydevd_pycharm
+        import pydevd_pycharm  # pylint: disable=import-error
         pydevd_pycharm.settrace(
             'localhost', stdoutToServer=True, stderrToServer=True,
             suspend=False)
@@ -57,7 +57,7 @@ class KoreaderAction(InterfaceAction):
         self.version = '{} (v{}.{}.{})'.format(base.name, *base.version)
 
         # Overwrite icon with actual KOReader logo
-        icon = get_icons('images/icon.png')
+        icon = get_icons('images/icon.png')  # pylint: disable=undefined-variable
         self.qaction.setIcon(icon)
 
         # Left-click action
@@ -108,8 +108,8 @@ class KoreaderAction(InterfaceAction):
     def show_about(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_about:')
         debug_print('start')
-        text = get_resources('about.txt').decode('utf-8')
-        icon = get_icons('images/icon.png')
+        text = get_resources('about.txt').decode('utf-8')  # pylint: disable=undefined-variable
+        icon = get_icons('images/icon.png')  # pylint: disable=undefined-variable
 
         about_dialog = MessageBox(
             MessageBox.INFO,
@@ -124,7 +124,8 @@ class KoreaderAction(InterfaceAction):
         return about_dialog.exec_()
 
     def apply_settings(self):
-        debug_print = partial(module_debug_print, 'KoreaderAction:apply_settings:')
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:apply_settings:')
         debug_print('start')
         pass
 
@@ -140,7 +141,6 @@ class KoreaderAction(InterfaceAction):
             is_device_present = self.gui.device_manager.is_device_present
         except:
             is_device_present = False
-
 
         if not is_device_present:
             debug_print('is_device_present = ', is_device_present)
@@ -292,7 +292,8 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:sync_to_calibre:')
 
-        supported_devices = ['FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
+        supported_devices = ['FOLDER_DEVICE',
+                             'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
         device = self.get_connected_device()
 
         if not device:
@@ -366,7 +367,8 @@ class KoreaderAction(InterfaceAction):
 
                 keys_values_to_update[target] = value
 
-            success, result = self.update_metadata(book_uuid, keys_values_to_update)
+            success, result = self.update_metadata(
+                book_uuid, keys_values_to_update)
             results.append({
                 **result,
                 'book_uuid': book_uuid,

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from PyQt5.Qt import (
+import os
+import json
+from functools import partial
+
+from PyQt5.Qt import (  # pylint: disable=no-name-in-module
     QComboBox,
     QGridLayout,
     QHBoxLayout,
@@ -9,15 +13,12 @@ from PyQt5.Qt import (
     QWidget,
     Qt,
 )
-from PyQt5.QtGui import (
-    QPixmap
-)
-from calibre.utils.config import JSONConfig
-from calibre.devices.usbms.driver import debug_print as root_debug_print
-from calibre.constants import numeric_version
-import os
-import json
-from functools import partial
+
+from PyQt5.QtGui import QPixmap   # pylint: disable=no-name-in-module
+from calibre.utils.config import JSONConfig  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
+
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
@@ -145,7 +146,7 @@ class TitleLayout(QHBoxLayout):
         # Add icon
         icon_label = QLabel(parent)
         pixmap = QPixmap()
-        pixmap.loadFromData(get_resources(icon))
+        pixmap.loadFromData(get_resources(icon))  # pylint: disable=undefined-variable
         icon_label.setPixmap(pixmap)
         icon_label.setMaximumSize(64, 64)
         icon_label.setScaledContents(True)

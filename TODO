@@ -1,6 +1,6 @@
 # TODO
-- Add `last_page` for PDFs instead of `last_xpointer`
+- Add an `.editorconfig` to define code layout
 - Add support for highlights and bookmarks
+- Add `last_page` for PDFs instead of `last_xpointer`
 - USBMS devices have `calibre.devices.usbms.cli.CLI.list()`. Use that to find sidecars (and their mtime?), instead of trying paths that might not exist? (Note that `calibre.devices.smart_device_app.driver.SMART_DEVICE_APP` does not have a `list` function.)
 - Sync from calibre to KOReader?
--

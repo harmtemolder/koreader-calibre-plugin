@@ -1,27 +1,31 @@
-name: /Users/harmtemolder/GitHub/calibre/env
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - beautifulsoup4=4.9.3=pyhb0f4dca_0
-  - ca-certificates=2020.6.20=hecda079_0
-  - certifi=2020.6.20=py38h5347e94_2
-  - libcxx=11.0.0=h439d374_0
-  - libffi=3.2.1=hb1e8313_1007
-  - ncurses=6.2=h2e338ed_3
-  - openssl=1.1.1h=haf1e3a3_0
-  - pip=20.2.4=py_0
-  - python=3.8.5=h0ed32c4_9_cpython
-  - python_abi=3.8=1_cp38
-  - readline=8.0=h0678c8f_2
-  - setuptools=49.6.0=py38h5347e94_2
-  - soupsieve=2.0.1=py_1
-  - sqlite=3.33.0=h960bd1c_1
-  - tk=8.6.10=hb0a8c7a_1
-  - wheel=0.35.1=pyh9f0ad1d_0
-  - xz=5.2.5=haf1e3a3_1
-  - zlib=1.2.11=h7795811_1010
+  - beautifulsoup4
+  - ca-certificates
+  - certifi
+  - icu
+  - libcxx
+  - libffi
+  - libiconv
+  - libxml2
+  - libxslt
+  - lxml
+  - ncurses
+  - openssl
+  - pip
+  - python
+  - python_abi
+  - readline
+  - setuptools
+  - soupsieve
+  - sqlite
+  - tk
+  - wheel
+  - xz
+  - zlib
   - pip:
-    - pyqt5==5.15.1
-    - pyqt5-sip==12.8.1
-prefix: /Users/harmtemolder/GitHub/calibre/env
+      - pyqt5
+      - pyqt5-sip
+prefix: /Users/harmtemolder/git/calibre/env
