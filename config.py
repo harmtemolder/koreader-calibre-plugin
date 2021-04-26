@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import math
 import os
 import json
 from functools import partial
@@ -27,12 +28,19 @@ __docformat__ = 'restructuredtext en'
 
 COLUMNS = [{
     'name': 'column_percent_read',
-    'label': 'Percent read column:',
+    'label': 'Percent read column (float):',
     'tooltip': 'A “Floating point numbers” column to store the current\n'
                'percent read, with “Format for numbers” set to `{:.0%}`.',
     'type': 'float',
     'sidecar_property': ['percent_finished'],
     'transform': (lambda value: float(value))
+}, {
+    'name': 'column_percent_read_int',
+    'label': 'Percent read column (int):',
+    'tooltip': 'An “Integers” column to store the current percent read.',
+    'type': 'int',
+    'sidecar_property': ['percent_finished'],
+    'transform': (lambda value: math.floor(float(value) * 100))
 }, {
     'name': 'column_last_read_location',
     'label': 'Last read location column:',
@@ -204,6 +212,7 @@ class CustomColumnsLayout(QGridLayout):
             'comments': self.get_custom_columns(['comments']),
             'datetime': self.get_custom_columns(['datetime']),
             'float': self.get_custom_columns(['float']),
+            'int': self.get_custom_columns(['int']),
             'rating': self.get_rating_columns(),  # Includes built-in
             'text': self.get_custom_columns(['text']),
         }

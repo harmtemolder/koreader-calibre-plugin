@@ -26,6 +26,7 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 1. Pick and choose the metadata you would like to sync and create the appropriate columns in calibre. These are your options:
     - A “Floating point numbers” column to store the **current percent read**, with “Format for numbers” set to `{:.0%}`.
+    - An “Integers” column to store the **current percent read**.
     - A regular “Text” column to store the **location you last stopped reading at**.
     - A “Rating” column to store your **rating** of the book, as entered on the book's status page.
     - A “Long text” column to store your **review** of the book, as entered on the book's status page.
@@ -96,6 +97,12 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.1-alpha] - 2021-04-26
+
+### Added
+
+- An extra column for read progress as integer (because that’s what [the Goodreads Sync plugin](https://www.mobileread.com/forums/showthread.php?t=123281) expects)
 
 ## [0.2.0-alpha] - 2021-04-24
 
