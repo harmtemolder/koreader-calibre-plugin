@@ -214,7 +214,14 @@ class KoreaderAction(InterfaceAction):
                 return None
 
             contents = outfile.getvalue()
-            parsed_contents = self.parse_sidecar_lua(contents.decode())
+
+            try:
+                decoded_contents = contents.decode()
+            except UnicodeDecodeError:
+                debug_print('could not decode ', contents)
+                return None
+
+            parsed_contents = self.parse_sidecar_lua(decoded_contents)
 
         return parsed_contents
 
