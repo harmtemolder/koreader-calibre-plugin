@@ -301,7 +301,13 @@ class KoreaderAction(InterfaceAction):
                               'KoreaderAction:sync_to_calibre:')
 
         supported_devices = [
-            'FOLDER_DEVICE', 'KOBO', 'KOBOTOUCH', 'SMART_DEVICE_APP']
+            'FOLDER_DEVICE',
+            'KINDLE2',
+            'KOBO',
+            'KOBOTOUCH',
+            'MTP_DEVICE',
+            'SMART_DEVICE_APP'
+        ]
         device = self.get_connected_device()
 
         if not device:

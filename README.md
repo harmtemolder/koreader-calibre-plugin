@@ -99,6 +99,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 - Skip metadata sidecars that cannot be decoded (e.g. from a very old version of KOReader)
+- Enabled `KINDLE2` and `MTP_DEVICE`. **Needs testing**
 
 ## [0.2.1-alpha] - 2021-04-26
 
