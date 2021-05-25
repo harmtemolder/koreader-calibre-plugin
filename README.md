@@ -86,6 +86,18 @@ Make sure you have the dependencies and have set the correct version number in `
 make
 ```
 
+### Debugging a release
+
+1. Download the required release from [here](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases)
+2. Add it to calibre by running this in your terminal: `calibre-customize -a "KOReader Sync vX.X.X-alpha.zip"`, where `X.X.X` refers to the version you downloaded
+3. Start calibre in debug mode with `calibre-debug -g`
+4. Configure the KOReader plugin as described [here](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin#setup)
+5. Connect your device
+6. Run the sync by clicking the KOReader icon in your toolbar
+7. Check the details of the message when it's done if any/all books have been synced correctly
+7. Check your (custom) columns for one of those books to see if their contents are what they should be
+7. Check the output in your terminal for lines containing `koreader` to see what it did
+
 ### Sending in your patches
 
 Contributing patches on sourcehut works through `git send-email`. You can find this repository's mailing list [here](https://lists.sr.ht/~harmtemolder/koreader-calibre-plugin).
@@ -100,6 +112,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Skip metadata sidecars that cannot be decoded (e.g. from a very old version of KOReader)
 - Enabled `KINDLE2` and `MTP_DEVICE`. **Needs testing**
+- Use `path` instead of `lpath` for book paths to go around `MTP_DEVICE` lowercasing the latter
 
 ## [0.2.1-alpha] - 2021-04-26
 

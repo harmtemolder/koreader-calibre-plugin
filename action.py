@@ -183,10 +183,9 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print,
                               'KoreaderAction:get_paths:')
 
-        prefix = getattr(device, '_main_prefix', '')
         paths = {
-            book.uuid: prefix + re.sub(
-                '\.(\w+)$', '.sdr/metadata.\\1.lua', book.lpath)
+            book.uuid: re.sub(
+                '\.(\w+)$', '.sdr/metadata.\\1.lua', book.path)
             for book in device.books()
         }
 
