@@ -217,8 +217,13 @@ class KoreaderAction(InterfaceAction):
         )
 
         debug_print(
-            'found these books:\n\t',
+            'found these paths to books:\n\t',
             '\n\t'.join([book.path for book in device.books()])
+        )
+
+        debug_print(
+            'found these lpaths to books:\n\t',
+            '\n\t'.join([book.lpath for book in device.books()])
         )
 
         paths = {
