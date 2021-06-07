@@ -18,7 +18,11 @@ DRY_RUN = False  # Used during debugging to skip the actual updating of metadata
 PYDEVD = True  # Used during debugging to connect to PyCharm’s remote debugging
 
 if numeric_version >= (5, 5, 0):
-    module_debug_print = partial(root_debug_print, ' koreader:__init__:', sep='')
+    module_debug_print = partial(
+        root_debug_print,
+        ' koreader:__init__:',
+        sep=''
+        )
 else:
     module_debug_print = partial(root_debug_print, 'koreader:__init__:')
 
@@ -71,7 +75,8 @@ def clean_bookmarks(input):
             for attr in bookmark:
                 output += '{}: {}, '.format(
                     attr,
-                    bookmark[attr])
+                    bookmark[attr]
+                )
 
             output = output[:-2] + ' -->'
 

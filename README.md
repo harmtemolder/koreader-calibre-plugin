@@ -110,9 +110,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
 - Skip metadata sidecars that cannot be decoded (e.g. from a very old version of KOReader)
-- Enabled `KINDLE2` and `MTP_DEVICE`. **Needs testing**
+
+### Changed
+
 - Use `path` instead of `lpath` for book paths to go around `MTP_DEVICE` lowercasing the latter
+- Disabled `MTP_DEVICE` because it cannot be supported (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2))
+
+### Added
+
+- Enabled `KINDLE2`. **Needs testing**
 
 ## [0.2.1-alpha] - 2021-04-26
 

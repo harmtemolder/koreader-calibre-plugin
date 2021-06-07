@@ -368,8 +368,10 @@ class KoreaderAction(InterfaceAction):
             'KINDLE2',
             'KOBO',
             'KOBOTOUCH',
+            'SMART_DEVICE_APP',
+        ]
+        unsupported_devices = [
             'MTP_DEVICE',
-            'SMART_DEVICE_APP'
         ]
         device = self.get_connected_device()
 
@@ -378,15 +380,32 @@ class KoreaderAction(InterfaceAction):
 
         device_class = device.__class__.__name__
 
-        if device_class not in supported_devices:
+        if device_class in unsupported_devices:
             debug_print('unsupported device, device_class = ', device_class)
             error_dialog(
                 self.gui,
-                'Unsupported device',
-                'Devices of the type {} are not (yet) supported by this '
-                'plugin. Please check if there already is a feature request '
-                'for this <a href="https://todo.sr.ht/~harmtemolder/koreader'
-                '-calibre-plugin">here</a>. If not, feel free to create '
+                'Device not supported',
+                'Devices of the type {} are not supported by this plugin. I '
+                'have tried to get it working, but couldn’t. Sorry.'.format(
+                    device_class
+                ),
+                det_msg='',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+        elif device_class not in supported_devices:
+            debug_print(
+                'not yet supported device, device_class = ',
+                device_class
+            )
+            error_dialog(
+                self.gui,
+                'Device not yet supported',
+                'Devices of the type {} are not yet supported by this plugin. '
+                'Please check if there already is a feature request for this '
+                '<a href="https://todo.sr.ht/~harmtemolder/koreader-calibre'
+                '-plugin">here</a>. If not, feel free to create '
                 'one.'.format(device_class),
                 det_msg='',
                 show=True,
