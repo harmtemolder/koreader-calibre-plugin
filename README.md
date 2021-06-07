@@ -45,6 +45,16 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 - The plugin overwrites existing metadata without asking. That usually isn’t a problem, because you will probably only add to KOReader’s metadata. But be aware that you might lose data in calibre if you’re not careful.
 
+### Supported devices
+
+This plugin has been tested successfully with:
+- Kobo Aura connected over USB, which means it will probably work for all comparable Kobo devices (`KOBO` and `KOBOTOUCH`)
+- Kobo Aura connected wirelessly, which means it will probably work for all calibre connect devices (`SMART_DEVICE_APP`)
+- A connected folder (`FOLDER_DEVICE`)
+
+This plugin is not compatible with:
+- `MTP_DEVICE` (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2) for details)
+
 ### Issues
 
 If you encounter any issues with the plugin, please submit them [here](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin).
