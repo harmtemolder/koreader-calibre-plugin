@@ -1,4 +1,4 @@
 [*][URL="https://www.mobileread.com/forums/showthread.php?p=4060545"]KOReader Sync[/URL]
 [I]Synchronize metadata (e.g. read progress and rating) from KOReader to calibre.
-Version: 0.2.2; Released: ...; Calibre: 5.0.1; Author: harmtemolder; History: Yes;
+Version: 0.2.2; Released: 2021-06-22; Calibre: 5.0.1; Author: harmtemolder; History: Yes;
 Platforms: Windows, OSX, Linux;[/I]

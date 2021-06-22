@@ -51,6 +51,7 @@ This plugin has been tested successfully with:
 - Kobo Aura connected over USB, which means it will probably work for all comparable Kobo devices (`KOBO` and `KOBOTOUCH`)
 - Kobo Aura connected wirelessly, which means it will probably work for all calibre connect devices (`SMART_DEVICE_APP`)
 - A connected folder (`FOLDER_DEVICE`)
+- Kindle Keyboard (`KINDLE2`, see [#1](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/1) for details))
 
 This plugin is not compatible with:
 - `MTP_DEVICE` (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2) for details)
@@ -120,6 +121,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.2-alpha] - 2021-06-22
+
 ### Fixed
 
 - Skip metadata sidecars that cannot be decoded (e.g. from a very old version of KOReader)
@@ -127,11 +130,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Use `path` instead of `lpath` for book paths to go around `MTP_DEVICE` lowercasing the latter
-- Disabled `MTP_DEVICE` because it cannot be supported (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2))
+- Disable `MTP_DEVICE` because it cannot be supported (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2))
 
 ### Added
 
-- Enabled `KINDLE2`. **Needs testing**
+- Enable `KINDLE2`
 
 ## [0.2.1-alpha] - 2021-04-26
 
@@ -193,4 +196,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.1.3-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.3-alpha.zip
 [0.1.4-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.1.4-alpha.zip
 [0.2.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.0-alpha.zip
+[0.2.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.1-alpha.zip
+[0.2.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.2-alpha.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree

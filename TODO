@@ -4,7 +4,7 @@
 - [x] Make the warning about synced metadata more informative
 - [x] ~~Add support for `MTP_DEVICE` devices~~
 - [x] ~~Add support for multiple storages (i.e. SD cards) for `MTP_DEVICES`~~
-- [ ] Add support for `KINDLE2` devices
+- [x] Add support for `KINDLE2` devices
 - [ ] Build in a fail-safe when a sync would delete existing metadata (i.e. only add)
   ```python
   d = difflib.Differ()

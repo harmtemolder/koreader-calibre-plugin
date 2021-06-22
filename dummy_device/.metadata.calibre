@@ -1,14 +1,50 @@
 [
   {
-    "author_sort_map": {
-      "Lewis Carroll": "Carroll, Lewis"
+    "cover": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/11"
     },
-    "timestamp": "2020-11-16T21:46:44+00:00",
-    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "last_modified": "2021-04-24T20:22:48+00:00",
+    "languages": [
+      "eng"
+    ],
+    "db_id": null,
+    "rating": null,
+    "publisher": null,
+    "series": null,
+    "book_producer": null,
+    "application_id": 4,
     "author_link_map": {
       "Lewis Carroll": ""
     },
+    "author_sort_map": {
+      "Lewis Carroll": "Carroll, Lewis"
+    },
+    "title_sort": "Alice's Adventures in Wonderland",
+    "author_sort": "Carroll, Lewis",
     "comments": null,
+    "title": "Alice's Adventures in Wonderland",
+    "rights": null,
+    "timestamp": "2020-11-16T21:46:44+00:00",
+    "size": 253703,
+    "lpath": "Carroll, Lewis/Alice's Adventures in Wonderland - Lewis Carroll.epub",
+    "mime": null,
+    "tags": [
+      "Fantasy fiction",
+      "Children's stories",
+      "Imaginary places -- Juvenile fiction",
+      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
+    ],
+    "thumbnail": [
+      49,
+      68,
+      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADEDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAIFBgcBAwQI/8QANBAAAgEDAwIEBAQFBQAAAAAAAQIDAAQRBRIhMUEGE1FhFCIycSNCgaEkM0OCwZGSo7Hw/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJREAAwACAAUDBQAAAAAAAAAAAAECAxESEyExcQSh0QVBUWGB/9oADAMBAAIRAxEAPwB61AXvxEPw8ZeEY8wKQD9SnufQMP7hWm1XUBPGbhZNoLbvmBGOMd/vTxUF07xVpl1dQ2Vzq+pRXL4Vn2oI/MJA2j5SRz3Ix71mlbL09D4kWsfAD8QC4VgQGYcjacg/r/iiUauDJ5Z7jbyPUc/b6uvtTkdHYSBDql7uIyBvTJH+2oH4a8RXuq609pfaiYIQjEMWCnIIwMkGmaSWznFvoSyFtRS5t2kEhiCDzVyOWwff7URHVjPH5n0iRQ3I5XkN+wBHua49buotPhg+G1x5ZZXA2qyuQvdsAdqddHmafSopHlMrF3XzCMFgHIBx9hSKlS2hvvocttFY4opRhVefZ7FnnkfeACxOK9BVVssmljS7c/CyLKoXzJFjPfqc459aeb4en5EuHSbTS17+BjstHvY3jnS+kiuE5RkJ+XHvmlaPol3LqT/xDQ+V/MkU4PPYfeprpOg2lzpiytcSyrM7BZFcLtAJx+wrntdJuJrSzntFmlkWV0lztVSoBLEcZPGD+lQ5t7aNObFh4E8a0+/k0pFZ29wzPdo0wwSZpMt/7Hapd4fAOiQFSCN8mCOh/EaoJDbwzareRhVeYsAQ6Mw2gDGe3ap34eUpoUCMApDSAgDAHzt27U2Ps/4ZI77HTmij9aKcqLqrIdSihs7a2iiVpptqs7LnaDxVp1U4hs57e2ikhR5mRRveTpxngLz/AKkfaluU56hO+ZOh7W5SOyhWGOMlIwp/DwQQeFyRkkev71YmmW0drbW7XqJGx3Z3Nnlt2QTk89utVxD5VvJC0iM0Ue1nCDHAPOPc5qxX1vRZBFMbtlEZDjajAnA6Hj3rHhaabPU+o4eBzMr2+BgsfCcPlrcrcyIZCGkV4+d3AP8A1it+jR+XpcaD8sko/wCRqjOt6hrV1fTWsaO9pMwltzjbhc8EYxzz39vapJoCvHokCSZ3qzhsnJzvar4Za22zzKmVrS0OWTRRRVzguop4e8LQv4divbd8alLArRTTE7YzweAPbjPWpXTOlhJa2sdmms3CRRoI1XZHwABxnb6YqeSaqdSxoamtsi81lrw1K4jk03zJXILGBcRucAZDEAe/Na9N0+d/G+nPd2U8EYL43rhWdQTx2I6HNS+KCZQQmuT9Mk7Iicev01l0mVlaTXJdyggFoocjpn8n2qc4KXbXb9/Bov1bqFDfReDq1UtvAnbFu/yhRIBu9iDyM9Mg1zaIu3SYl44eQcdPrbpWiTSzdAxvrF0x6HGwH17L7U42dotlZx26OzKmfmbqcnP+abFieNdWQu1T2jdRWcUVUQVSDDEWLGNCT1JHWiiugY8iIf0k6Y+kfag28J6xIf7RRRRsAEEQOREmfXaKWaKKADFFFFcA/9k="
+    ],
+    "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
+    "pubdate": "2008-06-27T04:00:00+00:00",
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -405,56 +441,64 @@
         "is_multiple2": {}
       }
     },
-    "tags": [
-      "Fantasy fiction",
-      "Children's stories",
-      "Imaginary places -- Juvenile fiction",
-      "Alice (Fictitious character from Carroll) -- Juvenile fiction"
-    ],
-    "publisher": null,
     "series_index": null,
-    "title": "Alice's Adventures in Wonderland",
-    "cover": null,
-    "rating": null,
-    "db_id": null,
-    "title_sort": "Alice's Adventures in Wonderland",
-    "rights": null,
-    "uuid": "43bd8264-96fa-461a-a05e-1d1cb245d34f",
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/11"
-    },
-    "publication_type": null,
-    "mime": null,
-    "last_modified": "2021-04-24T20:22:48+00:00",
-    "pubdate": "2008-06-27T04:00:00+00:00",
-    "author_sort": "Carroll, Lewis",
-    "thumbnail": [
-      49,
-      68,
-      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEADEDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAAAAIFBgcBAwQI/8QANBAAAgEDAwIEBAQFBQAAAAAAAQIDAAQRBRIhMUEGE1FhFCIycSNCgaEkM0OCwZGSo7Hw/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJREAAwACAAUDBQAAAAAAAAAAAAECAxESEyExcQSh0QVBUWGB/9oADAMBAAIRAxEAPwB61AXvxEPw8ZeEY8wKQD9SnufQMP7hWm1XUBPGbhZNoLbvmBGOMd/vTxUF07xVpl1dQ2Vzq+pRXL4Vn2oI/MJA2j5SRz3Ix71mlbL09D4kWsfAD8QC4VgQGYcjacg/r/iiUauDJ5Z7jbyPUc/b6uvtTkdHYSBDql7uIyBvTJH+2oH4a8RXuq609pfaiYIQjEMWCnIIwMkGmaSWznFvoSyFtRS5t2kEhiCDzVyOWwff7URHVjPH5n0iRQ3I5XkN+wBHua49buotPhg+G1x5ZZXA2qyuQvdsAdqddHmafSopHlMrF3XzCMFgHIBx9hSKlS2hvvocttFY4opRhVefZ7FnnkfeACxOK9BVVssmljS7c/CyLKoXzJFjPfqc459aeb4en5EuHSbTS17+BjstHvY3jnS+kiuE5RkJ+XHvmlaPol3LqT/xDQ+V/MkU4PPYfeprpOg2lzpiytcSyrM7BZFcLtAJx+wrntdJuJrSzntFmlkWV0lztVSoBLEcZPGD+lQ5t7aNObFh4E8a0+/k0pFZ29wzPdo0wwSZpMt/7Hapd4fAOiQFSCN8mCOh/EaoJDbwzareRhVeYsAQ6Mw2gDGe3ap34eUpoUCMApDSAgDAHzt27U2Ps/4ZI77HTmij9aKcqLqrIdSihs7a2iiVpptqs7LnaDxVp1U4hs57e2ikhR5mRRveTpxngLz/AKkfaluU56hO+ZOh7W5SOyhWGOMlIwp/DwQQeFyRkkev71YmmW0drbW7XqJGx3Z3Nnlt2QTk89utVxD5VvJC0iM0Ue1nCDHAPOPc5qxX1vRZBFMbtlEZDjajAnA6Hj3rHhaabPU+o4eBzMr2+BgsfCcPlrcrcyIZCGkV4+d3AP8A1it+jR+XpcaD8sko/wCRqjOt6hrV1fTWsaO9pMwltzjbhc8EYxzz39vapJoCvHokCSZ3qzhsnJzvar4Za22zzKmVrS0OWTRRRVzguop4e8LQv4divbd8alLArRTTE7YzweAPbjPWpXTOlhJa2sdmms3CRRoI1XZHwABxnb6YqeSaqdSxoamtsi81lrw1K4jk03zJXILGBcRucAZDEAe/Na9N0+d/G+nPd2U8EYL43rhWdQTx2I6HNS+KCZQQmuT9Mk7Iicev01l0mVlaTXJdyggFoocjpn8n2qc4KXbXb9/Bov1bqFDfReDq1UtvAnbFu/yhRIBu9iDyM9Mg1zaIu3SYl44eQcdPrbpWiTSzdAxvrF0x6HGwH17L7U42dotlZx26OzKmfmbqcnP+abFieNdWQu1T2jdRWcUVUQVSDDEWLGNCT1JHWiiugY8iIf0k6Y+kfag28J6xIf7RRRRsAEEQOREmfXaKWaKKADFFFFcA/9k="
-    ],
-    "authors": [
-      "Lewis Carroll"
-    ],
-    "application_id": 4,
-    "series": null,
     "user_categories": {},
-    "size": 253703,
+    "publication_type": null
+  },
+  {
+    "cover": null,
+    "identifiers": {
+      "uri": "http://www.gutenberg.org/205"
+    },
+    "authors": [
+      "Henry David Thoreau"
+    ],
+    "last_modified": "2021-04-24T19:14:18+00:00",
     "languages": [
       "eng"
     ],
-    "book_producer": null
-  },
-  {
-    "author_sort_map": {
-      "Henry David Thoreau": "Thoreau, Henry David"
-    },
-    "timestamp": "2020-11-16T21:45:41+00:00",
-    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
+    "db_id": null,
+    "rating": null,
+    "publisher": null,
+    "series": null,
+    "book_producer": null,
+    "application_id": 3,
     "author_link_map": {
       "Henry David Thoreau": ""
     },
+    "author_sort_map": {
+      "Henry David Thoreau": "Thoreau, Henry David"
+    },
+    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
+    "author_sort": "Thoreau, Henry David",
     "comments": null,
+    "title": "Walden, and On The Duty Of Civil Disobedience",
+    "rights": null,
+    "timestamp": "2020-11-16T21:45:41+00:00",
+    "size": 612096,
+    "lpath": "Thoreau, Henry David/Walden, and On The Duty Of Civil Disobedience - Henry David Thoreau.epub",
+    "mime": null,
+    "tags": [
+      "Civil disobedience",
+      "Authors",
+      "American -- 19th century -- Biography",
+      "Thoreau",
+      "Henry David",
+      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
+      "Wilderness areas -- Massachusetts -- Walden Woods",
+      "Natural history -- Massachusetts -- Walden Woods",
+      "Solitude",
+      "Government",
+      "Resistance to",
+      "Walden Woods (Mass.) -- Social life and customs"
+    ],
+    "thumbnail": [
+      47,
+      68,
+      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
+    ],
+    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
+    "pubdate": "1995-01-01T03:00:00+00:00",
     "user_metadata": {
       "#formats": {
         "table": "custom_column_1",
@@ -851,52 +895,8 @@
         "is_multiple2": {}
       }
     },
-    "tags": [
-      "Civil disobedience",
-      "Authors",
-      "American -- 19th century -- Biography",
-      "Thoreau",
-      "Henry David",
-      "1817-1862 -- Homes and haunts -- Massachusetts -- Walden Woods",
-      "Wilderness areas -- Massachusetts -- Walden Woods",
-      "Natural history -- Massachusetts -- Walden Woods",
-      "Solitude",
-      "Government",
-      "Resistance to",
-      "Walden Woods (Mass.) -- Social life and customs"
-    ],
-    "publisher": null,
     "series_index": null,
-    "title": "Walden, and On The Duty Of Civil Disobedience",
-    "cover": null,
-    "rating": null,
-    "db_id": null,
-    "title_sort": "Walden, and On The Duty Of Civil Disobedience",
-    "rights": null,
-    "uuid": "3393747a-f0d8-44e1-bfaf-5fad857da3eb",
-    "identifiers": {
-      "uri": "http://www.gutenberg.org/205"
-    },
-    "publication_type": null,
-    "mime": null,
-    "last_modified": "2021-04-24T19:14:18+00:00",
-    "pubdate": "1995-01-01T03:00:00+00:00",
-    "author_sort": "Thoreau, Henry David",
-    "thumbnail": [
-      47,
-      68,
-      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABEAC8DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAwACBQYHAQT/xAAuEAACAgECBAQEBwEAAAAAAAABAgMRAAQhBRIxURNBYZEUcaHwBiJCgbHB0XL/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgAE/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERAjH/2gAMAwEAAhEDEQA/ANKAwWpillhZIZfCc9Hq6/bHtI6vyiIsKBBv13x0bylSWhKkcu1316+2cEjpBEOpDgmZeQEWCNyKIP1o4MabWhQDqxfKATyDrdk9O22eslnjUPACGamUm6G+/wBB742OWVo2vTlCEBC83U77fQe+ODTgrco5qvzrGtQFnONNMFv4Zr22DDtZ9umKN2kJDxFNgRfnsMLG0awouifkLxjvLuUFCtgUN3hUwb6uGOXw3aj3/rGNTA2oF83KRW1Rnr75xpNRdry12MTf7hJdXHEaNk1djp75GxauRdSAHL836S336e2ISCSyAEyKT/yhGFG+9V88GmqjkmaEEiRVDMpHQG/8wlgnrg0NfnERKEK3c5DT6kfFhC9uf4yW1biPRyP2H95RdPxQNxGV32NstnyAxkapPWcUli49BpnIMbQkL6Hy/jPNqNb8Hp9ZOjgEGlArY+W330yI1Ug12v8AjYpAoRrQmqYV5j53vni1OpV5ZIG5fFeQnnvZTew3+98rErVwri4k/FciczlJI1WqoDbsfU5cLrMs0OrRfxFHOWjjKvXMR+UHuarb1zUuoB2yeoqPDxuRo+C6l0blZVFG63sZTuG+BB8NPUsYOoBmldQFIIYkc3pS9ay/sGaJ1Q0xGx9cqsum1qSOItayrfRlLWfnjz41FWTTScYfVLq4Zonh8IIkoY3zWDXy88oDDl1bOoNCU3265Z9fwB3kJ8aX8+zKN2PoOg+owScClghaSXTtBCkbEFyOZiR1q9sqCo7hkKPxWKQOAHfmWrHnew37dM1M70czvhq6vUSaFoVKsjhnKp5i9+nrX75orHJ6MJTnWjRmsqL7+eLFkw1w6eIm2QE+uNbTws1tGrHuReLFiCGnhGwiSu3L0xzdcWLCmP/Z"
-    ],
-    "authors": [
-      "Henry David Thoreau"
-    ],
-    "application_id": 3,
-    "series": null,
     "user_categories": {},
-    "size": 612096,
-    "languages": [
-      "eng"
-    ],
-    "book_producer": null
+    "publication_type": null
   }
 ]
