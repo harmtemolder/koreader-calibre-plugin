@@ -49,6 +49,7 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 This plugin has been tested successfully with:
 - Kobo Aura connected over USB, which means it will probably work for all comparable Kobo devices (`KOBO` and `KOBOTOUCH`)
+- Kobo Aura H2O over USB (`KOBOTOUCHEXTENDED`)
 - Kobo Aura connected wirelessly, which means it will probably work for all calibre connect devices (`SMART_DEVICE_APP`)
 - A connected folder (`FOLDER_DEVICE`)
 - Kindle Keyboard (`KINDLE2`, see [#1](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/1) for details))
@@ -120,6 +121,12 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.3-alpha] - 2021-11-23
+
+### Added
+
+- Enable `KOBOTOUCHEXTENDED`
 
 ## [0.2.2-alpha] - 2021-06-22
 
@@ -198,4 +205,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.2.0-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.0-alpha.zip
 [0.2.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.1-alpha.zip
 [0.2.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.2-alpha.zip
+[0.2.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.3-alpha.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
