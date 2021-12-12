@@ -90,12 +90,18 @@ Make sure you have the dependencies. Then:
 make dev
 ```
 
-### Building a release
-
-Make sure you have the dependencies and have set the correct version number in `Makefile`. Then:
+Alternatively, build a release and load that:
 
 ```shell
-make
+make zip load
+```
+
+### Building a release
+
+Make sure you have the dependencies and have set the correct version number in `__init__.py`, `pluginIndexKOReaderSync.txt` and `Makefile`. Then:
+
+```shell
+make zip
 ```
 
 ### Debugging a release
@@ -121,6 +127,12 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.4-alpha] - 2021-12-12
+
+### Added
+
+- Enable `TOLINO`
 
 ## [0.2.3-alpha] - 2021-11-23
 
@@ -206,4 +218,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.2.1-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.1-alpha.zip
 [0.2.2-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.2-alpha.zip
 [0.2.3-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.3-alpha.zip
+[0.2.4-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.4-alpha.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree

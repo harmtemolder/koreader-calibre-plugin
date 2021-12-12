@@ -12,3 +12,6 @@ zip:
 
 dev:
 	@ calibre-customize -b .; calibre-debug -g
+
+load:
+	@ calibre-customize -a "$(zip_file)"; calibre-debug -g
