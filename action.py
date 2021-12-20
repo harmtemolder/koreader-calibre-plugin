@@ -369,6 +369,7 @@ class KoreaderAction(InterfaceAction):
             'KOBO',
             'KOBOTOUCH',
             'KOBOTOUCHEXTENDED',
+            'POCKETBOOK626',
             'SMART_DEVICE_APP',
         ]
         unsupported_devices = [

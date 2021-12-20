@@ -75,6 +75,7 @@ If you encounter any issues with the plugin, please submit them [here](https://t
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under “Preferences” > “Tweaks”, search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
 - I work in PyCharm, which offers a remote debugging server. Follow [these steps](https://harmtemolder.com/calibre-development-in-pycharm/) to set that up. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
+- The supported device drivers can be found in the `supported_devices` list at line 366 in `action.py`. Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
 
 ### Downloading dependencies
 
@@ -127,6 +128,12 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.5-alpha] - 2021-12-20
+
+### Added
+
+- Enable `POCKETBOOK626`
 
 ## [0.2.4-alpha] - 2021-12-12
 
