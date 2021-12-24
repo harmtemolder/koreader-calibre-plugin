@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from functools import partial
-import difflib
 import io
 import json
 import re
