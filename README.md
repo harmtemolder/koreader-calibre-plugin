@@ -55,6 +55,7 @@ This plugin has been tested successfully with:
 - Kindle Keyboard (`KINDLE2`, see [#1](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/1) for details)
 - Tolino Vision 4 HD (`TOLINO`, see [this comment](https://www.mobileread.com/forums/showpost.php?p=4179705&postcount=28) for details)
 - PocketBook Touch Lux 5 (which uses the `POCKETBOOK626` driver, so it will probably work for all comparable PocketBook devices, see [#8](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/8) for details)
+- PocketBooks that use the `POCKETBOOK622` driver
 
 This plugin is not compatible with:
 - `MTP_DEVICE` (see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2) for details)
@@ -131,11 +132,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.2.6-alpha] - 2021-12-20
+## [0.2.6-alpha] - 2021-12-31
 
 ### Added
 
-- Enable `POCKETBOOK626`
+- Enable `POCKETBOOK622`
 
 ## [0.2.5-alpha] - 2021-12-20
 
