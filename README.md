@@ -138,6 +138,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.7-alpha] - 2022-02-18
+
+### Added
+
+- Enable `TOLINO`, for real this time
+
 ## [0.2.6-alpha] - 2022-02-04
 
 ### Added
@@ -242,4 +248,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.2.3-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.3-alpha.zip
 [0.2.4-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.4-alpha.zip
 [0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.5-alpha.zip
+[0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.6-alpha.zip
+[0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.7-alpha.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
