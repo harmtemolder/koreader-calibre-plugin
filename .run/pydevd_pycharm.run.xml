@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="pydevd_pycharm" type="PyRemoteDebugConfigurationType" factoryName="Python Remote Debug" editBeforeRun="true">
+    <module name="koreader-calibre-plugin" />
+    <option name="PORT" value="5678" />
+    <option name="HOST" value="localhost" />
+    <PathMappingSettings>
+      <option name="pathMappings">
+        <list>
+          <mapping local-root="$PROJECT_DIR$/__init__.py" remote-root="/home/harm/git/koreader-calibre-plugin/calibre_plugins.koreader.__init__" />
+          <mapping local-root="$PROJECT_DIR$/action.py" remote-root="/home/harm/git/koreader-calibre-plugin/calibre_plugins.koreader.action" />
+          <mapping local-root="$PROJECT_DIR$/config.py" remote-root="/home/harm/git/koreader-calibre-plugin/calibre_plugins.koreader.config" />
+        </list>
+      </option>
+    </PathMappingSettings>
+    <option name="REDIRECT_OUTPUT" value="true" />
+    <option name="SUSPEND_AFTER_CONNECT" value="true" />
+    <method v="2" />
+  </configuration>
+</component>

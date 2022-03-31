@@ -41,7 +41,8 @@ else:
 if DEBUG and PYDEVD:
     try:
         sys.path.append(
-            '/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg'
+            # '/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg'  # macOS
+            '/opt/pycharm-professional/debug-eggs/pydevd-pycharm.egg'  # Manjaro Linux
         )
         import pydevd_pycharm  # pylint: disable=import-error
 

@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+css-parser = "*"
+html5-parser = "*"
+mechanize = "*"
+regex = "*"
+zeroconf = "*"
+apsw = "*"
+lxml = "*"
+msgpack = "*"
+python-dateutil = "*"
+pyqt5 = "*"
+beautifulsoup4 = "*"
+markdown = "*"
+netifaces = "*"
+
+[requires]
+python_version = "3.9"
