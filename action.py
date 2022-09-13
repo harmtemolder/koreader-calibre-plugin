@@ -403,19 +403,18 @@ class KoreaderAction(InterfaceAction):
                 'not yet supported device, device_class = ',
                 device_class
             )
-            error_dialog(
+            warning_dialog(
                 self.gui,
                 'Device not yet supported',
                 'Devices of the type {} are not yet supported by this plugin. '
                 'Please check if there already is a feature request for this '
                 '<a href="https://todo.sr.ht/~harmtemolder/koreader-calibre'
                 '-plugin">here</a>. If not, feel free to create '
-                'one.'.format(device_class),
+                'one. I\'ll try to sync anyway.'.format(device_class),
                 det_msg='',
                 show=True,
                 show_copy_button=False
             )
-            return None
 
         sidecar_paths = self.get_paths(device)
 

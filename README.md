@@ -84,7 +84,7 @@ If you encounter any issues with the plugin, please submit them [here](https://t
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under “Preferences” > “Tweaks”, search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
 - I work in PyCharm, which offers a remote debugging server. Follow [these steps](https://harmtemolder.com/calibre-development-in-pycharm/) to set that up. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
-- The supported device drivers can be found in the `supported_devices` list at line 366 in `action.py`. Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
+- The supported device drivers can be found in [the `supported_devices` list at line 366 in `action.py`](https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/action.py#L366). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
 
 ### Downloading dependencies
 
@@ -108,7 +108,7 @@ make zip load
 
 ### Building a release
 
-Make sure you have the dependencies and have set the correct version number in `__init__.py`, `pluginIndexKOReaderSync.txt` and `Makefile`. Then:
+Make sure you have the dependencies and have set the correct version number in `__init__.py`, `pluginIndexKOReaderSync.txt` and `Makefile`. Also update [Changelog](#Changelog). Then:
 
 ```shell
 make zip
@@ -137,6 +137,12 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.0-beta] - 2022-09-13
+
+### Changed
+
+- Don't break for unknown device class, but try to sync anyway
 
 ## [0.2.7-alpha] - 2022-02-18
 
@@ -248,6 +254,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.2.3-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.3-alpha.zip
 [0.2.4-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.4-alpha.zip
 [0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.5-alpha.zip
-[0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.6-alpha.zip
-[0.2.5-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.7-alpha.zip
+[0.2.6-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.6-alpha.zip
+[0.2.7-alpha]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.2.7-alpha.zip
+[0.3.0-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.0-beta.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
