@@ -373,6 +373,7 @@ class KoreaderAction(InterfaceAction):
             'POCKETBOOK626',
             'SMART_DEVICE_APP',
             'TOLINO',
+            'USER_DEFINED',
         ]
         unsupported_devices = [
             'MTP_DEVICE',
