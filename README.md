@@ -38,7 +38,8 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
     - A “Long text” column to store your **review** of the book, as entered on the book's status page.
     - A “Long text” column to store your **bookmarks and highlights** of the book, with “Interpret this column as” set to “Plain text formatted using markdown”. (Highlights are an unordered list with their metadata in an HTML comment.)
     - A regular “Text” column to store the **reading status** of the book, as entered on the book status page (“Finished”, “Reading”, “On hold”).
-    - A “Date” column to store the **date on which the book's status was last modified**. (This is probably the date on which you marked it as read.)
+    - A “Date” column to store **the date on which the first highlight or bookmark was made**. (This is probably around the time you started reading.)
+    - A “Date” column to store **the date on which the last highlight or bookmark was made**. (This is probably around the time you finished reading.)
     - A regular “Text” column to store the **MD5 hash** KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (“Progress sync” in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
     - A “Long text” column to store the **raw contents of the metadata sidecar**, with “Interpret this column as” set to “Plain text”.
 10. Add “KOReader Sync” to “main toolbar when a device is connected”, if it isn't there already.
