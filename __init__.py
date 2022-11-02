@@ -15,7 +15,7 @@ __docformat__ = 'restructuredtext en'
 
 DEBUG = _DEBUG
 DRY_RUN = False  # Used during debugging to skip the actual updating of metadata
-PYDEVD = True  # Used during debugging to connect to PyCharm’s remote debugging
+PYDEVD = False  # Used during debugging to connect to PyCharm's remote debugging
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(
@@ -31,7 +31,7 @@ class KoreaderSync(InterfaceActionBase):
     name = 'KOReader Sync'
     description = 'Get metadata from a locally connected KOReader device '
     author = 'harmtemolder'
-    version = (0, 3, 2)
+    version = (0, 4, 0)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     config = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
     actual_plugin = 'calibre_plugins.koreader.action:KoreaderAction'

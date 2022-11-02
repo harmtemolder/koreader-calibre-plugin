@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 from functools import partial
 import io
 import json
 import re
 import sys
+from zoneinfo import ZoneInfo
 
 from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
 from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
@@ -270,6 +272,7 @@ class KoreaderAction(InterfaceAction):
                 debug_print('could not decode ', contents)
                 return None
 
+            debug_print('parsing {}'.format(path))
             parsed_contents = self.parse_sidecar_lua(decoded_contents)
 
         return parsed_contents
@@ -291,6 +294,22 @@ class KoreaderAction(InterfaceAction):
         except:
             debug_print('could not decode sidecar_lua')
             decoded_lua = None
+
+        if 'bookmarks' in decoded_lua:
+            debug_print('calculating first and last bookmark dates')
+            bookmark_dates = [
+                datetime.strptime(
+                    bookmark['datetime'],
+                    '%Y-%m-%d %H:%M:%S'
+                ).replace(tzinfo=ZoneInfo('UTC'))
+                for bookmark in decoded_lua['bookmarks'].values()
+            ]
+
+            if len(bookmark_dates) > 0:
+                decoded_lua['calculated'] = {
+                    'first_bookmark': min(bookmark_dates),
+                    'last_bookmark': max(bookmark_dates),
+                }
 
         return decoded_lua
 
@@ -322,7 +341,9 @@ class KoreaderAction(InterfaceAction):
         updates = []
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
-            if new_value != metadata.get(key):
+            old_value = metadata.get(key)
+
+            if new_value != old_value:
                 updates.append(key)
                 metadata.set(key, new_value)
 
@@ -439,6 +460,7 @@ class KoreaderAction(InterfaceAction):
                 num_fail += 1
                 continue
 
+            debug_print('reading sidecar for ', book_uuid)
             keys_values_to_update = {}
 
             for column in COLUMNS:
@@ -469,6 +491,7 @@ class KoreaderAction(InterfaceAction):
 
                 # Transform value if required
                 if 'transform' in column:
+                    debug_print('transforming value for ', target)
                     value = column['transform'](value)
 
                 keys_values_to_update[target] = value
@@ -481,7 +504,7 @@ class KoreaderAction(InterfaceAction):
                     **result,
                     'book_uuid': book_uuid,
                     'sidecar_path': sidecar_path,
-                    'updated': keys_values_to_update,
+                    'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
             if success:

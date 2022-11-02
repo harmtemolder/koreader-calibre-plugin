@@ -619,6 +619,24 @@
       ],
       "table": null
     },
+    "in_tag_browser": {
+      "column": null,
+      "datatype": "text",
+      "display": {},
+      "is_category": false,
+      "is_csp": false,
+      "is_custom": false,
+      "is_editable": true,
+      "is_multiple": {},
+      "kind": "field",
+      "label": "in_tag_browser",
+      "name": null,
+      "rec_index": 39,
+      "search_terms": [
+        "in_tag_browser"
+      ],
+      "table": null
+    },
     "languages": {
       "category_sort": "lang_code",
       "column": "lang_code",
@@ -1354,7 +1372,7 @@
   },
   "virt_libs_hidden": [],
   "namespaced:FindDuplicatesPlugin:settings": {
-    "SchemaVersion": 1.6,
+    "SchemaVersion": 1.7,
     "authorExemptions": [],
     "bookExemptions": [],
     "lastLibraryCompare": ""
@@ -1506,5 +1524,21 @@
       "http://www.goodreads.com/shelf/show/to-read"
     ]
   },
-  "news_to_be_synced": []
+  "news_to_be_synced": [],
+  "tag_browser_category_order": [
+    "authors",
+    "languages",
+    "series",
+    "formats",
+    "publisher",
+    "rating",
+    "news",
+    "tags",
+    "identifiers",
+    "#gr_rating",
+    "#gr_shelf",
+    "#ko_md5",
+    "#read_location",
+    "#read_status"
+  ]
 }

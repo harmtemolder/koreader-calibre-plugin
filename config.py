@@ -72,30 +72,30 @@ COLUMNS = [{
     'type': 'text',
     'sidecar_property': ['summary', 'status'],
 }, {
-    'name': 'column_date_status_modified',
-    'label': 'Status modified date column:',
-    'tooltip': 'A “Date” column to store the date on which the book’s status\n'
-               'was last modified. (This is probably the date on which you\n'
-               'marked it as read.)',
+    'name': 'column_date_first_bookmark',
+    'label': 'First bookmark date column:',
+    'tooltip': 'A “Date” column to store the date on which the first\n'
+               'highlight or bookmark was made. (This is probably\n'
+               'around the time you started reading.)',
     'type': 'datetime',
-    'sidecar_property': ['summary', 'modified'],
+    'sidecar_property': ['calculated', 'first_bookmark'],
+}, {
+    'name': 'column_date_last_bookmark',
+    'label': 'Last bookmark date column:',
+    'tooltip': 'A “Date” column to store the date on which the last\n'
+               'highlight or bookmark was made. (This is probably\n'
+               'around the time you finished reading.)',
+    'type': 'datetime',
+    'sidecar_property': ['calculated', 'last_bookmark'],
 }, {
     'name': 'column_bookmarks',
     'label': 'Bookmarks column',
-    'tooltip': 'A “Long text” column to store your bookmarks.',
+    'tooltip': 'A “Long text” column to store your bookmarks and\n'
+               'highlights.',
     'type': 'comments',
     'sidecar_property': ['bookmarks'],
     'transform': clean_bookmarks,
 }, {
-# Ignore the sidecar's `highlight` property, because highlights are part of
-# `bookmarks` as well
-#     'name': 'column_highlights',
-#     'label': 'Highlights column',
-#     'tooltip': 'A “Long text” column to store your highlights.',
-#     'type': 'comments',
-#     'sidecar_property': ['highlight'],
-#     'transform': clean_highlights,
-# }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',
     'tooltip': 'A regular “Text” column to store the MD5 hash KOReader uses\n'
@@ -113,7 +113,13 @@ COLUMNS = [{
                '“Plain text”.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict
-    'transform': (lambda value: json.dumps(value, indent=2)),
+    'transform': (lambda d: json.dumps(
+        {k: d[k] for k in d if k != 'calculated'},
+        skipkeys=True,
+        indent=2,
+        default=str,
+        sort_keys=True
+    )),
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))

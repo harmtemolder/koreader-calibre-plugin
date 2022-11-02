@@ -138,6 +138,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.0-beta] - 2022-11-02
+
+### Added
+
+- Calculate first and last bookmark date columns
+
 ## [0.3.2-beta] - 2022-09-16
 
 ### Added
@@ -271,4 +277,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.3.0-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.0-beta.zip
 [0.3.1-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.1-beta.zip
 [0.3.2-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.2-beta.zip
+[0.4.0-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.4.0-beta.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree

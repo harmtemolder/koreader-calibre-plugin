@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pyqt6 = "*"
+pyqt5 = "*"
+lxml = "*"
 
 [dev-packages]
 css-parser = "*"
@@ -15,7 +18,6 @@ apsw = "*"
 lxml = "*"
 msgpack = "*"
 python-dateutil = "*"
-pyqt5 = "*"
 beautifulsoup4 = "*"
 markdown = "*"
 netifaces = "*"
