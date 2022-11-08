@@ -139,6 +139,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.1-beta] - 2022-11-08
+
+### Changed
+
+- Use calibre's built-in UTC timezone ([source](https://github.com/kovidgoyal/calibre/blob/0cecc77a22c2cc91bbb7a5b5b414804808f73976/src/calibre/utils/date.py#L14)), because `tzdata` isn't available on Windows (see [#13](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/13))
+
 ## [0.4.0-beta] - 2022-11-02
 
 ### Added
@@ -279,4 +285,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.3.1-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.1-beta.zip
 [0.3.2-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.3.2-beta.zip
 [0.4.0-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.4.0-beta.zip
+[0.4.1-beta]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree/main/item/releases/KOReader%20Sync%20v0.4.1-beta.zip
 [unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree

@@ -6,7 +6,7 @@ import io
 import json
 import re
 import sys
-from zoneinfo import ZoneInfo
+from calibre.utils.iso8601 import utc_tz
 
 from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
 from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
@@ -301,7 +301,7 @@ class KoreaderAction(InterfaceAction):
                 datetime.strptime(
                     bookmark['datetime'],
                     '%Y-%m-%d %H:%M:%S'
-                ).replace(tzinfo=ZoneInfo('UTC'))
+                ).replace(tzinfo=utc_tz)
                 for bookmark in decoded_lua['bookmarks'].values()
             ]
 

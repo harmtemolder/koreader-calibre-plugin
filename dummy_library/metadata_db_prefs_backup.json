@@ -5,72 +5,10 @@
   "grouped_search_terms": {},
   "tag_browser_hidden_categories": [
     "rating",
-    "#read_location",
-    "news"
+    "news",
+    "#read_location"
   ],
   "library_view books view state": {
-    "column_alignment": {
-      "#read_progress": "right",
-      "#read_status": "center",
-      "pubdate": "center",
-      "size": "center",
-      "timestamp": "center"
-    },
-    "column_positions": {
-      "#formats": 13,
-      "#gr_rating": 10,
-      "#gr_read_progress": 12,
-      "#gr_review": 11,
-      "#gr_shelf": 9,
-      "#ko_annotations": 15,
-      "#ko_md5": 16,
-      "#ko_sidecar": 17,
-      "#mm_annotations": 14,
-      "#read_first": 6,
-      "#read_last": 7,
-      "#read_location": 8,
-      "#read_progress": 5,
-      "#read_status": 4,
-      "authors": 1,
-      "languages": 24,
-      "last_modified": 23,
-      "ondevice": 0,
-      "pubdate": 22,
-      "publisher": 21,
-      "rating": 25,
-      "series": 3,
-      "size": 19,
-      "tags": 20,
-      "timestamp": 18,
-      "title": 2
-    },
-    "column_sizes": {
-      "#formats": 100,
-      "#gr_rating": 100,
-      "#gr_read_progress": 100,
-      "#gr_review": 100,
-      "#gr_shelf": 137,
-      "#ko_annotations": 100,
-      "#ko_md5": 100,
-      "#ko_sidecar": 100,
-      "#mm_annotations": 100,
-      "#read_first": 100,
-      "#read_last": 100,
-      "#read_location": 100,
-      "#read_progress": 100,
-      "#read_status": 109,
-      "authors": 214,
-      "languages": 0,
-      "last_modified": 0,
-      "pubdate": 0,
-      "publisher": 0,
-      "rating": 0,
-      "series": 441,
-      "size": 0,
-      "tags": 0,
-      "timestamp": 111,
-      "title": 397
-    },
     "hidden_columns": [
       "size",
       "rating",
@@ -80,11 +18,11 @@
       "last_modified",
       "languages"
     ],
-    "languages_injected": true,
     "last_modified_injected": true,
+    "languages_injected": true,
     "sort_history": [
       [
-        "date",
+        "timestamp",
         false
       ],
       [
@@ -98,8 +36,90 @@
       [
         "title",
         true
+      ],
+      [
+        "timestamp",
+        false
+      ],
+      [
+        "authors",
+        true
+      ],
+      [
+        "series",
+        true
+      ],
+      [
+        "title",
+        true
+      ],
+      [
+        "timestamp",
+        false
       ]
-    ]
+    ],
+    "column_positions": {
+      "ondevice": 0,
+      "title": 2,
+      "authors": 1,
+      "timestamp": 18,
+      "size": 19,
+      "rating": 25,
+      "tags": 20,
+      "series": 3,
+      "publisher": 21,
+      "pubdate": 22,
+      "last_modified": 23,
+      "languages": 24,
+      "#formats": 13,
+      "#gr_rating": 10,
+      "#gr_read_progress": 12,
+      "#gr_review": 11,
+      "#gr_shelf": 9,
+      "#ko_annotations": 15,
+      "#ko_md5": 16,
+      "#ko_sidecar": 17,
+      "#mm_annotations": 14,
+      "#read_first": 6,
+      "#read_last": 7,
+      "#read_location": 8,
+      "#read_progress": 5,
+      "#read_status": 4
+    },
+    "column_sizes": {
+      "title": 397,
+      "authors": 214,
+      "timestamp": 111,
+      "size": 0,
+      "rating": 0,
+      "tags": 0,
+      "series": 441,
+      "publisher": 0,
+      "pubdate": 0,
+      "last_modified": 0,
+      "languages": 0,
+      "#formats": 100,
+      "#gr_rating": 100,
+      "#gr_read_progress": 100,
+      "#gr_review": 100,
+      "#gr_shelf": 137,
+      "#ko_annotations": 100,
+      "#ko_md5": 100,
+      "#ko_sidecar": 100,
+      "#mm_annotations": 100,
+      "#read_first": 100,
+      "#read_last": 100,
+      "#read_location": 100,
+      "#read_progress": 100,
+      "#read_status": 109
+    },
+    "column_alignment": {
+      "#read_progress": "right",
+      "#read_status": "center",
+      "pubdate": "center",
+      "size": "center",
+      "timestamp": "center"
+    }
   },
   "field_metadata": {
     "#formats": {
