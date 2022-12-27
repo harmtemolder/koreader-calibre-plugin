@@ -26,6 +26,23 @@ __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 
+SUPPORTED_DEVICES = [
+    'FOLDER_DEVICE',
+    'KINDLE2',
+    'KOBO',
+    'KOBOTOUCH',
+    'KOBOTOUCHEXTENDED',
+    'POCKETBOOK622',
+    'POCKETBOOK626',
+    'SMART_DEVICE_APP',
+    'TOLINO',
+    'USER_DEFINED',
+    'POCKETBOOK632',
+]
+UNSUPPORTED_DEVICES = [
+    'MTP_DEVICE',
+]
+
 COLUMNS = [{
     'name': 'column_percent_read',
     'label': 'Percent read column (float):',
@@ -108,8 +125,8 @@ COLUMNS = [{
 }, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
-    'tooltip': 'A “Long text” column to store the raw contents of the\n'
-               'metadata sidecar, with “Interpret this column as” set to\n'
+    'tooltip': 'A “Long text” column to store the contents of the\n'
+               'metadata sidecar as JSON, with “Interpret this column as” set to\n'
                '“Plain text”.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict

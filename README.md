@@ -10,7 +10,9 @@ A calibre plugin to synchronize metadata from KOReader to calibre.
 
 [KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre's metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware (“Nickel”) and custom columns in calibre.
 
-Note that at the moment the sync is one-way—from the KOReader device to calibre—and only works for USB and [wireless](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection) devices. For the latter, you'll need [KOReader 2021.04 or newer](https://github.com/koreader/koreader/releases).
+Note that at the moment the sync is primarily one-way—from the KOReader device to calibre — and only works for USB and [wireless](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection) devices. For the latter, you'll need [KOReader 2021.04 or newer](https://github.com/koreader/koreader/releases).
+
+Pushing metadata from Calibre to KOReader currently works only for books which do not have KOReader sidecar files, and of course requires the raw metadata column to be mapped. The use-case is for e.g. setting up a new device, or if a book was removed from your device and you've now added it back. This has been tested for Calibre's Connect to Folder and Custom USB Device modes. It does not seem to work for the Kobo Touch device driver nor with wireless connections, but I (@charlesangus) find those don't communicate perfectly with Calibre/KOReader in any case... I haven't disabled it for other devices - it may be a quirk in my setup which is causing it to fail, and it may work fine for you.
 
 Releases will also be uploaded to [this plugin thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?p=4060141). If you are on there as well, please let me know what you think of the plugin in that thread.
 
@@ -41,7 +43,7 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
     - A “Date” column to store **the date on which the first highlight or bookmark was made**. (This is probably around the time you started reading.)
     - A “Date” column to store **the date on which the last highlight or bookmark was made**. (This is probably around the time you finished reading.)
     - A regular “Text” column to store the **MD5 hash** KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (“Progress sync” in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
-    - A “Long text” column to store the **raw contents of the metadata sidecar**, with “Interpret this column as” set to “Plain text”.
+    - A “Long text” column to store the **raw contents of the metadata sidecar**, with “Interpret this column as” set to “Plain text”. This is required to sync metadata back to KOReader sidecars.
 10. Add “KOReader Sync” to “main toolbar when a device is connected”, if it isn't there already.
 11. Right-click the “KOReader Sync” icon and “Configure”.
 12. Map the metadata you want to sync to the newly created calibre columns.
@@ -50,7 +52,9 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 ### Things to consider
 
-- The plugin overwrites existing metadata without asking. That usually isn’t a problem, because you will probably only add to KOReader’s metadata. But be aware that you might lose data in calibre if you’re not careful.
+- The plugin overwrites existing metadata in Calibre without asking. That usually isn’t a problem, because you will probably only add to KOReader’s metadata. But be aware that you might lose data in calibre if you’re not careful.
+- Pushing sidecars back to KOReader currently only happens for sidecars which are missing. For now, manually delete the `<bookname>.sdr` folder from the device before attempting to push the sidecars back to KOReader for any books you would like to overwrite the current metadata with Calibre's metadata.
+- When pushing missing sidecars to the device, no attempt is made to convert Calibre's metadata to account for changes in KOReader's sidecar format. Old metadata may work unpredictably if it's from a different version of KOReader.
 
 ### Supported devices
 
@@ -76,6 +80,7 @@ If you encounter any issues with the plugin, please submit them [here](https://g
 ## Acknowledgements
 
 - Multiple tweaks and bug fixes by [Glen Sawyer](https://git.sr.ht/~snelg)
+- Additional functionality by [Charles Taylor](https://github.com/charlesangus/)
 - Contains [SirAnthony's SLPP](https://github.com/SirAnthony/slpp) to parse Lua in Python.
 - Some code borrowed from--and heavily inspired by--the great [Kobo Utilities](https://www.mobileread.com/forums/showthread.php?t=215339) calibre plugin.
 
@@ -87,17 +92,11 @@ If you encounter any issues with the plugin, please submit them [here](https://g
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under “Preferences” > “Tweaks”, search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
 - I work in PyCharm, which offers a remote debugging server. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
-- The supported device drivers can be found in [the `supported_devices` list at line 387 in `action.py`](https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/action.py#L387). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
-
-### Downloading dependencies
-
-```shell
-make dependencies
-```
+- The supported device drivers can be found in [the `SUPPORTED_DEVICES` list in `config.py`](https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/config.py#L30). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
 
 ### Testing in calibre
 
-Make sure you have the dependencies. Then:
+Use make to load the plugin into calibre and launch it:
 
 ```shell
 make dev
@@ -136,6 +135,13 @@ All notable changes to this project will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5] - 2022-12-27
+
+### Changed
+
+- Add "Sync Missing Sidecars to KOReader" functionality
+- Vendor in slpp.py instead of adding it as a separate dependency to reduce fragility
 
 ## [0.4.1-beta] - 2022-11-08
 

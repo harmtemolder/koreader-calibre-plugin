@@ -4,6 +4,7 @@ from datetime import datetime
 from functools import partial
 import io
 import json
+import os
 import re
 import sys
 from calibre.utils.iso8601 import utc_tz
@@ -11,6 +12,8 @@ from calibre.utils.iso8601 import utc_tz
 from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
 from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
 from calibre_plugins.koreader.config import (
+    SUPPORTED_DEVICES,
+    UNSUPPORTED_DEVICES,
     COLUMNS,
     CONFIG,  # pylint: disable=import-error
 )
@@ -88,6 +91,17 @@ class KoreaderAction(InterfaceAction):
         self.qaction.triggered.connect(self.sync_to_calibre)
 
         # Right-click menu (already includes left-click action)
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Sync Missing Sidecars to KOReader',
+            'Sync Missing Sidecars to KOReader',
+            icon='config.png',
+            description='Where Calibre has a raw metadata entry but KOReader '
+                'does not have a sidecar file, push the metadata from Calibre '
+                'to a new sidecar file.',
+            triggered=self.sync_missing_sidecars_to_koreader
+        )
+
         self.qaction.menu().addSeparator()
 
         self.create_menu_action(
@@ -373,41 +387,20 @@ class KoreaderAction(InterfaceAction):
             'book_id': book_id,
         }
 
-    def sync_to_calibre(self):
-        """This plugin’s main purpose. It syncs the contents of
-        KOReader’s metadata sidecar files into calibre’s metadata.
+    def check_device(self, device):
+        """Return .
 
-        :return:
+        :param device: The connected device.
+        :return: False if device is specifically not supported,
+        otherwise True
         """
-        debug_print = partial(
-            module_debug_print,
-            'KoreaderAction:sync_to_calibre:'
-        )
-
-        supported_devices = [
-            'FOLDER_DEVICE',
-            'KINDLE2',
-            'KOBO',
-            'KOBOTOUCH',
-            'KOBOTOUCHEXTENDED',
-            'POCKETBOOK622',
-            'POCKETBOOK626',
-            'SMART_DEVICE_APP',
-            'TOLINO',
-            'USER_DEFINED',
-            'POCKETBOOK632',
-        ]
-        unsupported_devices = [
-            'MTP_DEVICE',
-        ]
-        device = self.get_connected_device()
 
         if not device:
-            return None
+            return False
 
         device_class = device.__class__.__name__
 
-        if device_class in unsupported_devices:
+        if device_class in UNSUPPORTED_DEVICES:
             debug_print('unsupported device, device_class = ', device_class)
             error_dialog(
                 self.gui,
@@ -420,8 +413,10 @@ class KoreaderAction(InterfaceAction):
                 show=True,
                 show_copy_button=False
             )
-            return None
-        elif device_class not in supported_devices:
+            return False
+        elif device_class in SUPPORTED_DEVICES:
+            return True
+        else:
             debug_print(
                 'not yet supported device, device_class = ',
                 device_class
@@ -438,6 +433,180 @@ class KoreaderAction(InterfaceAction):
                 show=True,
                 show_copy_button=False
             )
+            return True
+
+    def push_metadata_to_koreader_sidecar(self, book_uuid, path):
+        """Create a sidecar file for the given book.
+
+        :param book_uuid: Calibre's uuid for the book
+        :param path: path to sidecar file to create
+        :return: tuple of bool and result dict
+        """
+
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:push_metadata_to_koreader_sidecar:'
+        )
+
+        try:
+            db = self.gui.current_db.new_api
+            book_id = db.lookup_by_uuid(book_uuid)
+            debug_print(f"Book id is {book_id}")
+        except:
+            book_id = None
+
+        if not book_id:
+            debug_print('could not find {} in calibre’s library'.format(book_uuid))
+            return "failure", {
+                'result': f"Could not find uuid {book_uuid} in Calibre's library."
+            }
+
+        # Get the current metadata for the book from the library
+        metadata = db.get_metadata(book_id)
+        sidecar_metadata = metadata.get(CONFIG["column_sidecar"])
+        if not sidecar_metadata:
+            return "no_metadata", {
+                'result': f'No KOReader metadata for book_id {book_id}, no need to push.'
+            }
+        sidecar_dict = json.loads(sidecar_metadata)
+        sidecar_lua = lua.encode(sidecar_dict)
+        # not certain if tabs need to be replaced with spaces but it can't hurt
+        sidecar_lua = sidecar_lua.replace("\t", "    ")
+        # something is happening in the decoding/encoding which is replacing [1] with ["1"]
+        # which ofc breaks the settings file; this regex strips the "" marks
+        sidecar_lua = re.sub(r'\["([0-9])+"\]', r'[\1]', sidecar_lua)
+        sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {sidecar_lua}\n"
+        try:
+            os.makedirs(os.path.dirname(path))
+        except FileExistsError:
+            # dir exists, so we're fine
+            pass
+
+        with open(path, "w") as f:
+            debug_print(f"Writing to {path}")
+            f.write(sidecar_lua_formatted)
+ 
+        return "success", {
+            'result': 'success',
+            'book_id': book_id,
+        }
+
+    def sync_missing_sidecars_to_koreader(self):
+        """Push the content of Calibre's raw metadata column to KOReader
+        for any files which are missing in KOReader. Does not touch existing
+        metadata sidecars on KOReader.
+
+        Intended for e.g. setting up a new device and syncing to it for the first
+        time.
+
+        :return:
+        """
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:sync_missing_sidecars_to_koreader:'
+        )
+
+        if CONFIG["column_sidecar"] is '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'Raw metadata column not mapped, impossible to push metadata to sidecars',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+
+        device = self.get_connected_device()
+
+        if not self.check_device(device):
+            return None
+
+        sidecar_paths = self.get_paths(device)
+        sidecar_paths_exist = {}
+        sidecar_paths_not_exist = {}
+        for book_uuid, path in sidecar_paths.items():
+            if os.path.exists(path):
+                sidecar_paths_exist[book_uuid] = path
+            else:
+                sidecar_paths_not_exist[book_uuid] = path
+        debug_print(
+            "Sidecars not present on device:",
+            "\n".join(sidecar_paths_not_exist.values())
+        )
+
+        results = []
+        num_success = 0
+        num_no_metadata = 0
+        num_fail = 0
+        for book_uuid, path in sidecar_paths_not_exist.items():
+            result, details = self.push_metadata_to_koreader_sidecar(book_uuid, path)
+            if result is "success":        
+                results.append(
+                    {
+                        **details,
+                        'book_uuid': book_uuid,
+                        'sidecar_path': path,
+                    }
+                )
+                num_success += 1
+            elif result is "failure":        
+                results.append(
+                    {
+                        **details,
+                        'book_uuid': book_uuid,
+                        'sidecar_path': path,
+                    }
+                )
+                num_fail += 1  
+            elif result is "no_metadata":
+                num_no_metadata += 1
+
+        if num_success > 0 and num_fail > 0:
+            warning_dialog(
+                self.gui,
+                'Results',
+                f'Metadata pushed to sidecars successfully for {num_success}.\n'
+                f'Metadata push to sidecars failed for {num_fail}.\n'
+                f'No metadata, and therefore no attempt made for {num_no_metadata}.',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        elif num_success > 0:  # and num_fail == 0
+            info_dialog(
+                self.gui,
+                'Success',
+                f'Metadata pushed successfully for all books ({num_success}). See below for details.\n'
+                f'No metadata, and therefore no attempt made for {num_no_metadata}.',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        else:  # not num_success
+            error_dialog(
+                self.gui,
+                'Failure',
+                'No metadata could be pushed to KOReader.',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+
+    def sync_to_calibre(self):
+        """This plugin’s main purpose. It syncs the contents of
+        KOReader’s metadata sidecar files into calibre’s metadata.
+
+        :return:
+        """
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:sync_to_calibre:'
+        )
+
+        device = self.get_connected_device()
+
+        if not self.check_device(device):
+            return None
 
         sidecar_paths = self.get_paths(device)
 
