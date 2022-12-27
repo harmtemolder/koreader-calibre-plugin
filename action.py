@@ -703,20 +703,19 @@ class KoreaderAction(InterfaceAction):
             else:
                 num_fail += 1
 
+        results_message = (
+            f'Attempted to sync {len(sidecar_paths)}.\n'
+            f'Metadata sync succeeded for {num_success}.\n'
+            f'Metadata sync failed for {num_fail}.\n'
+            f'(Failures may just be because you have not opened every book in '
+            f'KOReader yet. See below for details.'
+        )
+
         if num_success > 0 and num_fail > 0:
             warning_dialog(
                 self.gui,
-                'Metadata for some books could not be synced',
-                'Metadata was synced successfully for {}, but failed for {}. '
-                'This might just be because you have not opened every book in '
-                'KOReader yet. See below for details.'.format(
-                    '{} book{}'.format(
-                        num_success, 's' if num_success > 1 else ''
-                    ),
-                    '{} other{}'.format(
-                        num_fail, 's' if num_fail > 1 else ''
-                    )
-                ),
+                'Results',
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
@@ -725,11 +724,7 @@ class KoreaderAction(InterfaceAction):
             info_dialog(
                 self.gui,
                 'Metadata synced for all books',
-                'Metadata synced for {}. See below for details.'.format(
-                    '{} book{}'.format(
-                        num_success, 's' if num_success > 1 else ''
-                    )
-                ),
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
@@ -738,7 +733,7 @@ class KoreaderAction(InterfaceAction):
             error_dialog(
                 self.gui,
                 'No metadata could be synced',
-                'No metadata could be synced. See below for details.',
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
