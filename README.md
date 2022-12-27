@@ -136,11 +136,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.5] - 2022-12-27
+## [0.5.1-beta] - 2022-12-27
+
+### Added
+
+- Add support for Date Synced column (stores date of last sync from KOReader to Calibre)
+- Add support for Date Modified column (stores date modified of KOReader Sidecar)
 
 ### Changed
 
+- Standardized results message format
+- code cleanup to pass linting
+
+### Fixed
+
+- Error in results message
+- Fix error in debug_print definition
+
+## [0.5.0-beta] - 2022-12-27
+
+### Added
+
 - Add "Sync Missing Sidecars to KOReader" functionality
+
+### Changed
+
 - Vendor in slpp.py instead of adding it as a separate dependency to reduce fragility
 
 ## [0.4.1-beta] - 2022-11-08
