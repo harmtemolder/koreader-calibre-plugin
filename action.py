@@ -544,7 +544,7 @@ class KoreaderAction(InterfaceAction):
         )
 
         results = []
-        num_candidates = len(sidecar_paths_exist)
+        num_candidates = len(sidecar_paths_not_exist)
         num_success = 0
         num_no_metadata = 0
         num_fail = 0
