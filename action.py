@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""KOReader Sync Plugin for Calibre."""
+
 from datetime import datetime
 from functools import partial
 import io
@@ -7,32 +9,33 @@ import json
 import os
 import re
 import sys
-from calibre.utils.iso8601 import utc_tz, local_tz
 
-from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
-from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
+from PyQt5.Qt import QUrl
+from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
     UNSUPPORTED_DEVICES,
     COLUMNS,
-    CONFIG,  # pylint: disable=import-error
+    CONFIG,
 )
 from calibre_plugins.koreader import (
     DEBUG,
     DRY_RUN,
     PYDEVD,
-    KoreaderSync,  # pylint: disable=import-error
+    KoreaderSync,
 )
-from calibre.gui2.dialogs.message_box import MessageBox  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.gui2.actions import InterfaceAction  # pylint: disable=no-name-in-module, disable=import-error
+
+from calibre.utils.iso8601 import utc_tz, local_tz
+from calibre.gui2.dialogs.message_box import MessageBox
+from calibre.gui2.actions import InterfaceAction
 from calibre.gui2 import (
     error_dialog,
     warning_dialog,
     info_dialog,
-    open_url,  # pylint: disable=no-name-in-module, disable=import-error
+    open_url,
 )
-from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.constants import numeric_version
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -49,7 +52,7 @@ if DEBUG and PYDEVD:
             # '/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg'  # macOS
             '/opt/pycharm-professional/debug-eggs/pydevd-pycharm.egg'  # Manjaro Linux
         )
-        import pydevd_pycharm  # pylint: disable=import-error
+        import pydevd_pycharm
 
         pydevd_pycharm.settrace(
             'localhost', stdoutToServer=True, stderrToServer=True,
@@ -79,12 +82,12 @@ class KoreaderAction(InterfaceAction):
         debug_print('start')
 
         base = self.interface_action_base_plugin
-        self.version = '{} (v{}.{}.{})'.format(base.name, *base.version)
+        self.version = f'{base.name} (v{".".join(map(str, base.version))})'
 
         # Overwrite icon with actual KOReader logo
-        icon = get_icons(
+        icon = get_icons( # pylint: disable=undefined-variable
             'images/icon.png'
-        )  # pylint: disable=undefined-variable
+        )
         self.qaction.setIcon(icon)
 
         # Left-click action
@@ -148,16 +151,16 @@ class KoreaderAction(InterfaceAction):
     def show_about(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_about:')
         debug_print('start')
-        text = get_resources('about.txt').decode(
+        text = get_resources('about.txt').decode( # pylint: disable=undefined-variable
             'utf-8'
-        )  # pylint: disable=undefined-variable
-        icon = get_icons(
+        )
+        icon = get_icons( # pylint: disable=undefined-variable
             'images/icon.png'
-        )  # pylint: disable=undefined-variable
+        )
 
         about_dialog = MessageBox(
             MessageBox.INFO,
-            'About {}'.format(self.version),
+            f'About {self.version}',
             text,
             det_msg='',
             q_icon=icon,
@@ -173,7 +176,6 @@ class KoreaderAction(InterfaceAction):
             'KoreaderAction:apply_settings:'
         )
         debug_print('start')
-        pass
 
     def get_connected_device(self):
         """Tries to get the connected device, if any
@@ -244,15 +246,13 @@ class KoreaderAction(InterfaceAction):
 
         paths = {
             book.uuid: re.sub(
-                '\.(\w+)$', '.sdr/metadata.\\1.lua', book.path
+                r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
             )
             for book in device.books()
         }
 
         debug_print(
-            'generated {} path(s) to sidecar Lua files:\n\t'.format(
-                len(paths)
-            ),
+            f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
             '\n\t'.join(paths.values())
         )
 
@@ -286,7 +286,7 @@ class KoreaderAction(InterfaceAction):
                 debug_print('could not decode ', contents)
                 return None
 
-            debug_print('parsing {}'.format(path))
+            debug_print(f'parsing {path}')
             parsed_contents = self.parse_sidecar_lua(decoded_contents)
             parsed_contents['calculated']['date_sidecar_modified'] = datetime.fromtimestamp(
                 os.path.getmtime(path)).replace(tzinfo=local_tz
@@ -350,7 +350,7 @@ class KoreaderAction(InterfaceAction):
             book_id = None
 
         if not book_id:
-            debug_print('could not find {} in calibre’s library'.format(uuid))
+            debug_print(f'could not find {uuid} in calibre’s library')
             return False, {'result': 'could not find uuid in calibre’s library'}
 
         # Get the current metadata for the book from the library
@@ -414,10 +414,8 @@ class KoreaderAction(InterfaceAction):
             error_dialog(
                 self.gui,
                 'Device not supported',
-                'Devices of the type {} are not supported by this plugin. I '
-                'have tried to get it working, but couldn’t. Sorry.'.format(
-                    device_class
-                ),
+                f'Devices of the type {device_class} are not supported by this plugin. I '
+                f'have tried to get it working, but couldn’t. Sorry.',
                 det_msg='',
                 show=True,
                 show_copy_button=False
@@ -433,11 +431,10 @@ class KoreaderAction(InterfaceAction):
             warning_dialog(
                 self.gui,
                 'Device not yet supported',
-                'Devices of the type {} are not yet supported by this plugin. '
-                'Please check if there already is a feature request for this '
-                '<a href="https://todo.sr.ht/~harmtemolder/koreader-calibre'
-                '-plugin">here</a>. If not, feel free to create '
-                'one. I\'ll try to sync anyway.'.format(device_class),
+                f'Devices of the type {device_class} are not yet supported by this plugin. '
+                f'Please check if there already is a feature request for this '
+                f'<a href="https://github.com/harmtemolder/koreader-calibre-plugin/issues">'
+                f'here</a>. If not, feel free to create one. I\'ll try to sync anyway.',
                 det_msg='',
                 show=True,
                 show_copy_button=False
@@ -465,7 +462,7 @@ class KoreaderAction(InterfaceAction):
             book_id = None
 
         if not book_id:
-            debug_print('could not find {} in calibre’s library'.format(book_uuid))
+            debug_print(f'could not find {book_uuid} in calibre’s library')
             return "failure", {
                 'result': f"Could not find uuid {book_uuid} in Calibre's library."
             }
@@ -491,10 +488,10 @@ class KoreaderAction(InterfaceAction):
             # dir exists, so we're fine
             pass
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             debug_print(f"Writing to {path}")
             f.write(sidecar_lua_formatted)
- 
+
         return "success", {
             'result': 'success',
             'book_id': book_id,
@@ -550,7 +547,7 @@ class KoreaderAction(InterfaceAction):
         num_fail = 0
         for book_uuid, path in sidecar_paths_not_exist.items():
             result, details = self.push_metadata_to_koreader_sidecar(book_uuid, path)
-            if result is "success":        
+            if result is "success":
                 num_success += 1
                 results.append(
                     {
@@ -559,7 +556,7 @@ class KoreaderAction(InterfaceAction):
                         'sidecar_path': path,
                     }
                 )
-            elif result is "failure":        
+            elif result is "failure":
                 num_fail += 1
                 results.append(
                     {
@@ -662,18 +659,14 @@ class KoreaderAction(InterfaceAction):
                     # No column mapped, so do not sync
                     continue
 
-                property = column['sidecar_property']
+                sidecar_property = column['sidecar_property']
                 value = sidecar_contents
 
-                for subproperty in property:
+                for subproperty in sidecar_property:
                     if subproperty in value:
                         value = value[subproperty]
                     else:
-                        debug_print(
-                            'subproperty "{}" not found in value'.format(
-                                subproperty
-                            )
-                        )
+                        debug_print(f'subproperty "{subproperty}" not found in value')
                         value = None
                         break
 

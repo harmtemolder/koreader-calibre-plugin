@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+"""Config for KOReader Sync plugin for Calibre."""
+
 import math
 import os
 import json
 from functools import partial
 
-from PyQt5.Qt import (  # pylint: disable=no-name-in-module
+from PyQt5.Qt import (
     QComboBox,
     QGridLayout,
     QHBoxLayout,
@@ -15,11 +17,11 @@ from PyQt5.Qt import (  # pylint: disable=no-name-in-module
     Qt,
 )
 
-from PyQt5.QtGui import QPixmap   # pylint: disable=no-name-in-module
-from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.utils.config import JSONConfig  # pylint: disable=no-name-in-module, disable=import-error
-from calibre_plugins.koreader import clean_bookmarks  # pylint: disable=import-error
+from PyQt5.QtGui import QPixmap
+from calibre.constants import numeric_version
+from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.utils.config import JSONConfig
+from calibre_plugins.koreader import clean_bookmarks
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -152,8 +154,8 @@ COLUMNS = [{
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
-for column in COLUMNS:
-    CONFIG.defaults[column['name']] = ''
+for this_column in COLUMNS:
+    CONFIG.defaults[this_column['name']] = ''
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
@@ -174,7 +176,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Add icon and title
         title_layout = TitleLayout(
-            self, 'images/icon.png', 'Configure {}'.format(self.action.version))
+            self,
+            'images/icon.png',
+            f'Configure {self.action.version}',
+        )
         layout.addLayout(title_layout)
 
         # Add custom column dropdowns
@@ -210,7 +215,7 @@ class TitleLayout(QHBoxLayout):
         self.addWidget(icon_label)
 
         # Add title
-        title_label = QLabel('<h2>{}</h2>'.format(title), parent)
+        title_label = QLabel(f'<h2>{title}</h2>', parent)
         self.addWidget(title_label)
 
         # Add empty space
@@ -288,8 +293,10 @@ class CustomColumnsLayout(QGridLayout):
 
 
 class CustomColumnComboBox(QComboBox):
-    def __init__(self, parent, custom_columns={}, selected_column=''):
+    def __init__(self, parent, custom_columns=None, selected_column=''):
         QComboBox.__init__(self, parent)
+        if custom_columns is None:
+            custom_columns = {}
         self.populate_combo(custom_columns, selected_column)
 
     def populate_combo(self, custom_columns, selected_column):
@@ -300,7 +307,7 @@ class CustomColumnComboBox(QComboBox):
 
         for key in sorted(custom_columns.keys()):
             self.column_names.append(key)
-            display_name = '{} ({})'.format(custom_columns[key]['name'], key)
+            display_name = f'{custom_columns[key]["name"]} ({key})'
             self.addItem(display_name)
             if key == selected_column:
                 selected_idx = len(self.column_names) - 1
