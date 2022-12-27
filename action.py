@@ -395,6 +395,11 @@ class KoreaderAction(InterfaceAction):
         otherwise True
         """
 
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:check_device:'
+        )
+
         if not device:
             return False
 
