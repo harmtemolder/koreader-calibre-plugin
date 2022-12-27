@@ -544,21 +544,14 @@ class KoreaderAction(InterfaceAction):
         )
 
         results = []
+        num_candidates = len(sidecar_paths_exist)
         num_success = 0
         num_no_metadata = 0
         num_fail = 0
         for book_uuid, path in sidecar_paths_not_exist.items():
             result, details = self.push_metadata_to_koreader_sidecar(book_uuid, path)
             if result is "success":        
-                results.append(
-                    {
-                        **details,
-                        'book_uuid': book_uuid,
-                        'sidecar_path': path,
-                    }
-                )
                 num_success += 1
-            elif result is "failure":        
                 results.append(
                     {
                         **details,
@@ -566,36 +559,56 @@ class KoreaderAction(InterfaceAction):
                         'sidecar_path': path,
                     }
                 )
-                num_fail += 1  
+            elif result is "failure":        
+                num_fail += 1
+                results.append(
+                    {
+                        **details,
+                        'book_uuid': book_uuid,
+                        'sidecar_path': path,
+                    }
+                )
             elif result is "no_metadata":
                 num_no_metadata += 1
+                results.append(
+                    {
+                        **details,
+                        'book_uuid': book_uuid,
+                        'sidecar_path': path,
+                    }
+                )
+
+        results_message = (
+            f'{num_candidates} books on device without sidecars.\n'
+            f'Sidecar creation succeeded for {num_success}.\n'
+            f'Sidecar creation failed for {num_fail}.\n'
+            f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
+            f'See below for details.'
+        )
 
         if num_success > 0 and num_fail > 0:
             warning_dialog(
                 self.gui,
                 'Results',
-                f'Metadata pushed to sidecars successfully for {num_success}.\n'
-                f'Metadata push to sidecars failed for {num_fail}.\n'
-                f'No metadata, and therefore no attempt made for {num_no_metadata}.',
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
-        elif num_success > 0:  # and num_fail == 0
+        elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
             info_dialog(
                 self.gui,
                 'Success',
-                f'Metadata pushed successfully for all books ({num_success}). See below for details.\n'
-                f'No metadata, and therefore no attempt made for {num_no_metadata}.',
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
-        else:  # not num_success
+        else:
             error_dialog(
                 self.gui,
                 'Failure',
-                'No metadata could be pushed to KOReader.',
+                results_message,
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
