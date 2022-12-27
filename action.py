@@ -7,7 +7,7 @@ import json
 import os
 import re
 import sys
-from calibre.utils.iso8601 import utc_tz
+from calibre.utils.iso8601 import utc_tz, local_tz
 
 from PyQt5.Qt import QUrl  # pylint: disable=no-name-in-module
 from calibre_plugins.koreader.slpp import slpp as lua  # pylint: disable=import-error
@@ -288,6 +288,10 @@ class KoreaderAction(InterfaceAction):
 
             debug_print('parsing {}'.format(path))
             parsed_contents = self.parse_sidecar_lua(decoded_contents)
+            parsed_contents['calculated']['date_sidecar_modified'] = datetime.fromtimestamp(
+                os.path.getmtime(path)).replace(tzinfo=local_tz
+                )
+            parsed_contents['calculated']['date_synced'] = datetime.now().replace(tzinfo=local_tz)
 
         return parsed_contents
 

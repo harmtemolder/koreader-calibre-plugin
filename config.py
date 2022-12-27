@@ -123,6 +123,18 @@ COLUMNS = [{
     'type': 'text',
     'sidecar_property': ['partial_md5_checksum'],
 }, {
+    'name': 'column_date_synced',
+    'label': 'Date Synced column:',
+    'tooltip': 'A "Date" column to store when the last sync was performed.',
+    'type': 'datetime',
+    'sidecar_property': ['calculated', 'date_synced'],
+}, {
+    'name': 'column_date_sidecar_modified',
+    'label': 'Date Modified column:',
+    'tooltip': 'A "Date" column to store when the sidecar file was last modified.',
+    'type': 'datetime',
+    'sidecar_property': ['calculated', 'date_sidecar_modified'],
+}, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
     'tooltip': 'A “Long text” column to store the contents of the\n'
