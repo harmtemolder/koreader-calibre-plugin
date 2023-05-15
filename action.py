@@ -288,9 +288,13 @@ class KoreaderAction(InterfaceAction):
 
             debug_print(f'parsing {path}')
             parsed_contents = self.parse_sidecar_lua(decoded_contents)
-            parsed_contents['calculated']['date_sidecar_modified'] = datetime.fromtimestamp(
-                os.path.getmtime(path)).replace(tzinfo=local_tz
-                )
+            parsed_contents['calculated'] = {}
+            try:
+                parsed_contents['calculated']['date_sidecar_modified'] = datetime.fromtimestamp(
+                    os.path.getmtime(path)).replace(tzinfo=local_tz
+                    )
+            except:
+                pass
             parsed_contents['calculated']['date_synced'] = datetime.now().replace(tzinfo=local_tz)
 
         return parsed_contents
@@ -355,6 +359,51 @@ class KoreaderAction(InterfaceAction):
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
+
+        # Check config to sync only if data is more recent
+        if CONFIG['checkbox_sync_if_more_recent']:
+            date_modified_key = CONFIG['column_date_sidecar_modified']
+            current_date_modified = metadata.get(date_modified_key)
+            new_date_modified = keys_values_to_update.get(date_modified_key)
+            if current_date_modified is not None and new_date_modified is not None:
+                if current_date_modified.timestamp() >= new_date_modified.timestamp():
+                    debug_print(f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
+                    return False, {
+                        'result': 'Data in calibre is newer. No sync.',
+                        'book_id': book_id,
+                    }
+            # Fallback if no 'Date Modified Column' is set or not obtainable (wireless)
+            elif new_date_modified is None:
+                read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+                current_read_percent = metadata.get(read_percent_key)
+                new_read_percent = keys_values_to_update.get(read_percent_key)
+                if current_read_percent is not None and new_read_percent is not None:
+                    if current_read_percent >= new_read_percent:
+                        debug_print(f'book {book_id} read_percent {new_read_percent} lower than current {current_read_percent}')
+                        return False, {
+                            'result': 'Read Percent is lower or equal to the one stored in calibre. No sync.',
+                            'book_id': book_id,
+                        }
+                elif current_read_percent is not None and new_read_percent is None:
+                    debug_print(f'book {book_id} read_percent is None but existing is {current_read_percent}')
+                    return False, {
+                        'result': 'No new read percent found. No sync.',
+                        'book_id': book_id,
+                    }
+
+        # Check config to sync only if the book is not yet finished
+        if CONFIG['checkbox_no_sync_if_finished']:
+            read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+            current_read_percent = metadata.get(read_percent_key)
+            status_key = CONFIG['column_status']
+            current_status = metadata.get(status_key)
+            if current_read_percent is not None and current_read_percent >= 100 \
+            or current_status is not None and current_status == "complete":
+                debug_print(f'book {book_id} was already finished')
+                return False, {
+                    'result': 'Book already finished. No sync.',
+                    'book_id': book_id,
+                }
 
         updates = []
         # Update that metadata locally
