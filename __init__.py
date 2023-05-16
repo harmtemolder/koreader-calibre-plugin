@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""KOReader Sync Plugin for Calibre."""
+
 import os
 from functools import partial
 
@@ -44,39 +46,37 @@ class KoreaderSync(InterfaceActionBase):
             from calibre_plugins.koreader.config import \
                 ConfigWidget  # pylint: disable=import-error, disable=import-outside-toplevel
             return ConfigWidget(self.actual_plugin_)
+        return None
 
     def save_settings(self, config_widget):
         config_widget.save_settings()
 
 
-def clean_bookmarks(input):
+def clean_bookmarks(bookmarks):
     """Transforms KOReader's bookmark metadata into text that can be stored
     in calibre. I assume that all bookmarks have a `notes` attribute, which I
     use as the main text of the bookmark. All other attributes are stored in a
     HTML comment.
 
-    :param input: dict with numbered keys and bookmark dict values
+    :param bookmarks: dict with numbered keys and bookmark dict values
     :return: Markdown-formatted str of the bookmarks
     """
     debug_print = partial(root_debug_print, 'clean_bookmarks:')
 
     output = ''
 
-    for k in input:
-        bookmark = input[k]
+    for k in bookmarks:
+        bookmark = bookmarks[k]
         if not 'notes' in bookmark:
             debug_print('bookmark does not have `notes`', bookmark)
             continue
 
-        output += '- {}'.format(bookmark.pop('notes'))
+        output += f'- {bookmark.pop("notes")}'
 
         if len(bookmark) > 0:
             output += ' <!-- '
             for attr in bookmark:
-                output += '{}: {}, '.format(
-                    attr,
-                    bookmark[attr]
-                )
+                output += f'{attr}: {bookmark[attr]}, '
 
             output = output[:-2] + ' -->'
 
