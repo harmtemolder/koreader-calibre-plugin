@@ -3,11 +3,11 @@
 import os
 from functools import partial
 
-from calibre.constants import DEBUG as _DEBUG  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.constants import numeric_version  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.customize import InterfaceActionBase  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.devices.usbms.driver import debug_print as root_debug_print  # pylint: disable=no-name-in-module, disable=import-error
-from calibre.utils.config import JSONConfig  # pylint: disable=no-name-in-module, disable=import-error
+from calibre.constants import DEBUG as _DEBUG
+from calibre.constants import numeric_version
+from calibre.customize import InterfaceActionBase
+from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.utils.config import JSONConfig
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'

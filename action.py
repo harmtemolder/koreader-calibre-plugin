@@ -85,7 +85,7 @@ class KoreaderAction(InterfaceAction):
         self.version = f'{base.name} (v{".".join(map(str, base.version))})'
 
         # Overwrite icon with actual KOReader logo
-        icon = get_icons( # pylint: disable=undefined-variable
+        icon = get_icons(
             'images/icon.png'
         )
         self.qaction.setIcon(icon)
@@ -151,10 +151,10 @@ class KoreaderAction(InterfaceAction):
     def show_about(self):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_about:')
         debug_print('start')
-        text = get_resources('about.txt').decode( # pylint: disable=undefined-variable
+        text = get_resources('about.txt').decode(
             'utf-8'
         )
-        icon = get_icons( # pylint: disable=undefined-variable
+        icon = get_icons(
             'images/icon.png'
         )
 
