@@ -208,7 +208,7 @@ class TitleLayout(QHBoxLayout):
         # Add icon
         icon_label = QLabel(parent)
         pixmap = QPixmap()
-        pixmap.loadFromData(get_resources(icon))  # pylint: disable=undefined-variable
+        pixmap.loadFromData(get_resources(icon))
         icon_label.setPixmap(pixmap)
         icon_label.setMaximumSize(64, 64)
         icon_label.setScaledContents(True)
