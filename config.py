@@ -85,12 +85,21 @@ COLUMNS = [{
     'sidecar_property': ['summary', 'note'],
 }, {
     'name': 'column_status',
-    'label': 'Reading status column:',
+    'label': 'Reading status column (text):',
     'tooltip': 'A regular “Text” column to store the reading status of the\n'
                'book, as entered on the book status page (“Finished”,\n'
                '“Reading”, “On hold”).',
     'type': 'text',
     'sidecar_property': ['summary', 'status'],
+}, {
+    'name': 'column_status_bool',
+    'label': 'Reading status column (yes/no):',
+    'tooltip': 'A regular “yes/no” column to store the reading status of the\n'
+               'book, as entered on the book status page (“complete”,\n'
+               '“reading”).',
+    'type': 'bool',
+    'sidecar_property': ['summary', 'status'],
+    'transform': (lambda val: bool(val == 'complete')),
 }, {
     'name': 'column_date_first_bookmark',
     'label': 'First bookmark date column:',
@@ -229,7 +238,7 @@ class TitleLayout(QHBoxLayout):
         # Add icon
         icon_label = QLabel(parent)
         pixmap = QPixmap()
-        pixmap.loadFromData(get_resources(icon))  # pylint: disable=undefined-variable
+        pixmap.loadFromData(get_resources(icon))
         icon_label.setPixmap(pixmap)
         icon_label.setMaximumSize(64, 64)
         icon_label.setScaledContents(True)
