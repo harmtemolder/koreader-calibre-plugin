@@ -9,6 +9,7 @@ from functools import partial
 
 from PyQt5.Qt import (
     QComboBox,
+    QCheckBox,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -161,10 +162,23 @@ COLUMNS = [{
         sort_keys=True
     )),
 }]
+CHECKBOXES = [{
+    'name': 'checkbox_sync_if_more_recent',
+    'label': 'Sync only if changes are more recent:',
+    'tooltip': 'Only sync book only if the metadata is more recent.\n'
+               'Requires "Date Modified Column" or "Percent read column" to be synced',
+}, {
+    'name': 'checkbox_no_sync_if_finished',
+    'label': 'No sync if book has already been finished:',
+    'tooltip': 'Does not sync book if it has already been finished.\n'
+               'Requires "Percent read column" or "Reading status column" to be synced',
+}]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 for this_column in COLUMNS:
     CONFIG.defaults[this_column['name']] = ''
+for this_checkbox in CHECKBOXES:
+    CONFIG.defaults[this_checkbox['name']] = False
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
@@ -195,6 +209,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         custom_columns_layout = CustomColumnsLayout(self)
         layout.addLayout(custom_columns_layout)
 
+        # Add custom checkboxes
+        custom_checkbox_layout = CustomCheckboxLayout(self)
+        layout.addLayout(custom_checkbox_layout)
+
     def save_settings(self):
         debug_print = partial(module_debug_print,
                               'ConfigWidget:save_settings:')
@@ -202,6 +220,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         for column in COLUMNS:
             CONFIG[column['name']] = column['combo'].get_selected_column()
+
+        for checkbox in CHECKBOXES:
+            CONFIG[checkbox['name']] = checkbox['checkbox'].checkState() == Qt.Checked
 
         debug_print('new CONFIG = ', CONFIG)
 
@@ -300,6 +321,26 @@ class CustomColumnsLayout(QGridLayout):
 
         return rating_columns
 
+class CustomCheckboxLayout(QGridLayout):
+    """A sub-layout to the main layout used in ConfigWidget that contains a
+    grid of checkboxes for various settings.
+    """
+
+    def __init__(self, parent):
+        QGridLayout.__init__(self)
+        self.action = parent.action
+        row = 1
+
+        # Add custom cehckboxes
+        for checkbox in CHECKBOXES:
+            label = QLabel(checkbox['label'], parent)
+            label.setToolTip(checkbox['tooltip'])
+            checkbox['checkbox'] = QCheckBox()
+            checkbox['checkbox'].setCheckState(Qt.Checked if CONFIG[checkbox['name']] else Qt.Unchecked)
+            label.setBuddy(checkbox['checkbox'])
+            self.addWidget(label, row, 1, Qt.AlignRight)
+            self.addWidget(checkbox['checkbox'], row, 2, 1, 2)
+            row += 1
 
 class CustomColumnComboBox(QComboBox):
     def __init__(self, parent, custom_columns=None, selected_column=''):
