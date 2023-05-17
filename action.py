@@ -417,9 +417,15 @@ class KoreaderAction(InterfaceAction):
                     if new_read_percent > 0 and new_read_percent < 100 and current_status != "reading":
                         debug_print(f'book {book_id} set column_status to reading')
                         keys_values_to_update[status_key] = "reading"
+                        status_bool_key = CONFIG['column_status_bool']
+                        if status_bool_key:
+                            keys_values_to_update[status_bool_key] = False
                     elif new_read_percent >= 100 and current_status != "complete":
                         debug_print(f'book {book_id} set column_status to complete')
                         keys_values_to_update[status_key] = "complete"
+                        status_bool_key = CONFIG['column_status_bool']
+                        if status_bool_key:
+                            keys_values_to_update[status_bool_key] = True
 
         updates = []
         # Update that metadata locally
