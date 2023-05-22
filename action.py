@@ -38,7 +38,7 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
 
 __license__ = 'GNU GPLv3'
-__copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
+__copyright__ = '2023, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 if numeric_version >= (5, 5, 0):
@@ -65,7 +65,7 @@ if DEBUG and PYDEVD:
 
 class KoreaderAction(InterfaceAction):
     name = KoreaderSync.name
-    action_spec = (name, 'copy-to-library.png', KoreaderSync.description, None)
+    action_spec = (name, 'edit-redo.png', KoreaderSync.description, None)
     action_add_menu = True
     action_menu_clone_qaction = 'Sync from KOReader'
     dont_add_to = frozenset(
@@ -96,12 +96,12 @@ class KoreaderAction(InterfaceAction):
         # Right-click menu (already includes left-click action)
         self.create_menu_action(
             self.qaction.menu(),
-            'Sync Missing Sidecars to KOReader',
-            'Sync Missing Sidecars to KOReader',
-            icon='config.png',
-            description='Where Calibre has a raw metadata entry but KOReader '
-                'does not have a sidecar file, push the metadata from Calibre '
-                'to a new sidecar file.',
+            'Sync missing to KOReader',
+            'Sync missing to KOReader',
+            icon='edit-undo.png',
+            description='If calibre has an entry in the "Raw sidecar column", '
+                        'but KOReader does not have a sidecar file, push the '
+                        'metadata from calibre to a new sidecar file.',
             triggered=self.sync_missing_sidecars_to_koreader
         )
 
@@ -123,7 +123,7 @@ class KoreaderAction(InterfaceAction):
             'Readme for KOReader Sync',
             'Readme',
             icon='dialog_question.png',
-            description='About KOReader Sync',
+            description='Readme for KOReader Sync',
             triggered=self.show_readme
         )
 
@@ -143,8 +143,7 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
-            'https://git.sr.ht/~harmtemolder/koreader-calibre'
-            '-plugin#koreader-calibre-plugin'
+            'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
         )
         open_url(readme_url)
 
@@ -583,7 +582,7 @@ class KoreaderAction(InterfaceAction):
             'KoreaderAction:sync_missing_sidecars_to_koreader:'
         )
 
-        if CONFIG["column_sidecar"] is '':
+        if CONFIG["column_sidecar"] == '':
             error_dialog(
                 self.gui,
                 'Failure',
@@ -618,7 +617,7 @@ class KoreaderAction(InterfaceAction):
         num_fail = 0
         for book_uuid, path in sidecar_paths_not_exist.items():
             result, details = self.push_metadata_to_koreader_sidecar(book_uuid, path)
-            if result is "success":
+            if result == "success":
                 num_success += 1
                 results.append(
                     {
@@ -627,7 +626,7 @@ class KoreaderAction(InterfaceAction):
                         'sidecar_path': path,
                     }
                 )
-            elif result is "failure":
+            elif result == "failure":
                 num_fail += 1
                 results.append(
                     {
@@ -636,7 +635,7 @@ class KoreaderAction(InterfaceAction):
                         'sidecar_path': path,
                     }
                 )
-            elif result is "no_metadata":
+            elif result == "no_metadata":
                 num_no_metadata += 1
                 results.append(
                     {

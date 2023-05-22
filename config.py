@@ -49,29 +49,29 @@ UNSUPPORTED_DEVICES = [
 COLUMNS = [{
     'name': 'column_percent_read',
     'label': 'Percent read column (float):',
-    'tooltip': 'A “Floating point numbers” column to store the current\n'
-               'percent read, with “Format for numbers” set to `{:.0%}`.',
+    'tooltip': 'A "Floating point numbers" column to store the current\n'
+               'percent read, with "Format for numbers" set to `{:.0%}`.',
     'type': 'float',
     'sidecar_property': ['percent_finished'],
     'transform': (lambda value: float(value))
 }, {
     'name': 'column_percent_read_int',
     'label': 'Percent read column (int):',
-    'tooltip': 'An “Integers” column to store the current percent read.',
+    'tooltip': 'An "Integers" column to store the current percent read.',
     'type': 'int',
     'sidecar_property': ['percent_finished'],
     'transform': (lambda value: math.floor(float(value) * 100))
 }, {
     'name': 'column_last_read_location',
     'label': 'Last read location column:',
-    'tooltip': 'A regular “Text” column to store the location you last\n'
+    'tooltip': 'A regular "Text" column to store the location you last\n'
                'stopped reading at.',
     'type': 'text',
     'sidecar_property': ['last_xpointer'],
 }, {
     'name': 'column_rating',
     'label': 'Rating column:',
-    'tooltip': 'A “Rating” column to store your rating of the book,\n'
+    'tooltip': 'A "Rating" column to store your rating of the book,\n'
                'as entered on the book’s status page.',
     'type': 'rating',
     'sidecar_property': ['summary', 'rating'],
@@ -79,31 +79,30 @@ COLUMNS = [{
 }, {
     'name': 'column_review',
     'label': 'Review column:',
-    'tooltip': 'A “Long text” column to store your review of the book,\n'
+    'tooltip': 'A "Long text" column to store your review of the book,\n'
                'as entered on the book’s status page.',
     'type': 'comments',
     'sidecar_property': ['summary', 'note'],
 }, {
     'name': 'column_status',
     'label': 'Reading status column (text):',
-    'tooltip': 'A regular “Text” column to store the reading status of the\n'
-               'book, as entered on the book status page (“Finished”,\n'
-               '“Reading”, “On hold”).',
+    'tooltip': 'A regular "Text" column to store the reading status of the\n'
+               'book, as entered on the book status page ("Finished",\n'
+               '"Reading", "On hold").',
     'type': 'text',
     'sidecar_property': ['summary', 'status'],
 }, {
     'name': 'column_status_bool',
     'label': 'Reading status column (yes/no):',
-    'tooltip': 'A regular “yes/no” column to store the reading status of the\n'
-               'book, as entered on the book status page (“complete”,\n'
-               '“reading”).',
+    'tooltip': 'A "Yes/No" column to store the reading status of the book,\n'
+               'as a boolean ("Yes" = "Finished", "No" = everything else).',
     'type': 'bool',
     'sidecar_property': ['summary', 'status'],
     'transform': (lambda val: bool(val == 'complete')),
 }, {
     'name': 'column_date_first_bookmark',
     'label': 'First bookmark date column:',
-    'tooltip': 'A “Date” column to store the date on which the first\n'
+    'tooltip': 'A "Date" column to store the date on which the first\n'
                'highlight or bookmark was made. (This is probably\n'
                'around the time you started reading.)',
     'type': 'datetime',
@@ -111,7 +110,7 @@ COLUMNS = [{
 }, {
     'name': 'column_date_last_bookmark',
     'label': 'Last bookmark date column:',
-    'tooltip': 'A “Date” column to store the date on which the last\n'
+    'tooltip': 'A "Date" column to store the date on which the last\n'
                'highlight or bookmark was made. (This is probably\n'
                'around the time you finished reading.)',
     'type': 'datetime',
@@ -119,7 +118,7 @@ COLUMNS = [{
 }, {
     'name': 'column_bookmarks',
     'label': 'Bookmarks column',
-    'tooltip': 'A “Long text” column to store your bookmarks and\n'
+    'tooltip': 'A "Long text" column to store your bookmarks and\n'
                'highlights.',
     'type': 'comments',
     'sidecar_property': ['bookmarks'],
@@ -127,8 +126,8 @@ COLUMNS = [{
 }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',
-    'tooltip': 'A regular “Text” column to store the MD5 hash KOReader uses\n'
-               'to sync progress to a KOReader Sync Server. (“Progress sync”\n'
+    'tooltip': 'A regular "Text" column to store the MD5 hash KOReader uses\n'
+               'to sync progress to a KOReader Sync Server. ("Progress sync"\n'
                'in the KOReader app.) This might allow for syncing progress\n'
                'to calibre without having to connect your KOReader device,\n'
                'in the future.',
@@ -149,9 +148,9 @@ COLUMNS = [{
 }, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
-    'tooltip': 'A “Long text” column to store the contents of the\n'
-               'metadata sidecar as JSON, with “Interpret this column as” set to\n'
-               '“Plain text”.',
+    'tooltip': 'A "Long text" column to store the contents of the\n'
+               'metadata sidecar as JSON, with "Interpret this column as" set to\n'
+               '"Plain text". This is required to sync metadata back to KOReader sidecars.',
     'type': 'comments',
     'sidecar_property': [],  # `[]` gives the entire sidecar dict
     'transform': (lambda d: json.dumps(
@@ -165,13 +164,13 @@ COLUMNS = [{
 CHECKBOXES = [{
     'name': 'checkbox_sync_if_more_recent',
     'label': 'Sync only if changes are more recent:',
-    'tooltip': 'Only sync book only if the metadata is more recent.\n'
-               'Requires "Date Modified Column" or "Percent read column" to be synced',
+    'tooltip': 'Sync book only if the metadata is more recent. Requires\n'
+               '"Date Modified Column" or "Percent read column" to be synced',
 }, {
     'name': 'checkbox_no_sync_if_finished',
     'label': 'No sync if book has already been finished:',
-    'tooltip': 'Does not sync book if it has already been finished.\n'
-               'Requires "Percent read column" or "Reading status column" to be synced',
+    'tooltip': 'Do not sync book if it has already been finished. Requires\n'
+               '"Percent read column" or "Reading status column" to be synced',
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))

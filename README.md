@@ -8,11 +8,11 @@
 
 A calibre plugin to synchronize metadata from KOReader to calibre.
 
-[KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre's metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware (“Nickel”) and custom columns in calibre.
+[KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre's metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware ("Nickel") and custom columns in calibre.
 
-Note that at the moment the sync is primarily one-way—from the KOReader device to calibre — and only works for USB and [wireless](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection) devices. For the latter, you'll need [KOReader 2021.04 or newer](https://github.com/koreader/koreader/releases).
+Note that at the moment the sync is primarily one-way—from the KOReader device to calibre, and only works for USB and [wireless](https://github.com/koreader/koreader/wiki/Calibre-wireless-connection) devices. For the latter, you'll need [KOReader 2021.04 or newer](https://github.com/koreader/koreader/releases).
 
-Pushing metadata from Calibre to KOReader currently works only for books which do not have KOReader sidecar files, and of course requires the raw metadata column to be mapped. The use-case is for e.g. setting up a new device, or if a book was removed from your device and you've now added it back. This has been tested for Calibre's Connect to Folder and Custom USB Device modes. It does not seem to work for the Kobo Touch device driver nor with wireless connections, but I (@charlesangus) find those don't communicate perfectly with Calibre/KOReader in any case... I haven't disabled it for other devices - it may be a quirk in my setup which is causing it to fail, and it may work fine for you.
+Pushing metadata from calibre to KOReader currently works only for books which do not have KOReader sidecar files, and of course requires the raw metadata column to be mapped. The use-case is for setting up a new device, or if a book was removed from your device and you've now added it back. This has been tested for calibre's Connect to Folder and Custom USB Device modes. It does not seem to work for the Kobo Touch device driver nor with wireless connections, but I (@charlesangus) find those don't communicate perfectly with Calibre/KOReader in any case... I haven't disabled it for other devices - it may be a quirk in my setup which is causing it to fail, and it may work fine for you.
 
 Releases will also be uploaded to [this plugin thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?p=4060141). If you are on there as well, please let me know what you think of the plugin in that thread.
 
@@ -20,35 +20,38 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 ### Download and install
 
-1. Go to your calibre's “Preferences” > “Plugins” > “Get new plugins” and search for “KOReader Sync”
-2. Click “Install”
+1. Go to your calibre's _Preferences_ > _Plugins_ > _Get new plugins_ and search for _KOReader Sync_
+2. Click _Install_
 3. Restart calibre
 
 #### Alternatively
 
 1. Download the latest release from [here](https://github.com/harmtemolder/koreader-calibre-plugin/tree/main/releases).
-2. Go to your calibre's “Preferences” > “Plugins” > “Load plugin from file” and point it to the downloaded ZIP file
+2. Go to your calibre's _Preferences_ > _Plugins_ > _Load plugin from file_ and point it to the downloaded ZIP file
 3. Restart calibre
 
 ### Setup
 
 1. Pick and choose the metadata you would like to sync and create the appropriate columns in calibre. These are your options:
-    - A “Floating point numbers” column to store the **current percent read**, with “Format for numbers” set to `{:.0%}`.
-    - An “Integers” column to store the **current percent read**.
-    - A regular “Text” column to store the **location you last stopped reading at**.
-    - A “Rating” column to store your **rating** of the book, as entered on the book's status page.
-    - A “Long text” column to store your **review** of the book, as entered on the book's status page.
-    - A “Long text” column to store your **bookmarks and highlights** of the book, with “Interpret this column as” set to “Plain text formatted using markdown”. (Highlights are an unordered list with their metadata in an HTML comment.)
-    - A regular “Text” column to store the **reading status** of the book, as entered on the book status page (“Finished”, “Reading”, “On hold”).
-    - A “Date” column to store **the date on which the first highlight or bookmark was made**. (This is probably around the time you started reading.)
-    - A “Date” column to store **the date on which the last highlight or bookmark was made**. (This is probably around the time you finished reading.)
-    - A regular “Text” column to store the **MD5 hash** KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (“Progress sync” in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
-    - A “Long text” column to store the **raw contents of the metadata sidecar**, with “Interpret this column as” set to “Plain text”. This is required to sync metadata back to KOReader sidecars.
-10. Add “KOReader Sync” to “main toolbar when a device is connected”, if it isn't there already.
-11. Right-click the “KOReader Sync” icon and “Configure”.
+   - A _Floating point numbers_ column to store the **current percent read**, with _Format for numbers_ set to `{:.0%}`.
+   - An _Integers_ column to store the **current percent read**.
+   - A regular _Text_ column to store the **location you last stopped reading at**.
+   - A _Rating_ column to store your **rating** of the book, as entered on the book's status page.
+   - A _Long text_ column to store your **review** of the book, as entered on the book's status page.
+   - A regular _Text_ column to store the **reading status** of the book, as entered on the book status page (_Finished_, _Reading_, _On hold_).
+   - A _Yes/No_ column to store the **reading status** of the book, as a boolean (_Yes_ = _Finished_, _No_ = everything else).
+   - A _Date_ column to store **the date on which the first highlight or bookmark was made**. (This is probably around the time you started reading.)
+   - A _Date_ column to store **the date on which the last highlight or bookmark was made**. (This is probably around the time you finished reading.)
+   - A _Long text_ column to store your **bookmarks and highlights** of the book, with _Interpret this column as_ set to _Plain text formatted using markdown_. (Highlights are an unordered list with their metadata in an HTML comment.)
+   - A regular _Text_ column to store the **MD5 hash** KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (_Progress sync_ in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
+   - A _Date_ column to store **when the last sync was performed**.
+   - A _Date_ column to store **when the sidecar file was last modified**.',
+   - A _Long text_ column to store the **contents of the metadata sidecar** as JSON, with _Interpret this column as_ set to _Plain text_. This is required to sync metadata back to KOReader sidecars.
+10. Add _KOReader Sync_ to _main toolbar when a device is connected_, if it isn't there already.
+11. Right-click the _KOReader Sync_ icon and _Configure_.
 12. Map the metadata you want to sync to the newly created calibre columns.
-13. Click “OK” to save your mapping.
-14. From now on just click the “KOReader Sync” icon to sync all mapped metadata for all books on the connected device to calibre.
+13. Click _OK_ to save your mapping.
+14. From now on just click the _KOReader Sync_ icon to sync all mapped metadata for all books on the connected device to calibre.
 
 ### Things to consider
 
@@ -89,7 +92,7 @@ If you encounter any issues with the plugin, please submit them [here](https://g
 ### Notes & Tips
 
 - My first attempt was actually to sync calibre with KOReader's read progress through the progress sync plugin and a [sync server](https://github.com/koreader/koreader-sync-server). Read [here](https://github.com/koreader/koreader/issues/6399#issuecomment-721826362) why that did not work. This plugin might actually make that possible now by allowing you to store KOReader's MD5 hash in calibre...
-- calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under “Preferences” > “Tweaks”, search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
+- calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under "Preferences" > "Tweaks", search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
 - I work in PyCharm, which offers a remote debugging server. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
 - The supported device drivers can be found in [the `SUPPORTED_DEVICES` list in `config.py`](https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/config.py#L30). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
@@ -110,7 +113,7 @@ make zip load
 
 ### Building a release
 
-Make sure you have the dependencies and have set the correct version number in `__init__.py`, `pluginIndexKOReaderSync.txt` and `Makefile`. Also update [Changelog](#Changelog). Then:
+Make sure you have the dependencies and have set the correct version number in `__init__.py`, `pluginIndexKOReaderSync.txt` and `Makefile`. Also update [Changelog](#changelog). Then:
 
 ```shell
 make zip
@@ -136,22 +139,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.5.2-beta] - ?
+## [0.5.2-beta] - 2023-05-22
+
+- Many thanks to @elmodor and igorius for their help!
 
 ### Added
 
 - Added config option to only sync if the metadata is newer than the data stored in calibre (will fallback to "Percent read column" if no "Date Modified column" exists or can not be obtained)
 - Added config option to not sync if the book has already been marked as finished (via "Percent read column" or "Reading status column")
-- Added a yes/no column for read status (based on changes from igorius at mobilread)
+- Added a yes/no column for read status (based on [changes from igorius at MobileRead](https://www.mobileread.com/forums/showpost.php?p=4323088&postcount=90))
 
 ### Changed
 
 - Pylint cleanup
+- Update README to match new columns
+- Update dummy device and library to match new columns
 
 ### Fixed
 
 - Fixed crash for wireless connected devices while trying to get the "Date Modified column" value
-- Fixed setting correct sync status for `column_status` if no status is send from koreader
+- Fixed setting correct sync status for `column_status` if no status is sent from KOReader
 
 ## [0.5.1-beta] - 2022-12-27
 
@@ -326,5 +333,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.3.1-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/releases/KOReader%20Sync%20v0.3.1-beta.zip
 [0.3.2-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/releases/KOReader%20Sync%20v0.3.2-beta.zip
 [0.4.0-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/releases/KOReader%20Sync%20v0.4.0-beta.zip
-[0.4.1-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/releases/KOReader%20Sync%20v0.4.1-beta.zip
+[0.4.1-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/releases/tag/v0.4.1-beta
+[0.5.0-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/releases/tag/v0.5.0-beta
+[0.5.1-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/releases/tag/v0.5.1-beta
+[0.5.2-beta]: https://github.com/harmtemolder/koreader-calibre-plugin/releases/tag/v0.5.2-beta
 [unreleased]: https://github.com/harmtemolder/koreader-calibre-plugin
