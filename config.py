@@ -285,6 +285,7 @@ class CustomColumnsLayout(QGridLayout):
             'int': self.get_custom_columns(['int']),
             'rating': self.get_rating_columns(),  # Includes built-in
             'text': self.get_custom_columns(['text']),
+            'bool': self.get_custom_columns(['bool']),
         }
 
         # Add custom column dropdowns
