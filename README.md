@@ -142,11 +142,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Added config option to only sync if the metadata is newer than the data stored in calibre (will fallback to "Percent read column" if no "Date Modified column" exists or can not be obtained)
 - Added config option to not sync if the book has already been marked as finished (via "Percent read column" or "Reading status column")
+- Added a yes/no column for read status (based on changes from igorius at mobilread)
+
+### Changed
+
+- Pylint cleanup
 
 ### Fixed
 
 - Fixed crash for wireless connected devices while trying to get the "Date Modified column" value
-
+- Fixed setting correct sync status for `column_status` if no status is send from koreader
 
 ## [0.5.1-beta] - 2022-12-27
 
