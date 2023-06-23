@@ -139,6 +139,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Removed sorting from `column_sidecar` transform because this caused an error in at least one of my books
+
 ## [0.5.2-beta] - 2023-05-22
 
 - Many thanks to @elmodor and igorius for their help!

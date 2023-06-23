@@ -157,8 +157,7 @@ COLUMNS = [{
         {k: d[k] for k in d if k != 'calculated'},
         skipkeys=True,
         indent=2,
-        default=str,
-        sort_keys=True
+        default=str
     )),
 }]
 CHECKBOXES = [{
