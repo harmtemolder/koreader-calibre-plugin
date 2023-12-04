@@ -404,10 +404,13 @@ class KoreaderAction(InterfaceAction):
                     'book_id': book_id,
                 }
 
+
         # Check and correct reading status if required
         status_key = CONFIG['column_status']
         if status_key:
             new_status = keys_values_to_update.get(status_key)
+            if new_status == "abandoned":
+                keys_values_to_update[status_key] = "on hold"
             if not new_status:
                 read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
                 new_read_percent = keys_values_to_update.get(read_percent_key)
@@ -430,10 +433,10 @@ class KoreaderAction(InterfaceAction):
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
             old_value = metadata.get(key)
-
             if new_value != old_value:
                 updates.append(key)
                 metadata.set(key, new_value)
+
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
