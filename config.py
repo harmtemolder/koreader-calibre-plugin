@@ -23,6 +23,7 @@ from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 from calibre_plugins.koreader import clean_bookmarks
+from calibre_plugins.koreader import clean_highlights
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -123,6 +124,14 @@ COLUMNS = [{
     'type': 'comments',
     'sidecar_property': ['bookmarks'],
     'transform': clean_bookmarks,
+}, {
+    'name': 'column_highlights',
+    'label': 'Highlights column',
+    'tooltip': 'A "Long text" column to store your bookmarks and\n'
+               'highlights.',
+    'type': 'comments',
+    'sidecar_property': ['annotations'],
+    'transform': clean_highlights,
 }, {
     'name': 'column_md5',
     'label': 'MD5 hash column:',

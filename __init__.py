@@ -24,7 +24,7 @@ if numeric_version >= (5, 5, 0):
         root_debug_print,
         ' koreader:__init__:',
         sep=''
-        )
+    )
 else:
     module_debug_print = partial(root_debug_print, 'koreader:__init__:')
 
@@ -84,3 +84,75 @@ def clean_bookmarks(bookmarks):
         output += '\n'
 
     return output.strip()
+
+
+def clean_highlights(annotations):
+    """Transforms KOReader's bookmark metadata into text that can be stored
+    in calibre. I assume that all bookmarks have a `note` attribute, which I
+    use as the main text of the bookmark. All other attributes are stored in a
+    HTML comment.
+
+    :param annotations: dict with numbered keys and annotations dict values
+    :return: HTML-formatted str of the all bookmarks and highlights
+    """
+    debug_print = partial(root_debug_print, 'clean_bookmarks:')
+
+    # Dictionary to store highlights grouped by chapter
+    highlights_by_chapter = {}
+
+    for annotation in annotations.values():
+        if 'note' not in annotation:
+            debug_print('annotation does not have `note`', annotation)
+        else:
+            debug_print('annotation has `note`', annotation)
+
+        # Extracting all attributes to save as hidden text
+        hidden_attributes = ''
+        if len(annotations) > 0:
+            hidden_attributes += ' <!-- '
+            for attr in annotations:
+                hidden_attributes += f'{attr}: {annotations[attr]}, '
+            hidden_attributes = hidden_attributes[:-2] + ' -->'
+        hidden_attributes += '\n'
+
+        # Extracting attributes that will be used in html
+        chapter = annotation.get("chapter", "Unknown Chapter")
+        reader_note = annotation.get("note", "no notes")
+        highlighted_text = annotation.get("text", "Unknown Highlighted Text")
+        datetime = annotation.get("datetime", "Unknown Datetime")
+
+        # Create highlight dictionary
+        highlight = {
+            "chapter": chapter,
+            "reader_note": reader_note,
+            "highlighted_text": highlighted_text,
+            "datetime": datetime,
+            "hidden_attributes": hidden_attributes
+        }
+
+        # Add highlight to the corresponding chapter
+        if chapter not in highlights_by_chapter:
+            highlights_by_chapter[chapter] = []
+        highlights_by_chapter[chapter].append(highlight)
+
+    # Generate HTML content for each chapter
+    html_content = '<!DOCTYPE html>\n<html>\n<head>\n<title>Book Highlights and Notes</title>\n</head>\n<body>\n'
+    highlight_count = 0
+    for chapter, chapter_highlights in highlights_by_chapter.items():
+        if chapter.strip() == '':
+            chapter = 'Unknown'
+        html_content += f'<div>\n<h3>Chapter: "{chapter}"</h3>\n'
+        html_content += '<blockquote>'
+
+        for highlight in chapter_highlights:
+            highlight_count += 1
+            html_content += f'<p><strong>{highlight_count}. Highlight</strong> - {highlight["datetime"]} <br/>{highlight["highlighted_text"]}\n'
+            html_content += f'<br><br>\n'
+            html_content += f'<strong>Note:</strong> <i>{highlight["reader_note"]}</i></p>\n'
+            html_content += f'{highlight["hidden_attributes"]}\n'
+
+        html_content += "</div>\n"
+        html_content += '</blockquote>'
+
+    html_content += "</body>\n</html>"
+    return html_content.strip()
