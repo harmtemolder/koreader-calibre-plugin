@@ -137,7 +137,21 @@ All notable changes to this project will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.3-alpha]
+
+## Added
+
+- Version prefix which allow to use a/b for ui pop-up to show this is alpha/beta version
+
+### Fixed
+
+- Should fix issue that people [reported](https://github.com/harmtemolder/koreader-calibre-plugin/issues/20)
+
+### Changed
+
+- Nothing in the main logic, idea is to release unreleased changes as alpha for people to test and make sure it fixes reported problems
+
+## [Unreleased](https://github.com/harmtemolder/koreader-calibre-plugin/commit/15a5b155681adc201fa8576b8718ef6efc9630e6)
 
 ### Changed
 

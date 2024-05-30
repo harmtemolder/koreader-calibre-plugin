@@ -82,7 +82,7 @@ class KoreaderAction(InterfaceAction):
         debug_print('start')
 
         base = self.interface_action_base_plugin
-        self.version = f'{base.name} (v{".".join(map(str, base.version))})'
+        self.version = f'{base.name} (v{".".join(map(str, base.version))}{base.version_suffix})'
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons(
