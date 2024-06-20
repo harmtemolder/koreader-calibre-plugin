@@ -38,7 +38,9 @@ from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
 
 __license__ = 'GNU GPLv3'
-__copyright__ = '2023, harmtemolder <mail at harmtemolder.com>'
+__copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
+__modified_by__ = 'kyxap kyxappp@gmail.com'
+__modification_date__ = '2024'
 __docformat__ = 'restructuredtext en'
 
 if numeric_version >= (5, 5, 0):
@@ -82,7 +84,7 @@ class KoreaderAction(InterfaceAction):
         debug_print('start')
 
         base = self.interface_action_base_plugin
-        self.version = f'{base.name} (v{".".join(map(str, base.version))}{base.version_suffix})'
+        self.version = f'{base.name} (v{".".join(map(str, base.version))})'
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons(
@@ -143,7 +145,7 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
-            'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
+            'https://github.com/kyxap/koreader-calibre-plugin#readme'
         )
         open_url(readme_url)
 

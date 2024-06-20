@@ -2,9 +2,9 @@
 
 > **Hi,**
 >
-> **I'm looking for someone who wants to help me maintain this plugin, because I don't use it all that much anymore. Please contact me if you're up for this.**
+> Original author seems abandoned the project and not responding on issue and fixes,
 >
-> **Harm**
+> so I will be maintaining the project in this fork.
 
 A calibre plugin to synchronize metadata from KOReader to calibre.
 
@@ -40,18 +40,23 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
    - A _Long text_ column to store your **review** of the book, as entered on the book's status page.
    - A regular _Text_ column to store the **reading status** of the book, as entered on the book status page (_Finished_, _Reading_, _On hold_).
    - A _Yes/No_ column to store the **reading status** of the book, as a boolean (_Yes_ = _Finished_, _No_ = everything else).
-   - A _Date_ column to store **the date on which the first highlight or bookmark was made**. (This is probably around the time you started reading.)
-   - A _Date_ column to store **the date on which the last highlight or bookmark was made**. (This is probably around the time you finished reading.)
    - A _Long text_ column to store your **bookmarks and highlights** of the book, with _Interpret this column as_ set to _Plain text formatted using markdown_. (Highlights are an unordered list with their metadata in an HTML comment.)
    - A regular _Text_ column to store the **MD5 hash** KOReader uses to sync progress to a [**KOReader Sync Server**](https://github.com/koreader/koreader-sync-server#koreader-sync-server). (_Progress sync_ in the KOReader app.) This might allow for syncing progress to calibre without having to connect your KOReader device, in the future.
    - A _Date_ column to store **when the last sync was performed**.
-   - A _Date_ column to store **when the sidecar file was last modified**.',
-   - A _Long text_ column to store the **contents of the metadata sidecar** as JSON, with _Interpret this column as_ set to _Plain text_. This is required to sync metadata back to KOReader sidecars.
+   - A _Long text_ column to store the **contents of the metadata sidecar** as HTML, with _Interpret this column as_ set to _HTML_.
 10. Add _KOReader Sync_ to _main toolbar when a device is connected_, if it isn't there already.
 11. Right-click the _KOReader Sync_ icon and _Configure_.
 12. Map the metadata you want to sync to the newly created calibre columns.
 13. Click _OK_ to save your mapping.
 14. From now on just click the _KOReader Sync_ icon to sync all mapped metadata for all books on the connected device to calibre.
+
+**Note:** Some field are depreciated and removed from plugin since they are changed/removed `sidecar_contents` data structure:
+- `first_bookmark` removed
+- `last_bookmark` removed
+- `bookmarks` renamed to `annotations`
+- `rating` uses 5-point instead 10-point scale
+- `date_sidecar_modified` removed from `calculated`
+- `date_sidecar_modified` is seems always empty, part of `calculated`
 
 ### Things to consider
 
@@ -122,7 +127,7 @@ make zip
 ### Debugging a release
 
 1. Download the required release from [here](https://github.com/harmtemolder/koreader-calibre-plugin/tree/main/releases)
-1. Add it to calibre by running this in your terminal: `calibre-customize -a "KOReader Sync vX.X.X-alpha.zip"`, where `X.X.X` refers to the version you downloaded
+1. Add it to calibre by running this in your terminal: `calibre-customize -a "KOReader_Sync_vX.X.X.zip"`, where `X.X.X` refers to the version you downloaded
 1. Start calibre in debug mode with `calibre-debug -g`
 1. Configure the KOReader plugin as described [here](https://github.com/harmtemolder/koreader-calibre-plugin#setup)
 1. Connect your device
@@ -136,6 +141,22 @@ make zip
 All notable changes to this project will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.6.0]
+## Added
+
+- Version update via makefile
+
+### Fixed
+
+- All columns are fixed and can be used with latest koreader
+
+### Changed
+
+- Readme upd, broken columns that does not support by data type in koreader
+- Removed releases files from repo since they should in be gitlab releases
+- No use in alpha/beta
+
 
 ## [0.5.3-alpha]
 
