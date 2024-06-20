@@ -13,6 +13,8 @@ from calibre.utils.config import JSONConfig
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
+__modified_by__ = 'kyxap kyxappp@gmail.com'
+__modification_date__ = '2024'
 __docformat__ = 'restructuredtext en'
 
 DEBUG = _DEBUG
@@ -33,8 +35,7 @@ class KoreaderSync(InterfaceActionBase):
     name = 'KOReader Sync'
     description = 'Get metadata from a connected KOReader device'
     author = 'harmtemolder'
-    version = (0, 5, 3)
-    version_suffix = 'a'
+    version = (0, 6, 0)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     config = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
     actual_plugin = 'calibre_plugins.koreader.action:KoreaderAction'
