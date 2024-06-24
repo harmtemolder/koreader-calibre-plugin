@@ -45,5 +45,11 @@ debug_version:
 
 tag:
 	@echo "Tagging version $(version) and pushing to the repository"
-	@git tag -a v$(version) -m "Version $(version)"  # Create annotated tag for the version
-	@git push origin v$(version)  # Push the tag to the remote repository
+	@if git rev-parse "v$(version)" >/dev/null 2>&1; then \
+		echo "Tag v$(version) already exists. Deleting the old tag."; \
+		git tag -d "v$(version)"; \
+		git push origin ":refs/tags/v$(version)"; \
+	fi
+	@git tag -a "v$(version)" -m "Version $(version)"  # Create annotated tag for the version
+	@git push origin "v$(version)"  # Push the tag to the remote repository
+
