@@ -9,6 +9,7 @@ release_dir = release
 # Convert the version to tuple format
 version_tuple := $(shell echo $(version) | awk -F. '{print "("$$1", "$$2", "$$3")"}')
 
+release: update_version zip load
 all: update_version zip
 
 zip: $(release_dir)
