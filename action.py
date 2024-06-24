@@ -70,11 +70,64 @@ def is_system_path(path):
     """
     KOreader user may have some files in the root which we want to skip to
     avoid showing warning message
+
     :param path: path to sidecar file (*.lua)
     :return: true/false if partial match found
     """
     to_ignore = ['kfmon.sdr', 'koreader.sdr']
     return any(substring in path for substring in to_ignore)
+
+
+def append_results(status_msg, book_uuid, results, sidecar_path):
+    debug_print = partial(
+        module_debug_print,
+        'KoreaderAction:append_results:'
+    )
+    debug_print(f'{sidecar_path} - {status_msg}')
+    return results.append(
+        {
+            'status': status_msg,
+            'book_uuid': book_uuid,
+            'sidecar_path': sidecar_path,
+        }
+    )
+
+
+def parse_sidecar_lua(sidecar_lua):
+    """Parses a sidecar Lua file into a Python dict
+
+    :param sidecar_lua: the contents of a sidecar Lua as a str
+    :return: a dict of those contents
+    """
+    debug_print = partial(
+        module_debug_print,
+        'KoreaderAction:parse_sidecar_lua:'
+    )
+
+    try:
+        clean_lua = re.sub('^[^{]*', '', sidecar_lua).strip()
+        decoded_lua = lua.decode(clean_lua)
+    except:
+        debug_print('could not decode sidecar_lua')
+        decoded_lua = None
+
+    if 'bookmarks' in decoded_lua:
+        debug_print('calculating first and last bookmark dates')
+        bookmark_dates = [
+            datetime.strptime(
+                bookmark['datetime'],
+                '%Y-%m-%d %H:%M:%S'
+            ).replace(tzinfo=utc_tz)
+            for bookmark in decoded_lua['bookmarks'].values()
+        ]
+
+        if len(bookmark_dates) > 0:
+            decoded_lua['calculated'] = {
+                'first_bookmark': min(bookmark_dates),
+                'last_bookmark': max(bookmark_dates),
+            }
+
+    return decoded_lua
 
 
 class KoreaderAction(InterfaceAction):
@@ -303,7 +356,7 @@ class KoreaderAction(InterfaceAction):
                 return None
 
             debug_print(f'Parsing: {path}')
-            parsed_contents = self.parse_sidecar_lua(decoded_contents)
+            parsed_contents = parse_sidecar_lua(decoded_contents)
             parsed_contents['calculated'] = {}
             try:
                 parsed_contents['calculated'][
@@ -316,42 +369,6 @@ class KoreaderAction(InterfaceAction):
                 'date_synced'] = datetime.now().replace(tzinfo=local_tz)
 
         return parsed_contents
-
-    def parse_sidecar_lua(self, sidecar_lua):
-        """Parses a sidecar Lua file into a Python dict
-
-        :param sidecar_lua: the contents of a sidecar Lua as a str
-        :return: a dict of those contents
-        """
-        debug_print = partial(
-            module_debug_print,
-            'KoreaderAction:parse_sidecar_lua:'
-        )
-
-        try:
-            clean_lua = re.sub('^[^{]*', '', sidecar_lua).strip()
-            decoded_lua = lua.decode(clean_lua)
-        except:
-            debug_print('could not decode sidecar_lua')
-            decoded_lua = None
-
-        if 'bookmarks' in decoded_lua:
-            debug_print('calculating first and last bookmark dates')
-            bookmark_dates = [
-                datetime.strptime(
-                    bookmark['datetime'],
-                    '%Y-%m-%d %H:%M:%S'
-                ).replace(tzinfo=utc_tz)
-                for bookmark in decoded_lua['bookmarks'].values()
-            ]
-
-            if len(bookmark_dates) > 0:
-                decoded_lua['calculated'] = {
-                    'first_bookmark': min(bookmark_dates),
-                    'last_bookmark': max(bookmark_dates),
-                }
-
-        return decoded_lua
 
     def update_metadata(self, uuid, keys_values_to_update):
         """Update multiple metadata columns for the given book.
@@ -374,7 +391,8 @@ class KoreaderAction(InterfaceAction):
 
         if not book_id:
             debug_print(f'could not find {uuid} in calibre\'s library')
-            return False, {'result': 'could not find uuid in calibre\'s library'}
+            return False, {
+                'result': 'could not find uuid in calibre\'s library'}
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
@@ -739,43 +757,35 @@ class KoreaderAction(InterfaceAction):
             debug_print('Trying to get sidecar from ', device,
                         ', with sidecar_path: ', sidecar_path)
 
-            if is_system_path(sidecar_path):
-                results.append(
-                    {
-                        'result': f'skipped, it\'s a system path',
-                        'book_uuid': book_uuid,
-                        'sidecar_path': sidecar_path,
-                    }
-                )
+            # pre-checks before parsing
+            if book_uuid is None:
+                status = 'skipped, no UUID'
+                results = append_results(status, book_uuid, results,
+                                         sidecar_path)
                 num_skip += 1
                 continue
 
+            # Actually sees like all system files can be moved out of root
+            # if is_system_path(sidecar_path):
+            #     status = 'skipped, it\'s a system path'
+            #     append_results(status, book_uuid, results, sidecar_path)
+            #     num_skip += 1
+            #     continue
+
             if not os.path.exists(sidecar_path):
-                debug_print(
-                    "Skipping, files/folder does not exist "
-                    "(book never opened): ", sidecar_path)
-                results.append(
-                    {
-                        'result': 'skipped, files/folder does not exist '
-                                  '(book never opened)',
-                        'book_uuid': book_uuid,
-                        'sidecar_path': sidecar_path,
-                    }
-                )
+                status = ('skipped, file/folder does not exist '
+                          '(seems like is book never opened)')
+                results = append_results(status, book_uuid, results,
+                                         sidecar_path)
                 num_skip += 1
                 continue
 
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
             if not sidecar_contents:
-                debug_print('skipping uuid = ', book_uuid)
-                results.append(
-                    {
-                        'result': 'could not get sidecar contents',
-                        'book_uuid': book_uuid,
-                        'sidecar_path': sidecar_path,
-                    }
-                )
+                status = 'could not get sidecar contents'
+                results = append_results(status, book_uuid, results,
+                                         sidecar_path)
                 num_fail += 1
                 continue
             else:
@@ -816,11 +826,13 @@ class KoreaderAction(InterfaceAction):
             success, result = self.update_metadata(
                 book_uuid, keys_values_to_update
             )
+
             results.append(
                 {
                     **result,
                     'book_uuid': book_uuid,
                     'sidecar_path': sidecar_path
+                    # too much data, hard to read for user
                     # 'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
@@ -840,7 +852,7 @@ class KoreaderAction(InterfaceAction):
             info_dialog(
                 self.gui,
                 'Metadata sync finished',
-                results_message + f'All logs good!\n\n',
+                results_message + f'All looks good!\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
@@ -848,7 +860,7 @@ class KoreaderAction(InterfaceAction):
         elif num_fail > 0:
             error_dialog(
                 self.gui,
-                'Errors during sync',
+                'Some sync failed',
                 results_message + f'There was some error during sync process!\n'
                                   f'Please investigate and report if it looks '
                                   f'like a bug\n\n',
@@ -859,7 +871,7 @@ class KoreaderAction(InterfaceAction):
         elif num_success == 0 and num_fail == 0:
             warning_dialog(
                 self.gui,
-                'No errors, not successful syncs',
+                'No errors but not successful syncs',
                 results_message + f'No errors but no successful syncs\n'
                                   f'Do you have book(s) which are ready to be '
                                   f'sync?\n'
