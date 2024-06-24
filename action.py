@@ -52,7 +52,8 @@ if DEBUG and PYDEVD:
     try:
         sys.path.append(
             # '/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg'  # macOS
-            '/opt/pycharm-professional/debug-eggs/pydevd-pycharm.egg'  # Manjaro Linux
+            '/opt/pycharm-professional/debug-eggs/pydevd-pycharm.egg'
+            # Manjaro Linux
         )
         import pydevd_pycharm
 
@@ -63,6 +64,17 @@ if DEBUG and PYDEVD:
     except Exception as e:
         module_debug_print('could not start pydevd_pycharm, e = ', e)
         PYDEVD = False
+
+
+def is_system_path(path):
+    """
+    KOreader user may have some files in the root which we want to skip to
+    avoid showing warning message
+    :param path: path to sidecar file (*.lua)
+    :return: true/false if partial match found
+    """
+    to_ignore = ['kfmon.sdr', 'koreader.sdr']
+    return any(substring in path for substring in to_ignore)
 
 
 class KoreaderAction(InterfaceAction):
@@ -236,14 +248,17 @@ class KoreaderAction(InterfaceAction):
         )
 
         debug_print(
-            'found these paths to books:\n\t',
+            f'found {len(device.books())} paths to books:\n\t',
             '\n\t'.join([book.path for book in device.books()])
         )
 
         debug_print(
-            'found these lpaths to books:\n\t',
+            f'found {len(device.books())} lpaths to books:\n\t',
             '\n\t'.join([book.lpath for book in device.books()])
         )
+
+        for book in device.books():
+            debug_print(f'uuid to path: {book.uuid} - {book.path}')
 
         paths = {
             book.uuid: re.sub(
@@ -287,16 +302,18 @@ class KoreaderAction(InterfaceAction):
                 debug_print('could not decode ', contents)
                 return None
 
-            debug_print(f'parsing {path}')
+            debug_print(f'Parsing: {path}')
             parsed_contents = self.parse_sidecar_lua(decoded_contents)
             parsed_contents['calculated'] = {}
             try:
-                parsed_contents['calculated']['date_sidecar_modified'] = datetime.fromtimestamp(
+                parsed_contents['calculated'][
+                    'date_sidecar_modified'] = datetime.fromtimestamp(
                     os.path.getmtime(path)).replace(tzinfo=local_tz
-                    )
+                                                    )
             except:
                 pass
-            parsed_contents['calculated']['date_synced'] = datetime.now().replace(tzinfo=local_tz)
+            parsed_contents['calculated'][
+                'date_synced'] = datetime.now().replace(tzinfo=local_tz)
 
         return parsed_contents
 
@@ -349,14 +366,15 @@ class KoreaderAction(InterfaceAction):
         )
 
         try:
+            debug_print('Looking uuid in calibre db: ', uuid)
             db = self.gui.current_db.new_api
             book_id = db.lookup_by_uuid(uuid)
         except:
             book_id = None
 
         if not book_id:
-            debug_print(f'could not find {uuid} in calibre’s library')
-            return False, {'result': 'could not find uuid in calibre’s library'}
+            debug_print(f'could not find {uuid} in calibre\'s library')
+            return False, {'result': 'could not find uuid in calibre\'s library'}
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
@@ -368,25 +386,29 @@ class KoreaderAction(InterfaceAction):
             new_date_modified = keys_values_to_update.get(date_modified_key)
             if current_date_modified is not None and new_date_modified is not None:
                 if current_date_modified.timestamp() >= new_date_modified.timestamp():
-                    debug_print(f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
+                    debug_print(
+                        f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
                     return False, {
                         'result': 'Data in calibre is newer. No sync.',
                         'book_id': book_id,
                     }
             # Fallback if no 'Date Modified Column' is set or not obtainable (wireless)
             elif new_date_modified is None:
-                read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+                read_percent_key = CONFIG['column_percent_read'] or CONFIG[
+                    'column_percent_read_int']
                 current_read_percent = metadata.get(read_percent_key)
                 new_read_percent = keys_values_to_update.get(read_percent_key)
                 if current_read_percent is not None and new_read_percent is not None:
                     if current_read_percent >= new_read_percent:
-                        debug_print(f'book {book_id} read_percent {new_read_percent} lower than current {current_read_percent}')
+                        debug_print(
+                            f'book {book_id} read_percent {new_read_percent} lower than current {current_read_percent}')
                         return False, {
                             'result': 'Read Percent is lower or equal to the one stored in calibre. No sync.',
                             'book_id': book_id,
                         }
                 elif current_read_percent is not None and new_read_percent is None:
-                    debug_print(f'book {book_id} read_percent is None but existing is {current_read_percent}')
+                    debug_print(
+                        f'book {book_id} read_percent is None but existing is {current_read_percent}')
                     return False, {
                         'result': 'No new read percent found. No sync.',
                         'book_id': book_id,
@@ -394,12 +416,13 @@ class KoreaderAction(InterfaceAction):
 
         # Check config to sync only if the book is not yet finished
         if CONFIG['checkbox_no_sync_if_finished']:
-            read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+            read_percent_key = CONFIG['column_percent_read'] or CONFIG[
+                'column_percent_read_int']
             current_read_percent = metadata.get(read_percent_key)
             status_key = CONFIG['column_status']
             current_status = metadata.get(status_key)
             if current_read_percent is not None and current_read_percent >= 100 \
-            or current_status is not None and current_status == "complete":
+                or current_status is not None and current_status == "complete":
                 debug_print(f'book {book_id} was already finished')
                 return False, {
                     'result': 'Book already finished. No sync.',
@@ -411,18 +434,21 @@ class KoreaderAction(InterfaceAction):
         if status_key:
             new_status = keys_values_to_update.get(status_key)
             if not new_status:
-                read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+                read_percent_key = CONFIG['column_percent_read'] or CONFIG[
+                    'column_percent_read_int']
                 new_read_percent = keys_values_to_update.get(read_percent_key)
                 current_status = metadata.get(status_key)
                 if new_read_percent and current_status != "abandoned":
                     if new_read_percent > 0 and new_read_percent < 100 and current_status != "reading":
-                        debug_print(f'book {book_id} set column_status to reading')
+                        debug_print(
+                            f'book {book_id} set column_status to reading')
                         keys_values_to_update[status_key] = "reading"
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = False
                     elif new_read_percent >= 100 and current_status != "complete":
-                        debug_print(f'book {book_id} set column_status to complete')
+                        debug_print(
+                            f'book {book_id} set column_status to complete')
                         keys_values_to_update[status_key] = "complete"
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
@@ -505,7 +531,7 @@ class KoreaderAction(InterfaceAction):
                 'Device not yet supported',
                 f'Devices of the type {device_class} are not yet supported by this plugin. '
                 f'Please check if there already is a feature request for this '
-                f'<a href="https://github.com/harmtemolder/koreader-calibre-plugin/issues">'
+                f'<a href="https://github.com/kyxap/koreader-calibre-plugin/issues">'
                 f'here</a>. If not, feel free to create one. I\'ll try to sync anyway.',
                 det_msg='',
                 show=True,
@@ -600,6 +626,7 @@ class KoreaderAction(InterfaceAction):
             return None
 
         sidecar_paths = self.get_paths(device)
+        debug_print('sidecar_paths: ', sidecar_paths)
         sidecar_paths_exist = {}
         sidecar_paths_not_exist = {}
         for book_uuid, path in sidecar_paths.items():
@@ -618,7 +645,8 @@ class KoreaderAction(InterfaceAction):
         num_no_metadata = 0
         num_fail = 0
         for book_uuid, path in sidecar_paths_not_exist.items():
-            result, details = self.push_metadata_to_koreader_sidecar(book_uuid, path)
+            result, details = self.push_metadata_to_koreader_sidecar(book_uuid,
+                                                                     path)
             if result == "success":
                 num_success += 1
                 results.append(
@@ -700,12 +728,43 @@ class KoreaderAction(InterfaceAction):
             return None
 
         sidecar_paths = self.get_paths(device)
+        debug_print('sidecar_paths:', sidecar_paths)
 
         results = []
         num_success = 0
         num_fail = 0
+        num_skip = 0
 
         for book_uuid, sidecar_path in sidecar_paths.items():
+            debug_print('Trying to get sidecar from ', device,
+                        ', with sidecar_path: ', sidecar_path)
+
+            if is_system_path(sidecar_path):
+                results.append(
+                    {
+                        'result': f'skipped, it\'s a system path',
+                        'book_uuid': book_uuid,
+                        'sidecar_path': sidecar_path,
+                    }
+                )
+                num_skip += 1
+                continue
+
+            if not os.path.exists(sidecar_path):
+                debug_print(
+                    "Skipping, files/folder does not exist "
+                    "(book never opened): ", sidecar_path)
+                results.append(
+                    {
+                        'result': 'skipped, files/folder does not exist '
+                                  '(book never opened)',
+                        'book_uuid': book_uuid,
+                        'sidecar_path': sidecar_path,
+                    }
+                )
+                num_skip += 1
+                continue
+
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
             if not sidecar_contents:
@@ -719,8 +778,9 @@ class KoreaderAction(InterfaceAction):
                 )
                 num_fail += 1
                 continue
+            else:
+                debug_print('sidecar_contents is found!')
 
-            debug_print('reading sidecar for ', book_uuid)
             keys_values_to_update = {}
 
             for column in COLUMNS:
@@ -738,7 +798,8 @@ class KoreaderAction(InterfaceAction):
                     if subproperty in value:
                         value = value[subproperty]
                     else:
-                        debug_print(f'subproperty "{subproperty}" not found in value')
+                        debug_print(
+                            f'subproperty "{subproperty}" not found in value')
                         value = None
                         break
 
@@ -759,8 +820,8 @@ class KoreaderAction(InterfaceAction):
                 {
                     **result,
                     'book_uuid': book_uuid,
-                    'sidecar_path': sidecar_path,
-                    'updated': json.dumps(keys_values_to_update, default=str),
+                    'sidecar_path': sidecar_path
+                    # 'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
             if success:
@@ -769,36 +830,50 @@ class KoreaderAction(InterfaceAction):
                 num_fail += 1
 
         results_message = (
-            f'Attempted to sync {len(sidecar_paths)}.\n'
-            f'Metadata sync succeeded for {num_success}.\n'
-            f'Metadata sync failed for {num_fail}.\n'
-            f'(Failures may just be because you have not opened every book in '
-            f'KOReader yet. See below for details.'
+            f'Total targets found: {len(sidecar_paths)}\n\n'
+            f'Metadata sync succeeded for: {num_success}\n'
+            f'Metadata sync skipped for: {num_skip}\n'
+            f'Metadata sync failed for: {num_fail}\n\n'
         )
 
-        if num_success > 0 and num_fail > 0:
-            warning_dialog(
-                self.gui,
-                'Results',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_success > 0:  # and num_fail == 0
+        if num_success > 0 and num_fail == 0:
             info_dialog(
                 self.gui,
-                'Metadata synced for all books',
-                results_message,
+                'Metadata sync finished',
+                results_message + f'All logs good!\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
             )
-        else:  # not num_success
+        elif num_fail > 0:
             error_dialog(
                 self.gui,
-                'No metadata could be synced',
-                results_message,
+                'Errors during sync',
+                results_message + f'There was some error during sync process!\n'
+                                  f'Please investigate and report if it looks '
+                                  f'like a bug\n\n',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        elif num_success == 0 and num_fail == 0:
+            warning_dialog(
+                self.gui,
+                'No errors, not successful syncs',
+                results_message + f'No errors but no successful syncs\n'
+                                  f'Do you have book(s) which are ready to be '
+                                  f'sync?\n'
+                                  f'Please investigate and report if it looks '
+                                  f'like a bug\n\n',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        else:
+            error_dialog(
+                self.gui,
+                'Edge case',
+                results_message + f'Seems like and bug, please report ASAP\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False

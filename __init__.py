@@ -35,7 +35,7 @@ class KoreaderSync(InterfaceActionBase):
     name = 'KOReader Sync'
     description = 'Get metadata from a connected KOReader device'
     author = 'harmtemolder'
-    version = (0, 6, 0)
+    version = (0, 6, 1)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     config = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
     actual_plugin = 'calibre_plugins.koreader.action:KoreaderAction'
@@ -56,44 +56,11 @@ class KoreaderSync(InterfaceActionBase):
 
 def clean_bookmarks(bookmarks):
     """Transforms KOReader's bookmark metadata into text that can be stored
-    in calibre. I assume that all bookmarks have a `notes` attribute, which I
-    use as the main text of the bookmark. All other attributes are stored in a
-    HTML comment.
-
-    :param bookmarks: dict with numbered keys and bookmark dict values
-    :return: Markdown-formatted str of the bookmarks
-    """
-    debug_print = partial(root_debug_print, 'clean_bookmarks:')
-
-    output = ''
-
-    for k in bookmarks:
-        bookmark = bookmarks[k]
-        if not 'notes' in bookmark:
-            debug_print('bookmark does not have `notes`', bookmark)
-            continue
-
-        output += f'- {bookmark.pop("notes")}'
-
-        if len(bookmark) > 0:
-            output += ' <!-- '
-            for attr in bookmark:
-                output += f'{attr}: {bookmark[attr]}, '
-
-            output = output[:-2] + ' -->'
-
-        output += '\n'
-
-    return output.strip()
-
-
-def clean_highlights(annotations):
-    """Transforms KOReader's bookmark metadata into text that can be stored
     in calibre. I assume that all bookmarks have a `note` attribute, which I
     use as the main text of the bookmark. All other attributes are stored in a
     HTML comment.
 
-    :param annotations: dict with numbered keys and annotations dict values
+    :param bookmarks: dict with numbered keys and annotations dict values
     :return: HTML-formatted str of the all bookmarks and highlights
     """
     debug_print = partial(root_debug_print, 'clean_bookmarks:')
@@ -101,7 +68,7 @@ def clean_highlights(annotations):
     # Dictionary to store highlights grouped by chapter
     highlights_by_chapter = {}
 
-    for annotation in annotations.values():
+    for annotation in bookmarks.values():
         if 'note' not in annotation:
             debug_print('annotation does not have `note`', annotation)
         else:
@@ -109,10 +76,10 @@ def clean_highlights(annotations):
 
         # Extracting all attributes to save as hidden text
         hidden_attributes = ''
-        if len(annotations) > 0:
+        if len(bookmarks) > 0:
             hidden_attributes += ' <!-- '
-            for attr in annotations:
-                hidden_attributes += f'{attr}: {annotations[attr]}, '
+            for attr in bookmarks:
+                hidden_attributes += f'{attr}: {bookmarks[attr]}, '
             hidden_attributes = hidden_attributes[:-2] + ' -->'
         hidden_attributes += '\n'
 
@@ -137,19 +104,24 @@ def clean_highlights(annotations):
         highlights_by_chapter[chapter].append(highlight)
 
     # Generate HTML content for each chapter
-    html_content = '<!DOCTYPE html>\n<html>\n<head>\n<title>Book Highlights and Notes</title>\n</head>\n<body>\n'
+    html_content = ('<!DOCTYPE html>\n<html>\n<head>\n'
+                    '<title>Book Highlights and Notes</title>\n'
+                    '</head>\n<body>\n')
     highlight_count = 0
     for chapter, chapter_highlights in highlights_by_chapter.items():
         if chapter.strip() == '':
             chapter = 'Unknown'
-        html_content += f'<div>\n<h3>Chapter: "{chapter}"</h3>\n'
+        html_content += f'<div>\n<h3>Chapter: <u>{chapter}</u></h3>\n'
         html_content += '<blockquote>'
 
         for highlight in chapter_highlights:
             highlight_count += 1
-            html_content += f'<p><strong>{highlight_count}. Highlight</strong> - {highlight["datetime"]} <br/>{highlight["highlighted_text"]}\n'
+            html_content += (f'<p><strong>{highlight_count}. Highlight</strong'
+                             f'> - {highlight["datetime"]} '
+                             f'<br/>{highlight["highlighted_text"]}\n')
             html_content += f'<br><br>\n'
-            html_content += f'<strong>Note:</strong> <i>{highlight["reader_note"]}</i></p>\n'
+            html_content += (f'<strong>Note:</strong> <i>'
+                             f'{highlight["reader_note"]}</i></p>\n')
             html_content += f'{highlight["hidden_attributes"]}\n'
 
         html_content += "</div>\n"
