@@ -68,6 +68,7 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 This plugin has been tested successfully with:
 
+- Kobo Clara BW connected over USB or KOreader wireless driver (means should work with prev and latest color modes as well)
 - Kobo Aura connected over USB, which means it will probably work for all comparable Kobo devices (`KOBO` and `KOBOTOUCH`)
 - Kobo Aura H2O over USB (`KOBOTOUCHEXTENDED`, see [#6](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/6) for details)
 - Kobo Aura connected wirelessly, which means it will probably work for all calibre connect devices (`SMART_DEVICE_APP`)
