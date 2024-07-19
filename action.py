@@ -167,16 +167,18 @@ class KoreaderAction(InterfaceAction):
         self.qaction.triggered.connect(self.sync_to_calibre)
 
         # Right-click menu (already includes left-click action)
-        self.create_menu_action(
-            self.qaction.menu(),
-            'Sync missing to KOReader',
-            'Sync missing to KOReader',
-            icon='edit-undo.png',
-            description='If calibre has an entry in the "Raw sidecar column", '
-                        'but KOReader does not have a sidecar file, push the '
-                        'metadata from calibre to a new sidecar file.',
-            triggered=self.sync_missing_sidecars_to_koreader
-        )
+
+        # TODO: Sync calibre to KOReader is disabled see more in #8
+        # self.create_menu_action(
+        #     self.qaction.menu(),
+        #     'Sync missing to KOReader',
+        #     'Sync missing to KOReader',
+        #     icon='edit-undo.png',
+        #     description='If calibre has an entry in the "Raw sidecar column", '
+        #                 'but KOReader does not have a sidecar file, push the '
+        #                 'metadata from calibre to a new sidecar file.',
+        #     triggered=self.sync_missing_sidecars_to_koreader
+        # )
 
         self.qaction.menu().addSeparator()
 
