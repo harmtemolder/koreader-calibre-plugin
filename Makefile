@@ -16,9 +16,11 @@ all: update_version zip
 zip: $(release_dir)
 	@echo "Creating new $(release_dir)/$(zip_file)" && zip "$(release_dir)/$(zip_file)" $(zip_contents) && echo "Created new $(release_dir)/$(zip_file)"
 
+# Loads current src content, use this if doing dev changes
 dev:
 	@calibre-customize -b .; calibre-debug -g
 
+# Loads zip from release dir if exists
 load:
 	@calibre-customize -a "$(release_dir)/$(zip_file)"; calibre-debug -g
 
@@ -52,4 +54,3 @@ tag:
 	fi
 	@git tag -a "v$(version)" -m "Version $(version)"  # Create annotated tag for the version
 	@git push origin "v$(version)"  # Push the tag to the remote repository
-

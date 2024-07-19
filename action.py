@@ -36,6 +36,7 @@ from calibre.gui2 import (
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
+from enum import Enum
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -66,6 +67,11 @@ if DEBUG and PYDEVD:
         PYDEVD = False
 
 
+class GetSidecarStatus(Enum):
+    PATH_NOT_FOUND = 5
+    DECODE_FAILED = 6
+
+
 def is_system_path(path):
     """
     KOreader user may have some files in the root which we want to skip to
@@ -78,7 +84,7 @@ def is_system_path(path):
     return any(substring in path for substring in to_ignore)
 
 
-def append_results(status_msg, book_uuid, results, sidecar_path):
+def append_results(results, status_msg, book_uuid, sidecar_path):
     debug_print = partial(
         module_debug_print,
         'KoreaderAction:append_results:'
@@ -161,16 +167,18 @@ class KoreaderAction(InterfaceAction):
         self.qaction.triggered.connect(self.sync_to_calibre)
 
         # Right-click menu (already includes left-click action)
-        self.create_menu_action(
-            self.qaction.menu(),
-            'Sync missing to KOReader',
-            'Sync missing to KOReader',
-            icon='edit-undo.png',
-            description='If calibre has an entry in the "Raw sidecar column", '
-                        'but KOReader does not have a sidecar file, push the '
-                        'metadata from calibre to a new sidecar file.',
-            triggered=self.sync_missing_sidecars_to_koreader
-        )
+
+        # TODO: Sync calibre to KOReader is disabled see more in #8
+        # self.create_menu_action(
+        #     self.qaction.menu(),
+        #     'Sync missing to KOReader',
+        #     'Sync missing to KOReader',
+        #     icon='edit-undo.png',
+        #     description='If calibre has an entry in the "Raw sidecar column", '
+        #                 'but KOReader does not have a sidecar file, push the '
+        #                 'metadata from calibre to a new sidecar file.',
+        #     triggered=self.sync_missing_sidecars_to_koreader
+        # )
 
         self.qaction.menu().addSeparator()
 
@@ -345,7 +353,7 @@ class KoreaderAction(InterfaceAction):
                 device.get_file(path, outfile)
             except:
                 debug_print('could not get ', path)
-                return None
+                return GetSidecarStatus.PATH_NOT_FOUND
 
             contents = outfile.getvalue()
 
@@ -353,7 +361,7 @@ class KoreaderAction(InterfaceAction):
                 decoded_contents = contents.decode()
             except UnicodeDecodeError:
                 debug_print('could not decode ', contents)
-                return None
+                return GetSidecarStatus.DECODE_FAILED
 
             debug_print(f'Parsing: {path}')
             parsed_contents = parse_sidecar_lua(decoded_contents)
@@ -760,34 +768,27 @@ class KoreaderAction(InterfaceAction):
             # pre-checks before parsing
             if book_uuid is None:
                 status = 'skipped, no UUID'
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
-                num_skip += 1
-                continue
-
-            # Actually sees like all system files can be moved out of root
-            # if is_system_path(sidecar_path):
-            #     status = 'skipped, it\'s a system path'
-            #     append_results(status, book_uuid, results, sidecar_path)
-            #     num_skip += 1
-            #     continue
-
-            if not os.path.exists(sidecar_path):
-                status = ('skipped, file/folder does not exist '
-                          '(seems like is book never opened)')
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
+                append_results(results, status, book_uuid, sidecar_path)
                 num_skip += 1
                 continue
 
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
-            if not sidecar_contents:
-                status = 'could not get sidecar contents'
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
+            debug_print("sidecar_contents:", sidecar_contents)
+
+            if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
+                status = ('skipped, sidecar does not exist '
+                          '(seems like book is never opened)')
+                append_results(results, status, book_uuid, sidecar_path)
+                num_skip += 1
+                continue
+
+            elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
+                status = 'decoding is failed see debug for more details'
+                append_results(results, status, book_uuid, sidecar_path)
                 num_fail += 1
                 continue
+
             else:
                 debug_print('sidecar_contents is found!')
 
@@ -831,11 +832,12 @@ class KoreaderAction(InterfaceAction):
                 {
                     **result,
                     'book_uuid': book_uuid,
-                    'sidecar_path': sidecar_path
+                    'sidecar_path': sidecar_path,
                     # too much data, hard to read for user
                     # 'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
+
             if success:
                 num_success += 1
             else:
