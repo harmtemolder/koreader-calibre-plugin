@@ -78,7 +78,7 @@ def is_system_path(path):
     return any(substring in path for substring in to_ignore)
 
 
-def append_results(status_msg, book_uuid, results, sidecar_path):
+def append_results(results, status_msg, book_uuid, sidecar_path):
     debug_print = partial(
         module_debug_print,
         'KoreaderAction:append_results:'
@@ -760,8 +760,8 @@ class KoreaderAction(InterfaceAction):
             # pre-checks before parsing
             if book_uuid is None:
                 status = 'skipped, no UUID'
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
+                append_results(results, status, book_uuid,
+                               sidecar_path)
                 num_skip += 1
                 continue
 
@@ -772,21 +772,22 @@ class KoreaderAction(InterfaceAction):
             #     num_skip += 1
             #     continue
 
-            if not os.path.exists(sidecar_path):
-                status = ('skipped, file/folder does not exist '
-                          '(seems like is book never opened)')
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
-                num_skip += 1
-                continue
+            # if not os.path.exists(sidecar_path):
+            #     status = ('skipped, file/folder does not exist '
+            #               '(seems like is book never opened)')
+            #     # results = append_results(status, book_uuid, results,
+            #     #                          sidecar_path)
+            #     num_skip += 1
+            #     continue
 
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
             if not sidecar_contents:
-                status = 'could not get sidecar contents'
-                results = append_results(status, book_uuid, results,
-                                         sidecar_path)
-                num_fail += 1
+                status = ('could not get sidecar contents '
+                          '(seems like is book never opened)')
+                append_results(results, status, book_uuid, sidecar_path)
+
+                num_skip += 1
                 continue
             else:
                 debug_print('sidecar_contents is found!')
@@ -831,11 +832,12 @@ class KoreaderAction(InterfaceAction):
                 {
                     **result,
                     'book_uuid': book_uuid,
-                    'sidecar_path': sidecar_path
+                    'sidecar_path': sidecar_path,
                     # too much data, hard to read for user
                     # 'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
+            debug_print(">>>RESULTS:", results)
             if success:
                 num_success += 1
             else:
@@ -847,6 +849,10 @@ class KoreaderAction(InterfaceAction):
             f'Metadata sync skipped for: {num_skip}\n'
             f'Metadata sync failed for: {num_fail}\n\n'
         )
+
+        debug_print(">>>RESULTS2:", results)
+
+        debug_print(">>>RESULTS3:", json.dumps(results, indent=2))
 
         if num_success > 0 and num_fail == 0:
             info_dialog(
