@@ -9,9 +9,8 @@ release_dir = release
 # Convert the version to tuple format
 version_tuple := $(shell echo $(version) | awk -F. '{print "("$$1", "$$2", "$$3")"}')
 
+# Main targets
 release: update_version zip load
-
-all: update_version zip
 
 zip: $(release_dir)
 	@echo "Creating new $(release_dir)/$(zip_file)" && zip "$(release_dir)/$(zip_file)" $(zip_contents) && echo "Created new $(release_dir)/$(zip_file)"
@@ -46,7 +45,7 @@ debug_version:
 	@echo "Version tuple: $(version_tuple)"
 
 tag:
-	@echo "Tagging version $(version) and pushing to the repository"
+	@echo "Tagging version v$(version) and pushing to the repository"
 	@if git rev-parse "v$(version)" >/dev/null 2>&1; then \
 		echo "Tag v$(version) already exists. Deleting the old tag."; \
 		git tag -d "v$(version)"; \
