@@ -36,6 +36,7 @@ from calibre.gui2 import (
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
+from enum import Enum
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -64,6 +65,11 @@ if DEBUG and PYDEVD:
     except Exception as e:
         module_debug_print('could not start pydevd_pycharm, e = ', e)
         PYDEVD = False
+
+
+class GetSidecarStatus(Enum):
+    PATH_NOT_FOUND = 5
+    DECODE_FAILED = 6
 
 
 def is_system_path(path):
@@ -345,7 +351,7 @@ class KoreaderAction(InterfaceAction):
                 device.get_file(path, outfile)
             except:
                 debug_print('could not get ', path)
-                return None
+                return GetSidecarStatus.PATH_NOT_FOUND
 
             contents = outfile.getvalue()
 
@@ -353,7 +359,7 @@ class KoreaderAction(InterfaceAction):
                 decoded_contents = contents.decode()
             except UnicodeDecodeError:
                 debug_print('could not decode ', contents)
-                return None
+                return GetSidecarStatus.DECODE_FAILED
 
             debug_print(f'Parsing: {path}')
             parsed_contents = parse_sidecar_lua(decoded_contents)
@@ -760,35 +766,27 @@ class KoreaderAction(InterfaceAction):
             # pre-checks before parsing
             if book_uuid is None:
                 status = 'skipped, no UUID'
-                append_results(results, status, book_uuid,
-                               sidecar_path)
+                append_results(results, status, book_uuid, sidecar_path)
                 num_skip += 1
                 continue
-
-            # Actually sees like all system files can be moved out of root
-            # if is_system_path(sidecar_path):
-            #     status = 'skipped, it\'s a system path'
-            #     append_results(status, book_uuid, results, sidecar_path)
-            #     num_skip += 1
-            #     continue
-
-            # if not os.path.exists(sidecar_path):
-            #     status = ('skipped, file/folder does not exist '
-            #               '(seems like is book never opened)')
-            #     # results = append_results(status, book_uuid, results,
-            #     #                          sidecar_path)
-            #     num_skip += 1
-            #     continue
 
             sidecar_contents = self.get_sidecar(device, sidecar_path)
 
-            if not sidecar_contents:
-                status = ('could not get sidecar contents '
-                          '(seems like is book never opened)')
-                append_results(results, status, book_uuid, sidecar_path)
+            debug_print("sidecar_contents:", sidecar_contents)
 
+            if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
+                status = ('skipped, sidecar does not exist '
+                          '(seems like book is never opened)')
+                append_results(results, status, book_uuid, sidecar_path)
                 num_skip += 1
                 continue
+
+            elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
+                status = 'decoding is failed see debug for more details'
+                append_results(results, status, book_uuid, sidecar_path)
+                num_fail += 1
+                continue
+
             else:
                 debug_print('sidecar_contents is found!')
 
@@ -837,7 +835,7 @@ class KoreaderAction(InterfaceAction):
                     # 'updated': json.dumps(keys_values_to_update, default=str),
                 }
             )
-            debug_print(">>>RESULTS:", results)
+
             if success:
                 num_success += 1
             else:
@@ -849,10 +847,6 @@ class KoreaderAction(InterfaceAction):
             f'Metadata sync skipped for: {num_skip}\n'
             f'Metadata sync failed for: {num_fail}\n\n'
         )
-
-        debug_print(">>>RESULTS2:", results)
-
-        debug_print(">>>RESULTS3:", json.dumps(results, indent=2))
 
         if num_success > 0 and num_fail == 0:
             info_dialog(
