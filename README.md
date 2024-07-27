@@ -1,11 +1,5 @@
 # KOReader calibre plugin
 
-> **Hi,**
->
-> Original author seems abandoned the project and not responding on issue and fixes,
->
-> so I will be maintaining the project in this fork.
-
 A calibre plugin to synchronize metadata from KOReader to calibre.
 
 [KOReader](https://koreader.rocks/) creates sidecar files that hold read progress and annotations. This plugin reads the data from those sidecar files and updates calibre's metadata based on them. It is inspired by [the Kobo Utilities plugin](https://www.mobileread.com/forums/showthread.php?t=215339), that synchronizes reading progress between the original Kobo firmware ("Nickel") and custom columns in calibre.
