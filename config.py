@@ -26,8 +26,9 @@ from calibre_plugins.koreader import clean_bookmarks
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
+__modified_by__ = 'kyxap kyxappp@gmail.com'
+__modification_date__ = '2024'
 __docformat__ = 'restructuredtext en'
-
 
 SUPPORTED_DEVICES = [
     'FOLDER_DEVICE',
@@ -75,7 +76,6 @@ COLUMNS = [{
                'as entered on the book’s status page.',
     'type': 'rating',
     'sidecar_property': ['summary', 'rating'],
-    'transform': (lambda value: value * 2),  # calibre uses a 10-point scale
 }, {
     'name': 'column_review',
     'label': 'Review column:',
@@ -100,28 +100,12 @@ COLUMNS = [{
     'sidecar_property': ['summary', 'status'],
     'transform': (lambda val: bool(val == 'complete')),
 }, {
-    'name': 'column_date_first_bookmark',
-    'label': 'First bookmark date column:',
-    'tooltip': 'A "Date" column to store the date on which the first\n'
-               'highlight or bookmark was made. (This is probably\n'
-               'around the time you started reading.)',
-    'type': 'datetime',
-    'sidecar_property': ['calculated', 'first_bookmark'],
-}, {
-    'name': 'column_date_last_bookmark',
-    'label': 'Last bookmark date column:',
-    'tooltip': 'A "Date" column to store the date on which the last\n'
-               'highlight or bookmark was made. (This is probably\n'
-               'around the time you finished reading.)',
-    'type': 'datetime',
-    'sidecar_property': ['calculated', 'last_bookmark'],
-}, {
     'name': 'column_bookmarks',
     'label': 'Bookmarks column',
     'tooltip': 'A "Long text" column to store your bookmarks and\n'
                'highlights.',
     'type': 'comments',
-    'sidecar_property': ['bookmarks'],
+    'sidecar_property': ['annotations'],
     'transform': clean_bookmarks,
 }, {
     'name': 'column_md5',
@@ -139,12 +123,6 @@ COLUMNS = [{
     'tooltip': 'A "Date" column to store when the last sync was performed.',
     'type': 'datetime',
     'sidecar_property': ['calculated', 'date_synced'],
-}, {
-    'name': 'column_date_sidecar_modified',
-    'label': 'Date Modified column:',
-    'tooltip': 'A "Date" column to store when the sidecar file was last modified.',
-    'type': 'datetime',
-    'sidecar_property': ['calculated', 'date_sidecar_modified'],
 }, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
