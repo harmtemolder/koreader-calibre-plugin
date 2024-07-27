@@ -218,7 +218,7 @@ class KoreaderAction(InterfaceAction):
         debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
-            'https://github.com/kyxap/koreader-calibre-plugin#readme'
+            'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
         )
         open_url(readme_url)
 
@@ -557,7 +557,7 @@ class KoreaderAction(InterfaceAction):
                 'Device not yet supported',
                 f'Devices of the type {device_class} are not yet supported by this plugin. '
                 f'Please check if there already is a feature request for this '
-                f'<a href="https://github.com/kyxap/koreader-calibre-plugin/issues">'
+                f'<a href="https://github.com/harmtemolder/koreader-calibre-plugin/issues">'
                 f'here</a>. If not, feel free to create one. I\'ll try to sync anyway.',
                 det_msg='',
                 show=True,
