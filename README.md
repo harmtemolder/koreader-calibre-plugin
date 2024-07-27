@@ -26,7 +26,7 @@ Releases will also be uploaded to [this plugin thread on the MobileRead Forums](
 
 #### Alternatively
 
-1. Download the latest release from [here](https://github.com/kyxap/koreader-calibre-plugin/releases).
+1. Download the latest release from [here](https://github.com/harmtemolder/koreader-calibre-plugin/releases).
 2. Go to your calibre's _Preferences_ > _Plugins_ > _Load plugin from file_ and point it to the downloaded ZIP file
 3. Restart calibre
 
@@ -84,7 +84,7 @@ This plugin is not compatible with:
 
 ### Issues
 
-If you encounter any issues with the plugin, please submit them [here](https://github.com/kyxap/koreader-calibre-plugin/issues).
+If you encounter any issues with the plugin, please submit them [here](https://github.com/harmtemolder/koreader-calibre-plugin/issues).
 
 ## Acknowledgements
 
@@ -101,7 +101,7 @@ If you encounter any issues with the plugin, please submit them [here](https://g
 - calibre allows you to auto-connect to a folder device on boot, which greatly speeds up your workflow when testing. You can find this under "Preferences" > "Tweaks", search for `auto_connect_to_folder`. Point that to the `dummy_device` folder in this repository. (I have included royalty free EPUBs for your and my convenience.)
 - If you're testing and don't actually want to update any metadata, set `DRY_RUN` to `True` in `__init__.py`.
 - I work in PyCharm, which offers a remote debugging server. To enable that in this plugin, set `PYDEVD` to `True` in `__init__.py`.You might need to change `sys.path.append` in `action.py`.
-- The supported device drivers can be found in [the `SUPPORTED_DEVICES` list in `config.py`](https://github.com/kyxap/koreader-calibre-plugin/blob/main/config.py#L30). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
+- The supported device drivers can be found in [the `SUPPORTED_DEVICES` list in `config.py`](https://github.com/harmtemolder/koreader-calibre-plugin/blob/main/config.py#L32). Adding a new type here is the first step to adding support, but make sure all features are tested thoroughly before releasing a version with an added device
 
 ### Testing in calibre
 
@@ -127,10 +127,10 @@ make zip
 
 ### Debugging a release
 
-1. Download the required release from [here](https://github.com/kyxap/koreader-calibre-plugin/releases)
+1. Download the required release from [here](https://github.com/harmtemolder/koreader-calibre-plugin/releases)
 1. Add it to calibre by running this in your terminal: `calibre-customize -a "KOReader_Sync_vX.X.X.zip"`, where `X.X.X` refers to the version you downloaded
 1. Start calibre in debug mode with `calibre-debug -g`
-1. Configure the KOReader plugin as described [here](https://github.com/kyxap/koreader-calibre-plugin#setup)
+1. Configure the KOReader plugin as described [here](https://github.com/harmtemolder/koreader-calibre-plugin#setup)
 1. Connect your device
 1. Run the sync by clicking the KOReader icon in your toolbar
 1. Check the details of the message when it's done if any/all books have been synced correctly
