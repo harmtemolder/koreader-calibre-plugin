@@ -8,7 +8,7 @@ Note that at the moment the sync is primarily one-way—from the KOReader device
 
 Pushing metadata from calibre to KOReader currently works only for books which do not have KOReader sidecar files, and of course requires the raw metadata column to be mapped. The use-case is for setting up a new device, or if a book was removed from your device and you've now added it back. This has been tested for calibre's Connect to Folder and Custom USB Device modes. It does not seem to work for the Kobo Touch device driver nor with wireless connections, but I (@charlesangus) find those don't communicate perfectly with Calibre/KOReader in any case... I haven't disabled it for other devices - it may be a quirk in my setup which is causing it to fail, and it may work fine for you.
 
-Releases will also be uploaded to [this plugin thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?p=4060141). If you are on there as well, please let me know what you think of the plugin in that thread.
+Releases will also be uploaded to [this plugin thread on the MobileRead Forums](https://www.mobileread.com/forums/showthread.php?t=362706). If you are on there as well, please let me know what you think of the plugin in that thread.
 
 ## Using this plugin
 
