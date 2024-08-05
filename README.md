@@ -16,6 +16,12 @@ and [wireless](https://github.com/koreader/koreader/wiki/Calibre-wireless-connec
 devices. For best experience please use the latest
 KOReader [release](https://github.com/koreader/koreader/releases)
 
+Releases will also be uploaded
+to [plugin thread](https://www.mobileread.com/forums/showthread.php?t=362706) on
+the MobileRead Forums.
+If you are on there as well, please let me know what you think of the plugin in
+that thread.
+
 ## Using this plugin
 
 ### Download and install
