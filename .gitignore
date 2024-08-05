@@ -144,3 +144,7 @@ cython_debug/
 # Release
 release
 *.bak
+
+# scripts extras
+.scripts/output.forumbb
+.scripts/input.md
