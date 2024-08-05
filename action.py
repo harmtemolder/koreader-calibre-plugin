@@ -169,16 +169,16 @@ class KoreaderAction(InterfaceAction):
         # Right-click menu (already includes left-click action)
 
         # TODO: Sync calibre to KOReader is disabled see more in #8
-        # self.create_menu_action(
-        #     self.qaction.menu(),
-        #     'Sync missing to KOReader',
-        #     'Sync missing to KOReader',
-        #     icon='edit-undo.png',
-        #     description='If calibre has an entry in the "Raw sidecar column", '
-        #                 'but KOReader does not have a sidecar file, push the '
-        #                 'metadata from calibre to a new sidecar file.',
-        #     triggered=self.sync_missing_sidecars_to_koreader
-        # )
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Sync missing to KOReader',
+            'Sync missing to KOReader',
+            icon='edit-undo.png',
+            description='If calibre has an entry in the "Raw sidecar column", '
+                        'but KOReader does not have a sidecar file, push the '
+                        'metadata from calibre to a new sidecar file.',
+            triggered=self.sync_missing_sidecars_to_koreader
+        )
 
         self.qaction.menu().addSeparator()
 
@@ -588,7 +588,8 @@ class KoreaderAction(InterfaceAction):
         if not book_id:
             debug_print(f'could not find {book_uuid} in calibre’s library')
             return "failure", {
-                'result': f"Could not find uuid {book_uuid} in Calibre's library."
+                'result': f"Could not find uuid {book_uuid} in Calibre's "
+                          f"library."
             }
 
         # Get the current metadata for the book from the library
@@ -596,7 +597,8 @@ class KoreaderAction(InterfaceAction):
         sidecar_metadata = metadata.get(CONFIG["column_sidecar"])
         if not sidecar_metadata:
             return "no_metadata", {
-                'result': f'No KOReader metadata for book_id {book_id}, no need to push.'
+                'result': f'No KOReader metadata for book_id {book_id}, no '
+                          f'need to push.'
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
@@ -611,6 +613,18 @@ class KoreaderAction(InterfaceAction):
         except FileExistsError:
             # dir exists, so we're fine
             pass
+        except PermissionError as perm_e:
+            return "failure", {
+                'result': f'Unable to create directory at: '
+                          f'{path} due to {perm_e}',
+                'book_id': book_id,
+            }
+        except OSError as os_e:
+            return "failure", {
+                'result': f'Unexpectable exception is occurred, '
+                          f'please report: {os_e}',
+                'book_id': book_id,
+            }
 
         with open(path, "w", encoding="utf-8") as f:
             debug_print(f"Writing to {path}")
