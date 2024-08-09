@@ -53,3 +53,9 @@ tag:
 	fi
 	@git tag -a "v$(version)" -m "Version $(version)"  # Create annotated tag for the version
 	@git push origin "v$(version)"  # Push the tag to the remote repository
+
+md_to_bb:
+	@echo "Converting input.md to output.forumbb"
+	@python .scripts/md-to-bb.py .scripts/input.md .scripts/output.forumbb
+	@echo "Done:"
+	@cat .scripts/output.forumbb
