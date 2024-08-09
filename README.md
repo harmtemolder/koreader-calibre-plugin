@@ -85,7 +85,7 @@ changed/removed from `sidecar_contents` data structure:
 - `first_bookmark` removed
 - `last_bookmark` removed
 - `bookmarks` renamed to `annotations`
-- `rating` uses 5-point instead 10-point scale
+- `rating` KOreader uses 5-point but calibre 10-point scale
 - `date_sidecar_modified` removed from `calculated`
 
 ### Things to consider
