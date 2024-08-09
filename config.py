@@ -76,6 +76,7 @@ COLUMNS = [{
                'as entered on the book’s status page.',
     'type': 'rating',
     'sidecar_property': ['summary', 'rating'],
+    'transform': (lambda value: value * 2),  # calibre uses a 10-point scale
 }, {
     'name': 'column_review',
     'label': 'Review column:',
