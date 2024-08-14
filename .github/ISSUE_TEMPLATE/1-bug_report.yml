@@ -41,7 +41,7 @@ body:
     validations:
       required: true
 
-    - type: dropdown
+  - type: dropdown
     id: connection-type
     attributes:
       label: Connection type
