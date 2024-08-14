@@ -68,6 +68,8 @@ that thread.
      progress to calibre without having to connect your KOReader device, in the
      future.
    - A _Date_ column to store **when the last sync was performed**.
+   - A _Date_ column to store **when the sidecar file was last modified**. Works
+     for wired connection only, wireless will be always empty,
    - A _Long text_ column to store the **contents of the metadata sidecar** as
      HTML, with _Interpret this column as_ set to _HTML_.
 
@@ -86,7 +88,8 @@ changed/removed from `sidecar_contents` data structure:
 - `last_bookmark` removed
 - `bookmarks` renamed to `annotations`
 - `rating` KOreader uses 5-point but calibre 10-point scale
-- `date_sidecar_modified` seems to be present in `calculated` if connected via cable (not wireless)
+- `date_sidecar_modified` seems to be present in `calculated` if connected via
+  cable (not wireless)
 
 ### Things to consider
 
