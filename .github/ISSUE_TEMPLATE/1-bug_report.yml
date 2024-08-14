@@ -67,7 +67,7 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     id: show-details
     attributes:
       label: Show details output from plugin pop-up
@@ -77,10 +77,19 @@ body:
       required: false
 
   - type: input
-    id: screenshots
+    id: textarea
     attributes:
-      label: Screenshots
+      label: screenshots
       description: If applicable, add screenshots to help explain your problem.
-      placeholder: Upload screenshots here
+      placeholder: Upload screenshots here, for most of the browser simple copy and paste in the input field will upload the screen shot automatically.
+    validations:
+      required: false
+
+  - type: input
+    id: textarea
+    attributes:
+      label: additional-info
+      description: Any additional information
+      placeholder: If you want add something extra
     validations:
       required: false
