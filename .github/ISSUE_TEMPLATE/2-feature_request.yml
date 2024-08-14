@@ -1,0 +1,46 @@
+name: Feature Request
+about: Suggest an idea for a new feature
+title: "[FEATURE] "
+labels: enhancement
+assignees: ''
+
+body:
+  - type: markdown
+    attributes:
+      content: |
+        **Thank you for suggesting a feature! Please fill out the following details to help us understand and evaluate your request.**
+
+  - type: input
+    attributes:
+      label: Feature Summary
+      description: A clear and concise summary of the feature you are requesting.
+      placeholder: Briefly describe the feature
+      required: true
+
+  - type: input
+    attributes:
+      label: Motivation
+      description: Explain why this feature is needed and how it will benefit the project or users.
+      placeholder: Describe the motivation for this feature
+      required: true
+
+  - type: input
+    attributes:
+      label: Use Cases
+      description: Provide specific scenarios or use cases where this feature would be useful.
+      placeholder: Provide detailed use cases
+      required: true
+
+  - type: input
+    attributes:
+      label: Alternatives
+      description: Describe any alternative solutions or features that you considered.
+      placeholder: Describe any alternative solutions
+      required: false
+
+  - type: input
+    attributes:
+      label: Additional Context
+      description: Add any other context or information that may help in understanding and evaluating the request.
+      placeholder: Provide additional context here
+      required: false
