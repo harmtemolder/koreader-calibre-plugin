@@ -76,7 +76,7 @@ body:
     validations:
       required: false
 
-  - type: input
+  - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
@@ -85,7 +85,7 @@ body:
     validations:
       required: false
 
-  - type: input
+  - type: textarea
     id: additional-info
     attributes:
       label: Any additional info
