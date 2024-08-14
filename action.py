@@ -36,7 +36,7 @@ from calibre.gui2 import (
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
-from enum import Enum
+from enum import Enum, auto
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -68,8 +68,14 @@ if DEBUG and PYDEVD:
 
 
 class GetSidecarStatus(Enum):
-    PATH_NOT_FOUND = 5
-    DECODE_FAILED = 6
+    PATH_NOT_FOUND = auto()
+    DECODE_FAILED = auto()
+
+
+class OperationStatus(Enum):
+    PASS = auto()
+    FAIL = auto()
+    SKIP = auto()
 
 
 def is_system_path(path):
@@ -399,7 +405,7 @@ class KoreaderAction(InterfaceAction):
 
         if not book_id:
             debug_print(f'could not find {uuid} in calibre\'s library')
-            return False, {
+            return OperationStatus.FAIL, {
                 'result': 'could not find uuid in calibre\'s library'}
 
         # Get the current metadata for the book from the library
@@ -414,8 +420,8 @@ class KoreaderAction(InterfaceAction):
                 if current_date_modified.timestamp() >= new_date_modified.timestamp():
                     debug_print(
                         f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
-                    return False, {
-                        'result': 'Data in calibre is newer. No sync.',
+                    return OperationStatus.SKIP, {
+                        'result': 'skipped, data in calibre is newer',
                         'book_id': book_id,
                     }
             # Fallback if no 'Date Modified Column' is set or not obtainable (wireless)
@@ -428,15 +434,15 @@ class KoreaderAction(InterfaceAction):
                     if current_read_percent >= new_read_percent:
                         debug_print(
                             f'book {book_id} read_percent {new_read_percent} lower or equal than current {current_read_percent}')
-                        return False, {
-                            'result': 'Read Percent is lower or equal to the one stored in calibre. No sync.',
+                        return OperationStatus.SKIP, {
+                            'result': 'skipped, read Percent is lower or equal to the one stored in calibre',
                             'book_id': book_id,
                         }
                 elif current_read_percent is not None and new_read_percent is None:
                     debug_print(
                         f'book {book_id} read_percent is None but existing is {current_read_percent}')
-                    return False, {
-                        'result': 'No new read percent found. No sync.',
+                    return OperationStatus.SKIP, {
+                        'result': 'skipped, no new read percent found',
                         'book_id': book_id,
                     }
 
@@ -450,8 +456,8 @@ class KoreaderAction(InterfaceAction):
             if current_read_percent is not None and current_read_percent >= 100 \
                 or current_status is not None and current_status == "complete":
                 debug_print(f'book {book_id} was already finished')
-                return False, {
-                    'result': 'Book already finished. No sync.',
+                return OperationStatus.SKIP, {
+                    'result': 'skipped, book already finished',
                     'book_id': book_id,
                 }
 
@@ -510,7 +516,7 @@ class KoreaderAction(InterfaceAction):
                 ', id = ', book_id, ': ', updates
             )
 
-        return True, {
+        return OperationStatus.PASS, {
             'result': 'success',
             'book_id': book_id,
         }
@@ -838,7 +844,7 @@ class KoreaderAction(InterfaceAction):
 
                 keys_values_to_update[target] = value
 
-            success, result = self.update_metadata(
+            operation_status, result = self.update_metadata(
                 book_uuid, keys_values_to_update
             )
 
@@ -852,10 +858,12 @@ class KoreaderAction(InterfaceAction):
                 }
             )
 
-            if success:
+            if operation_status == OperationStatus.PASS:
                 num_success += 1
-            else:
+            elif operation_status == OperationStatus.FAIL:
                 num_fail += 1
+            elif operation_status == OperationStatus.SKIP:
+                num_skip += 1
 
         results_message = (
             f'Total targets found: {len(sidecar_paths)}\n\n'
