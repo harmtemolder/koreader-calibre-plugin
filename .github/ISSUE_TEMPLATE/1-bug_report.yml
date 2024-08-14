@@ -1,67 +1,86 @@
 name: Bug Report
-about: Create a report to help us improve
-title: "[BUG] "
-labels: bug
-assignees: ''
+description: File a bug report.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - kyxap
 
 body:
   - type: markdown
     attributes:
-      content: |
-        **Thank you for reporting a bug! Please fill out the following details to help us resolve the issue.**
+      value: |
+        Thanks for taking the time to fill out this bug report!
 
   - type: input
+    id: plugin-version
     attributes:
       label: KOreader Sync plugin version
-      description: What plugin version you are suing? Is this latest version? If no please update and try reproduce the issue.
+      description: What plugin version are you using? Is this the latest version? If not, please update and try to reproduce the issue.
       placeholder: Provide information here
+    validations:
       required: true
 
   - type: input
+    id: koreader-version
     attributes:
       label: KOreader version
-      description: What KOreader you have installed on your device? If it's older than 2024.04, please update and try reproduce the issue.
+      description: What KOreader version do you have installed on your device? If it's older than 2024.04, please update and try to reproduce the issue.
       placeholder: Provide information here
+    validations:
       required: true
 
-  - type: input
+  - type: dropdown
+    id: os
     attributes:
-      label: Operation System
-      description: What OS is used to run calibre? (Windows 10/11, Ubuntu/etc)
-      placeholder: Provide information here
+      label: Operating System
+      description: What OS is used to run Calibre?
+      options:
+        - Linux
+        - Windows
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: describe-bug
     attributes:
       label: Describe the bug
       description: A clear and concise description of what the bug is.
       placeholder: Type your description here
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: reproduce-steps
     attributes:
       label: How to reproduce
       description: Steps to reproduce the behavior. Provide as much detail as possible.
       placeholder: Steps to reproduce the issue
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: expected-behavior
     attributes:
       label: Expected behavior
       description: A clear and concise description of what you expected to happen.
       placeholder: Describe what you expected to happen
+    validations:
       required: true
 
   - type: input
+    id: show-details
     attributes:
       label: Show details output from plugin pop-up
-      description: Get detailed output by clicking "Show details" button and copy output
+      description: Get detailed output by clicking the "Show details" button and copy the output here.
       placeholder: Provide information here
+    validations:
       required: false
 
   - type: input
+    id: screenshots
     attributes:
       label: Screenshots
       description: If applicable, add screenshots to help explain your problem.
       placeholder: Upload screenshots here
+    validations:
       required: false
