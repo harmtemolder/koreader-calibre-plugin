@@ -24,7 +24,7 @@ body:
     id: koreader-version
     attributes:
       label: KOreader version
-      description: What `KOreader` version do you have installed on your device? If it's older than `2024.04`, please update and try to reproduce the issue.
+      description: What KOreader version do you have installed on your device? If it's older than 2024.04, please update and try to reproduce the issue.
       placeholder: Provide information here
     validations:
       required: true
