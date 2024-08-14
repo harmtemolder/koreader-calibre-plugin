@@ -1,46 +1,57 @@
 name: Feature Request
-about: Suggest an idea for a new feature
+description: Suggest an idea for a new feature
 title: "[FEATURE] "
-labels: enhancement
-assignees: ''
+labels: ["enhancement", "triage"]
+assignees:
+  - kyxap
 
 body:
   - type: markdown
     attributes:
-      content: |
+      value: |
         **Thank you for suggesting a feature! Please fill out the following details to help us understand and evaluate your request.**
 
   - type: input
+    id: feature-summary
     attributes:
       label: Feature Summary
       description: A clear and concise summary of the feature you are requesting.
       placeholder: Briefly describe the feature
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: motivation
     attributes:
       label: Motivation
       description: Explain why this feature is needed and how it will benefit the project or users.
       placeholder: Describe the motivation for this feature
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: use-cases
     attributes:
       label: Use Cases
       description: Provide specific scenarios or use cases where this feature would be useful.
       placeholder: Provide detailed use cases
+    validations:
       required: true
 
-  - type: input
+  - type: textarea
+    id: alternatives
     attributes:
       label: Alternatives
       description: Describe any alternative solutions or features that you considered.
       placeholder: Describe any alternative solutions
+    validations:
       required: false
 
-  - type: input
+  - type: textarea
+    id: additional-context
     attributes:
       label: Additional Context
       description: Add any other context or information that may help in understanding and evaluating the request.
       placeholder: Provide additional context here
+    validations:
       required: false
