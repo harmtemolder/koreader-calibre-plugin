@@ -34,6 +34,7 @@ body:
     attributes:
       label: Operating System
       description: What OS is used to run Calibre?
+      multiple: true
       options:
         - Please select!
         - Linux
