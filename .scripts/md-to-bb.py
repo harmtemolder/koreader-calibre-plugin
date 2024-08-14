@@ -5,7 +5,7 @@ import re
 def markdown_to_bbcode(text):
     # Remove all line breaks to preserve full lines in the output
     text = re.sub(r'(?m)^# (.+)', r'[b][SIZE="7"]\1[/SIZE][/b]', text)  # H1
-    text = re.sub(r'(?m)^## (.+)', r'[b][SIZE="5"]\1[/SIZE][/b]', text)  # H2
+    text = re.sub(r'(?m)^## (.+)', r'[b][SIZE="3"]\1[/SIZE][/b]', text)  # H2
     text = re.sub(r'(?m)^### (.+)', r'[b][SIZE="3"]\1[/SIZE][/b]', text)  # H3
 
     # Convert Markdown lists to BBCode

@@ -1,0 +1,67 @@
+name: Bug Report
+about: Create a report to help us improve
+title: "[BUG] "
+labels: bug
+assignees: ''
+
+body:
+  - type: markdown
+    attributes:
+      content: |
+        **Thank you for reporting a bug! Please fill out the following details to help us resolve the issue.**
+
+  - type: input
+    attributes:
+      label: KOreader Sync plugin version
+      description: What plugin version you are suing? Is this latest version? If no please update and try reproduce the issue.
+      placeholder: Provide information here
+      required: true
+
+  - type: input
+    attributes:
+      label: KOreader version
+      description: What KOreader you have installed on your device? If it's older than 2024.04, please update and try reproduce the issue.
+      placeholder: Provide information here
+      required: true
+
+  - type: input
+    attributes:
+      label: Operation System
+      description: What OS is used to run calibre? (Windows 10/11, Ubuntu/etc)
+      placeholder: Provide information here
+      required: true
+
+  - type: input
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Type your description here
+      required: true
+
+  - type: input
+    attributes:
+      label: How to reproduce
+      description: Steps to reproduce the behavior. Provide as much detail as possible.
+      placeholder: Steps to reproduce the issue
+      required: true
+
+  - type: input
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: Describe what you expected to happen
+      required: true
+
+  - type: input
+    attributes:
+      label: Show details output from plugin pop-up
+      description: Get detailed output by clicking "Show details" button and copy output
+      placeholder: Provide information here
+      required: false
+
+  - type: input
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Upload screenshots here
+      required: false
