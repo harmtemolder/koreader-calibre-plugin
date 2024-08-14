@@ -77,19 +77,19 @@ body:
       required: false
 
   - type: input
-    id: textarea
+    id: screenshots
     attributes:
-      label: screenshots
+      label: Screenshots
       description: If applicable, add screenshots to help explain your problem.
       placeholder: Upload screenshots here, for most of the browser simple copy and paste in the input field will upload the screen shot automatically.
     validations:
       required: false
 
   - type: input
-    id: textarea
+    id: additional-info
     attributes:
-      label: additional-info
-      description: Any additional information
+      label: Any additional info
+      description: Any additional information if want to add to the bug report
       placeholder: If you want add something extra
     validations:
       required: false
