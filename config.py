@@ -125,6 +125,14 @@ COLUMNS = [{
     'type': 'datetime',
     'sidecar_property': ['calculated', 'date_synced'],
 }, {
+    'name': 'column_date_sidecar_modified',
+    'label': 'Date Modified column:',
+    'tooltip': 'A "Date" column to store when the sidecar file was last '
+               'modified. Works for wired connection only, wireless will be '
+               'always empty',
+    'type': 'datetime',
+    'sidecar_property': ['calculated', ''],
+}, {
     'name': 'column_sidecar',
     'label': 'Raw sidecar column:',
     'tooltip': 'A "Long text" column to store the contents of the\n'
