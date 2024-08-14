@@ -45,7 +45,7 @@ body:
     id: connection-type
     attributes:
       label: Connection type
-      description: How do you connect/sync your device with calibre? PS: never mix and match you must use only wireless or wired but no both for the same device.
+      description: How do you connect/sync your device with calibre? Never mix and match. You must use only wireless or wired but no both for the same device.
       options:
         - Please select!
         - Wireless (over wifi)
