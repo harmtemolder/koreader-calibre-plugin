@@ -71,7 +71,7 @@ body:
   - type: textarea
     id: show-details
     attributes:
-      label: "Show details" output from plugin pop-up
+      label: Provide details output from plugin pop-up window
       description: Get detailed output by clicking the "Show details" button and copy the output here.
       placeholder: Provide information here
     validations:
