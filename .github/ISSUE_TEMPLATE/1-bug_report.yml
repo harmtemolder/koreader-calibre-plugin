@@ -36,7 +36,6 @@ body:
       description: What OS is used to run Calibre?
       multiple: true
       options:
-        - Please select!
         - Linux
         - Windows
     validations:
@@ -47,8 +46,8 @@ body:
     attributes:
       label: Connection type
       description: How do you connect/sync your device with calibre? Never mix and match. You must use only wireless or wired but no both for the same device.
+      multiple: true
       options:
-        - Please select!
         - Wireless (over wifi)
         - Wired (over usb cable)
     validations:
