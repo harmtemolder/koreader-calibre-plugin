@@ -427,7 +427,7 @@ class KoreaderAction(InterfaceAction):
                 if current_read_percent is not None and new_read_percent is not None:
                     if current_read_percent >= new_read_percent:
                         debug_print(
-                            f'book {book_id} read_percent {new_read_percent} lower than current {current_read_percent}')
+                            f'book {book_id} read_percent {new_read_percent} lower or equal than current {current_read_percent}')
                         return False, {
                             'result': 'Read Percent is lower or equal to the one stored in calibre. No sync.',
                             'book_id': book_id,

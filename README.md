@@ -86,7 +86,7 @@ changed/removed from `sidecar_contents` data structure:
 - `last_bookmark` removed
 - `bookmarks` renamed to `annotations`
 - `rating` KOreader uses 5-point but calibre 10-point scale
-- `date_sidecar_modified` removed from `calculated`
+- `date_sidecar_modified` seems to be present in `calculated` if connected via cable (not wireless)
 
 ### Things to consider
 
