@@ -124,6 +124,9 @@ def parse_sidecar_lua(sidecar_lua):
         decoded_lua = None
 
     if 'bookmarks' in decoded_lua:
+        if type(decoded_lua['bookmarks']) is list:
+            decoded_lua['bookmarks'] = {i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}  # Starts from 1
+            
         debug_print('calculating first and last bookmark dates')
         bookmark_dates = [
             datetime.strptime(
