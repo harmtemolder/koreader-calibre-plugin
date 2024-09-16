@@ -221,8 +221,7 @@ class KoreaderAction(InterfaceAction):
         self.interface_action_base_plugin.do_user_config(self.gui)
 
     def show_readme(self):
-        debug_print = partial(module_debug_print,
-                              'KoreaderAction:show_readme:')
+        debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
             'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
@@ -316,12 +315,12 @@ class KoreaderAction(InterfaceAction):
         )
 
         debug_print(
-            f'found {len(device.books())} paths to books: \n\t',
+            f'found {len(device.books())} paths to books:\n\t',
             '\n\t'.join([book.path for book in device.books()])
         )
 
         debug_print(
-            f'found {len(device.books())} lpaths to books: \n\t',
+            f'found {len(device.books())} lpaths to books:\n\t',
             '\n\t'.join([book.lpath for book in device.books()])
         )
 
@@ -336,7 +335,7 @@ class KoreaderAction(InterfaceAction):
         }
 
         debug_print(
-            f'generated {len(paths)} path(s) to sidecar Lua files: \n\t',
+            f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
             '\n\t'.join(paths.values())
         )
 
@@ -455,7 +454,7 @@ class KoreaderAction(InterfaceAction):
             status_key = CONFIG['column_status']
             current_status = metadata.get(status_key)
             if current_read_percent is not None and current_read_percent >= 100 \
-                    or current_status is not None and current_status == "complete":
+                or current_status is not None and current_status == "complete":
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
@@ -545,8 +544,7 @@ class KoreaderAction(InterfaceAction):
             error_dialog(
                 self.gui,
                 'Device not supported',
-                f'Devices of the type {
-                    device_class} are not supported by this plugin. I '
+                f'Devices of the type {device_class} are not supported by this plugin. I '
                 f'have tried to get it working, but couldn’t. Sorry.',
                 det_msg='',
                 show=True,
@@ -563,10 +561,9 @@ class KoreaderAction(InterfaceAction):
             warning_dialog(
                 self.gui,
                 'Device not yet supported',
-                f'Devices of the type {
-                    device_class} are not yet supported by this plugin. '
+                f'Devices of the type {device_class} are not yet supported by this plugin. '
                 f'Please check if there already is a feature request for this '
-                f'<a href="https: //github.com/harmtemolder/koreader-calibre-plugin/issues">'
+                f'<a href="https://github.com/harmtemolder/koreader-calibre-plugin/issues">'
                 f'here</a>. If not, feel free to create one. I\'ll try to sync anyway.',
                 det_msg='',
                 show=True,
@@ -598,7 +595,7 @@ class KoreaderAction(InterfaceAction):
             debug_print(f'could not find {book_uuid} in calibre’s library')
             return "failure", {
                 'result': f"Could not find uuid {book_uuid} in Calibre's "
-                f"library."
+                          f"library."
             }
 
         # Get the current metadata for the book from the library
@@ -607,12 +604,11 @@ class KoreaderAction(InterfaceAction):
         if not sidecar_metadata:
             return "no_metadata", {
                 'result': f'No KOReader metadata for book_id {book_id}, no '
-                f'need to push.'
+                          f'need to push.'
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
-        sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {
-            sidecar_lua}\n"
+        sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {sidecar_lua}\n"
         try:
             os.makedirs(os.path.dirname(path))
         except FileExistsError:
@@ -621,13 +617,13 @@ class KoreaderAction(InterfaceAction):
         except PermissionError as perm_e:
             return "failure", {
                 'result': f'Unable to create directory at: '
-                f'{path} due to {perm_e}',
+                          f'{path} due to {perm_e}',
                 'book_id': book_id,
             }
         except OSError as os_e:
             return "failure", {
                 'result': f'Unexpectable exception is occurred, '
-                f'please report: {os_e}',
+                          f'please report: {os_e}',
                 'book_id': book_id,
             }
 
@@ -724,8 +720,7 @@ class KoreaderAction(InterfaceAction):
             f'{num_candidates} books on device without sidecars.\n'
             f'Sidecar creation succeeded for {num_success}.\n'
             f'Sidecar creation failed for {num_fail}.\n'
-            f'No attempt made for {
-                num_no_metadata} (no metadata in Calibre to push).\n'
+            f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
             f'See below for details.'
         )
 
@@ -886,8 +881,8 @@ class KoreaderAction(InterfaceAction):
                 self.gui,
                 'Some sync failed',
                 results_message + f'There was some error during sync process!\n'
-                f'Please investigate and report if it looks '
-                f'like a bug\n\n',
+                                  f'Please investigate and report if it looks '
+                                  f'like a bug\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
@@ -897,10 +892,10 @@ class KoreaderAction(InterfaceAction):
                 self.gui,
                 'No errors but not successful syncs',
                 results_message + f'No errors but no successful syncs\n'
-                f'Do you have book(s) which are ready to be '
-                f'sync?\n'
-                f'Please investigate and report if it looks '
-                f'like a bug\n\n',
+                                  f'Do you have book(s) which are ready to be '
+                                  f'sync?\n'
+                                  f'Please investigate and report if it looks '
+                                  f'like a bug\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False
