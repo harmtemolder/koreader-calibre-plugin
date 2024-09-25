@@ -105,11 +105,6 @@ changed/removed from `sidecar_contents` data structure:
   Calibre's metadata to account for changes in KOReader's sidecar format. Old
   metadata may work unpredictably if it's from a different version of KOReader.
 
-
-### Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=harmtemolder/koreader-calibre-plugin&type=Date)](https://star-history.com/#harmtemolder/koreader-calibre-plugin&Date)
-
 ### Supported devices
 
 This plugin has been tested successfully with:
@@ -141,6 +136,10 @@ This plugin is not compatible with (may work with latest plugin release):
 - `MTP_DEVICE` (
   see [#2](https://todo.sr.ht/~harmtemolder/koreader-calibre-plugin/2) for
   details)
+
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=harmtemolder/koreader-calibre-plugin&type=Date)](https://star-history.com/#harmtemolder/koreader-calibre-plugin&Date)
 
 ### Issues
 
