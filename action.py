@@ -608,11 +608,6 @@ class KoreaderAction(InterfaceAction):
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
-        # not certain if tabs need to be replaced with spaces but it can't hurt
-        sidecar_lua = sidecar_lua.replace("\t", "    ")
-        # something is happening in the decoding/encoding which is replacing [1] with ["1"]
-        # which ofc breaks the settings file; this regex strips the "" marks
-        sidecar_lua = re.sub(r'\["([0-9])+"\]', r'[\1]', sidecar_lua)
         sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {sidecar_lua}\n"
         try:
             os.makedirs(os.path.dirname(path))
