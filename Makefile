@@ -13,7 +13,8 @@ version_tuple := $(shell echo $(version) | awk -F. '{print "("$$1", "$$2", "$$3"
 release: update_version zip load
 
 zip: $(release_dir)
-	@echo "Creating new $(release_dir)/$(zip_file)" && zip "$(release_dir)/$(zip_file)" $(zip_contents) && echo "Created new $(release_dir)/$(zip_file)"
+	@echo "Creating new $(release_dir)/$(zip_file)"
+	@mkdir -p "$(release_dir)" && zip "$(release_dir)/$(zip_file)" $(zip_contents)
 
 # Loads current src content, use this if doing dev changes
 dev:
