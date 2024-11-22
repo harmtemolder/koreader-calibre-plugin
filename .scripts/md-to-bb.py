@@ -1,5 +1,6 @@
 import sys
 import re
+import os
 
 
 def markdown_to_bbcode(text):
@@ -30,14 +31,36 @@ def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
+    # Compute the absolute path to the version file
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    version_file = os.path.join(script_dir, '..', 'version.txt')
+
+    # Read the version from the version file
+    if not os.path.exists(version_file):
+        print(f"Error: Version file '{version_file}' not found.")
+        sys.exit(1)
+
+    with open(version_file, 'r') as vf:
+        version = vf.read().strip()
+
+    # Format the version as BBCode
+    version_bbcode = f'[b][SIZE="5"]v{version}[/SIZE][/b]\n\n'
+
+    # Read and convert the Markdown input
     with open(input_file, 'r') as f:
         markdown_text = f.read()
 
     bbcode_text = markdown_to_bbcode(markdown_text)
 
-    # Write the BBCode to the output file
+    # Combine version and BBCode content
+    full_bbcode_text = version_bbcode + bbcode_text
+
+    # Write the combined BBCode to the output file
     with open(output_file, 'w') as f:
-        f.write(bbcode_text)
+        f.write(full_bbcode_text)
+
+    print(f"Converting {input_file} to {output_file}")
+    print(f"Version: {version}")
 
 
 if __name__ == "__main__":
