@@ -126,7 +126,7 @@ def parse_sidecar_lua(sidecar_lua):
     if 'bookmarks' in decoded_lua:
         if type(decoded_lua['bookmarks']) is list:
             decoded_lua['bookmarks'] = {i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}  # Starts from 1
-            
+
         debug_print('calculating first and last bookmark dates')
         bookmark_dates = [
             datetime.strptime(
@@ -408,8 +408,8 @@ class KoreaderAction(InterfaceAction):
 
         if not book_id:
             debug_print(f'could not find {uuid} in calibre\'s library')
-            return OperationStatus.FAIL, {
-                'result': 'could not find uuid in calibre\'s library'}
+            return OperationStatus.SKIP, {
+                'result': 'could not find uuid in calibre\'s library, have you deleted this book from library?'}
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
