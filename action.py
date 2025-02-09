@@ -10,6 +10,10 @@ import os
 import re
 import sys
 
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
+import brotli
+
 from PyQt5.Qt import QUrl
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
@@ -187,6 +191,16 @@ class KoreaderAction(InterfaceAction):
                         'but KOReader does not have a sidecar file, push the '
                         'metadata from calibre to a new sidecar file.',
             triggered=self.sync_missing_sidecars_to_koreader
+        )
+
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Sync from ProgressSync',
+            'Sync from ProgressSync',
+            icon='convert.png',
+            description='Use KOReader''s built in ProgressSync Plugin '
+                        'to update percentRead int or float.',
+            triggered=self.sync_progress_from_progresssync
         )
 
         self.qaction.menu().addSeparator()
@@ -750,6 +764,160 @@ class KoreaderAction(InterfaceAction):
                 self.gui,
                 'Failure',
                 results_message,
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+
+    def sync_progress_from_progresssync(self):
+        """Use KOReader's ProgressSync Server to update Calibre metadata rather than a manual sync.
+
+        Intended to easily update Calibre with the lastest reading progress from KOReader.
+
+        :return:
+        """
+
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:sync_progress_from_progresssync:'
+        )
+
+        if CONFIG["column_md5"] == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'MD5 column not mapped, impossible to get metadata from Progress Sync Server',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+        
+        if CONFIG["progress_sync_password"] == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'Progress Sync Account is not logged in, add credentials in plugin settings',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+        
+        'Get list of books with MD5 column'
+        db = self.gui.current_db.new_api
+        md5_column = CONFIG["column_md5"]
+        books_with_md5 = db.search(f'{md5_column}:!''')
+        
+        results = []
+        num_success = 0
+        num_skip = 0
+
+        headers = {
+            'x-auth-user': CONFIG["progress_sync_username"],
+            'x-auth-key': CONFIG["progress_sync_password"],
+            'Accept': 'application/vnd.koreader.v1+json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
+            'User-Agent': f'CalibreKOReaderSync/{self.version}'
+        }
+
+        for book_id in books_with_md5:
+            metadata = db.get_metadata(book_id)
+            md5_value = metadata.get(md5_column)
+
+            try:
+                url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
+                request = Request(url, headers=headers)
+                with urlopen(request, timeout=20) as response:
+                    response_data = response.read()
+                    if response_data == b'{}':
+                        results.append({
+                            'book_id': book_id,
+                            'md5_value': md5_value,
+                            'error': 'No ProgressSync entry for md5 hash'
+                        })
+                        num_skip += 1
+                        continue
+                    progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
+                
+                results.append({
+                    'book_id': book_id,
+                    'md5_value': md5_value,
+                    **progress_data
+                })
+                num_success += 1
+                
+                # List of keys to check
+                ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
+
+                # Map of progress_data keys to match each config key
+                progress_mapping = { 
+                    'column_percent_read': progress_data['percentage'],
+                    'column_percent_read_int': round(progress_data['percentage']*100),
+                    'column_last_read_location': progress_data['progress']
+                    # Device, Device ID, and timestamps could also be added
+                }
+
+                # Dictionary to store values to be updated
+                keys_values_to_update = {}
+
+                for key in ProgressSync_Columns:
+                    internal_column = CONFIG.get(key, '')  # Get internal column name from CONFIG
+                    if not internal_column:  # Skip if internal column name is blank
+                        continue
+                    
+                    current_value = metadata.get(internal_column)  # Get current value from metadata
+                    remote_value = progress_mapping[key]
+
+                    # Compare current and remote values
+                    if current_value != remote_value:
+                        keys_values_to_update[internal_column] = remote_value
+
+                # Update only if there are differences
+                if keys_values_to_update:
+                    self.update_metadata(metadata.get('uuid'), keys_values_to_update)
+
+            except (HTTPError, URLError) as e:
+                msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
+                debug_print(msg)
+                results.append({
+                    'book_id': book_id,
+                    'md5_value': md5_value,
+                    'error': 'No data received'
+                })
+                num_skip += 1
+
+        results_message = (
+            f'Total books with MD5 values: {len(books_with_md5)}\n\n'
+            f'Successful syncs: {num_success}\n'
+            f'Failed syncs: {num_skip}\n\n'
+        )
+
+        if num_success > 0 and num_skip == 0:
+            info_dialog(
+                self.gui,
+                'Progress sync finished',
+                results_message + 'All looks good!\n\n',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        elif num_skip > 0:
+            error_dialog(
+                self.gui,
+                'Some syncs failed',
+                results_message + 'There were some errors during the sync process!\n'
+                                'Please investigate and report if it looks like a bug\n\n',
+                det_msg=json.dumps(results, indent=2),
+                show=True,
+                show_copy_button=False
+            )
+        else:
+            warning_dialog(
+                self.gui,
+                'No successful syncs',
+                results_message + 'No successful syncs\n'
+                                'Please investigate and report if it looks like a bug\n\n',
                 det_msg=json.dumps(results, indent=2),
                 show=True,
                 show_copy_button=False

@@ -10,6 +10,8 @@ from functools import partial
 from PyQt5.Qt import (
     QComboBox,
     QCheckBox,
+    QPushButton,
+    QLineEdit,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -164,6 +166,9 @@ for this_column in COLUMNS:
     CONFIG.defaults[this_column['name']] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox['name']] = False
+CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
+CONFIG.defaults['progress_sync_username'] = ''
+CONFIG.defaults['progress_sync_password'] = ''
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
@@ -198,6 +203,15 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         custom_checkbox_layout = CustomCheckboxLayout(self)
         layout.addLayout(custom_checkbox_layout)
 
+        # Add ProgressSync Account button
+        progress_sync_button = QPushButton('Add ProgressSync Account', self)
+        progress_sync_button.clicked.connect(self.show_progress_sync_popup)
+        layout.addWidget(progress_sync_button)
+    
+    def show_progress_sync_popup(self):
+        self.progress_sync_popup = ProgressSyncPopup(self)
+        self.progress_sync_popup.show()
+
     def save_settings(self):
         debug_print = partial(module_debug_print,
                               'ConfigWidget:save_settings:')
@@ -211,6 +225,54 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         debug_print('new CONFIG = ', CONFIG)
 
+class ProgressSyncPopup(QWidget):
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+        self.setWindowTitle('Add ProgressSync Account')
+        self.setGeometry(100, 100, 400, 200)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.url_label = QLabel('ProgressSync Server URL:', self)
+        self.url_input = QLineEdit(self)
+        self.url_input.setText(CONFIG['progress_sync_url'])
+        layout.addWidget(self.url_label)
+        layout.addWidget(self.url_input)
+
+        self.username_label = QLabel('Username:', self)
+        self.username_input = QLineEdit(self)
+        self.username_input.setText(CONFIG['progress_sync_username'])
+        layout.addWidget(self.username_label)
+        layout.addWidget(self.username_input)
+
+        self.password_label = QLabel('Password:', self)
+        self.password_input = QLineEdit(self)
+        self.password_input.setEchoMode(QLineEdit.Password)
+        layout.addWidget(self.password_label)
+        layout.addWidget(self.password_input)
+
+        self.note_label = QLabel(
+            'Enter any custom server or leave the default filled in. '
+            'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.'
+            'Also make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location',
+            self
+        )
+        layout.addWidget(self.note_label)
+
+        self.login_button = QPushButton('Log In', self)
+        self.login_button.clicked.connect(self.save_progress_sync_settings)
+        layout.addWidget(self.login_button)
+
+    def save_progress_sync_settings(self):
+        CONFIG['progress_sync_url'] = self.url_input.text()
+        CONFIG['progress_sync_username'] = self.username_input.text()
+        CONFIG['progress_sync_password'] = self.hash_password(self.password_input.text())
+        self.close()
+
+    def hash_password(self, password):
+        import hashlib
+        return hashlib.md5(password.encode()).hexdigest()
 
 class TitleLayout(QHBoxLayout):
     """A sub-layout to the main layout used in ConfigWidget that contains an
