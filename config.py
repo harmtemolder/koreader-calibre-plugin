@@ -27,6 +27,7 @@ from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 from calibre_plugins.koreader import clean_bookmarks
+from calibre.gui2 import show_restart_warning
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -165,7 +166,7 @@ CHECKBOXES = [{
                '"Percent read column" or "Reading status column" to be synced',
 }, {
     'name': 'checkbox_enable_automatic_sync',
-    'addToLayout': True,
+    'addToLayout': False,
     'label': 'Automatic Sync on device connection:',
     'tooltip': 'Sync from KOReader automatically on device connection. \n'
                'Restart calibre to apply this setting',
@@ -219,6 +220,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # Add custom checkboxes
         custom_checkbox_layout = CustomCheckboxLayout(self)
         layout.addLayout(custom_checkbox_layout)
+        self.enable_automatic_sync_checkbox = QCheckBox('Automatic Sync on device connection')
+        self.enable_automatic_sync_checkbox.setCheckState(Qt.Checked if CONFIG['checkbox_enable_automatic_sync'] else Qt.Unchecked)
+        layout.addWidget(self.enable_automatic_sync_checkbox)
 
         # Add separator and header
         separator = QFrame()
@@ -274,17 +278,31 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                               'ConfigWidget:save_settings:')
         debug_print('old CONFIG = ', CONFIG)
 
+        print(CONFIG['checkbox_enable_scheduled_progressync'] != (self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked))
+
+        # Check relevant settings for changes in order to show restart warning
+        needRestart = ( CONFIG['checkbox_enable_automatic_sync'] != (self.enable_automatic_sync_checkbox.checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_scheduled_progressync'] != (self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked) or
+            CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
+            CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
+        )
+
         for column in COLUMNS:
             CONFIG[column['name']] = column['combo'].get_selected_column()
+            print(column['name'])
 
         for checkbox in CHECKBOXES:
             CONFIG[checkbox['name']] = checkbox['checkbox'].checkState() == Qt.Checked
 
+        CONFIG['checkbox_enable_automatic_sync'] = self.enable_automatic_sync_checkbox.checkState() == Qt.Checked
+        
         CONFIG['checkbox_enable_scheduled_progressync'] = self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
 
         debug_print('new CONFIG = ', CONFIG)
+        if needRestart and show_restart_warning('Changes have been made that require a restart to take effect. \n Restart now?'):
+            self.action.gui.quit(restart=True)
 
 class ProgressSyncPopup(QWidget):
     def __init__(self, parent):
