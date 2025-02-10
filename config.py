@@ -17,6 +17,8 @@ from PyQt5.Qt import (
     QLabel,
     QVBoxLayout,
     QWidget,
+    QSpinBox,
+    QFrame,
     Qt,
 )
 
@@ -151,14 +153,21 @@ COLUMNS = [{
 }]
 CHECKBOXES = [{
     'name': 'checkbox_sync_if_more_recent',
+    'addToLayout': True,
     'label': 'Sync only if changes are more recent:',
     'tooltip': 'Sync book only if the metadata is more recent. Requires\n'
                '"Date Modified Column" or "Percent read column" to be synced',
 }, {
     'name': 'checkbox_no_sync_if_finished',
+    'addToLayout': True,
     'label': 'No sync if book has already been finished:',
     'tooltip': 'Do not sync book if it has already been finished. Requires\n'
                '"Percent read column" or "Reading status column" to be synced',
+}, {
+    'name': 'checkbox_enable_scheduled_progressync',
+    'addToLayout': False,
+    'label': 'Enable Daily ProgressSync:',
+    'tooltip': 'Enable daily sync of reading progress and location using KOReader\'s ProgressSync server.',
 }]
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
@@ -169,6 +178,8 @@ for this_checkbox in CHECKBOXES:
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
+CONFIG.defaults['scheduleSyncHour'] = 4
+CONFIG.defaults['scheduleSyncMinute'] = 0
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
@@ -203,11 +214,51 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         custom_checkbox_layout = CustomCheckboxLayout(self)
         layout.addLayout(custom_checkbox_layout)
 
+        # Add separator and header
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(separator)
+
+        header_label = QLabel(
+            "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
+            "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
+            "This functionality can optionally be scheduled into a daily sync from within calibre. "
+            "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
+        )
+        header_label.setWordWrap(True)
+        layout.addWidget(header_label)
+
         # Add ProgressSync Account button
         progress_sync_button = QPushButton('Add ProgressSync Account', self)
         progress_sync_button.clicked.connect(self.show_progress_sync_popup)
         layout.addWidget(progress_sync_button)
-    
+
+        # Add scheduled sync options
+        scheduled_sync_layout = QHBoxLayout()
+        scheduled_sync_layout.setAlignment(Qt.AlignLeft)
+        self.enable_scheduled_sync_checkbox = QCheckBox('Enable Daily ProgressSync')
+        self.enable_scheduled_sync_checkbox.setCheckState(Qt.Checked if CONFIG['checkbox_enable_scheduled_progressync'] else Qt.Unchecked)
+        scheduled_sync_layout.addWidget(self.enable_scheduled_sync_checkbox)
+
+        scheduled_sync_layout.addWidget(QLabel('Scheduled Time:'))
+
+        self.schedule_hour_input = QSpinBox()
+        self.schedule_hour_input.setRange(0, 23)
+        self.schedule_hour_input.setValue(CONFIG['scheduleSyncHour'])
+        self.schedule_hour_input.setSuffix('h')
+        scheduled_sync_layout.addWidget(self.schedule_hour_input)
+
+        scheduled_sync_layout.addWidget(QLabel(':'))
+
+        self.schedule_minute_input = QSpinBox()
+        self.schedule_minute_input.setRange(0, 59)
+        self.schedule_minute_input.setValue(CONFIG['scheduleSyncMinute'])
+        self.schedule_minute_input.setSuffix('m')
+        scheduled_sync_layout.addWidget(self.schedule_minute_input)
+
+        layout.addLayout(scheduled_sync_layout)
+
     def show_progress_sync_popup(self):
         self.progress_sync_popup = ProgressSyncPopup(self)
         self.progress_sync_popup.show()
@@ -222,6 +273,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         for checkbox in CHECKBOXES:
             CONFIG[checkbox['name']] = checkbox['checkbox'].checkState() == Qt.Checked
+
+        CONFIG['checkbox_enable_scheduled_progressync'] = self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked
+        CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
+        CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
 
         debug_print('new CONFIG = ', CONFIG)
 
@@ -379,16 +434,17 @@ class CustomCheckboxLayout(QGridLayout):
         self.action = parent.action
         row = 1
 
-        # Add custom cehckboxes
+        # Add custom checkboxes
         for checkbox in CHECKBOXES:
             label = QLabel(checkbox['label'], parent)
             label.setToolTip(checkbox['tooltip'])
             checkbox['checkbox'] = QCheckBox()
             checkbox['checkbox'].setCheckState(Qt.Checked if CONFIG[checkbox['name']] else Qt.Unchecked)
             label.setBuddy(checkbox['checkbox'])
-            self.addWidget(label, row, 1, Qt.AlignRight)
-            self.addWidget(checkbox['checkbox'], row, 2, 1, 2)
-            row += 1
+            if checkbox['addToLayout']:
+                self.addWidget(label, row, 1, Qt.AlignRight)
+                self.addWidget(checkbox['checkbox'], row, 2, 1, 2)
+                row += 1
 
 class CustomColumnComboBox(QComboBox):
     def __init__(self, parent, custom_columns=None, selected_column=''):

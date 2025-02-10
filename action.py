@@ -14,7 +14,7 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import brotli
 
-from PyQt5.Qt import QUrl
+from PyQt5.Qt import QUrl, QTimer, QTime
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
@@ -233,6 +233,10 @@ class KoreaderAction(InterfaceAction):
             description='About KOReader Sync',
             triggered=self.show_about
         )
+        
+        # Start the scheduled progress sync if enabled
+        if CONFIG["checkbox_enable_scheduled_progressync"]:
+            self.scheduled_progress_sync()
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
@@ -922,6 +926,32 @@ class KoreaderAction(InterfaceAction):
                 show=True,
                 show_copy_button=False
             )
+
+    def scheduled_progress_sync(self):
+        def scheduledTask():
+            self.sync_progress_from_progresssync()
+
+        def main():
+            # Get current local time
+            currentTime = QTime.currentTime()
+
+            # Set target time to user inputted time
+            targetTime = QTime(CONFIG["scheduleSyncHour"], CONFIG["scheduleSyncMinute"])
+
+            # Calculate the time difference
+            timeDiff = currentTime.msecsTo(targetTime)
+            
+            # If target time has already passed today, set the target time for tomorrow
+            if timeDiff < 0:
+                timeDiff = timeDiff + 86400000
+
+            # Create a QTimer to trigger the task at the desired time
+            QTimer.singleShot(timeDiff, scheduledTask)
+
+            # After the task, set another timer for the next day
+            QTimer.singleShot(24 * 3600 * 1000, scheduledTask)
+        
+        main() # Runs scheduled_progress_sync
 
     def sync_to_calibre(self):
         """This plugin’s main purpose. It syncs the contents of
