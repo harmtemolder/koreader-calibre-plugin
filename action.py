@@ -14,7 +14,19 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import brotli
 
-from PyQt5.Qt import QUrl, QTimer, QTime
+from PyQt5.Qt import (
+    QUrl,
+    QTimer,
+    QTime,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QDialog,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+)
+
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
@@ -329,7 +341,7 @@ class KoreaderAction(InterfaceAction):
         return connected_device
 
     def _on_device_metadata_available(self):
-        self.sync_to_calibre()
+        self.sync_to_calibre(silent=True)
 
     def get_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library
@@ -665,7 +677,7 @@ class KoreaderAction(InterfaceAction):
             'book_id': book_id,
         }
 
-    def sync_missing_sidecars_to_koreader(self):
+    def sync_missing_sidecars_to_koreader(self, silent=False):
         """Push the content of Calibre's raw metadata column to KOReader
         for any files which are missing in KOReader. Does not touch existing
         metadata sidecars on KOReader.
@@ -745,46 +757,41 @@ class KoreaderAction(InterfaceAction):
                     }
                 )
 
-        results_message = (
-            f'{num_candidates} books on device without sidecars.\n'
-            f'Sidecar creation succeeded for {num_success}.\n'
-            f'Sidecar creation failed for {num_fail}.\n'
-            f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
-            f'See below for details.'
-        )
-
-        if num_success > 0 and num_fail > 0:
-            warning_dialog(
-                self.gui,
-                'Results',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
-            info_dialog(
-                self.gui,
-                'Success',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        else:
-            error_dialog(
-                self.gui,
-                'Failure',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
+        if not silent:
+            results_message = (
+                f'{num_candidates} books on device without sidecars.\n'
+                f'Sidecar creation succeeded for {num_success}.\n'
+                f'Sidecar creation failed for {num_fail}.\n'
+                f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
+                f'See below for details.'
             )
 
-    def sync_progress_from_progresssync(self):
+            if num_success > 0 and num_fail > 0:
+                SyncCompletionDialog( #warn
+                    self.gui,
+                    'Results',
+                    results_message,
+                    results
+                )
+            elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
+                SyncCompletionDialog( #info
+                    self.gui,
+                    'Success',
+                    results_message,
+                    results
+                )
+            else:
+                SyncCompletionDialog( #err
+                    self.gui,
+                    'Failure',
+                    results_message,
+                    results
+                )
+
+    def sync_progress_from_progresssync(self, silent=False):
         """Use KOReader's ProgressSync Server to update Calibre metadata rather than a manual sync.
 
-        Intended to easily update Calibre with the lastest reading progress from KOReader.
+        Intended to easily update Calibre with the latest reading progress from KOReader.
 
         :return:
         """
@@ -836,6 +843,7 @@ class KoreaderAction(InterfaceAction):
         for book_id in books_with_md5:
             metadata = db.get_metadata(book_id)
             md5_value = metadata.get(md5_column)
+            book_uuid = metadata.get('uuid')
 
             try:
                 url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
@@ -851,13 +859,6 @@ class KoreaderAction(InterfaceAction):
                         num_skip += 1
                         continue
                     progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
-                
-                results.append({
-                    'book_id': book_id,
-                    'md5_value': md5_value,
-                    **progress_data
-                })
-                num_success += 1
                 
                 # List of keys to check
                 ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
@@ -887,57 +888,61 @@ class KoreaderAction(InterfaceAction):
 
                 # Update only if there are differences
                 if keys_values_to_update:
-                    self.update_metadata(metadata.get('uuid'), keys_values_to_update)
+                    operation_status, result = self.update_metadata(book_uuid, keys_values_to_update)
+                else:
+                    result = {}
+
+                results.append({
+                    **result,
+                    'book_uuid': book_uuid,
+                    'md5_value': md5_value,
+                    **progress_data
+                }) 
+                num_success += 1
 
             except (HTTPError, URLError) as e:
                 msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
                 debug_print(msg)
                 results.append({
-                    'book_id': book_id,
+                    'book_uuid': book_uuid,
                     'md5_value': md5_value,
                     'error': 'No data received'
                 })
                 num_skip += 1
+        if not silent:
+            results_message = (
+                f'Total books with MD5 values: {len(books_with_md5)}\n\n'
+                f'Successful syncs: {num_success}\n'
+                f'Failed syncs: {num_skip}\n\n'
+            )
 
-        results_message = (
-            f'Total books with MD5 values: {len(books_with_md5)}\n\n'
-            f'Successful syncs: {num_success}\n'
-            f'Failed syncs: {num_skip}\n\n'
-        )
-
-        if num_success > 0 and num_skip == 0:
-            info_dialog(
-                self.gui,
-                'Progress sync finished',
-                results_message + 'All looks good!\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_skip > 0:
-            error_dialog(
-                self.gui,
-                'Some syncs failed',
-                results_message + 'There were some errors during the sync process!\n'
-                                'Please investigate and report if it looks like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        else:
-            warning_dialog(
-                self.gui,
-                'No successful syncs',
-                results_message + 'No successful syncs\n'
-                                'Please investigate and report if it looks like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
+            if num_success > 0 and num_skip == 0:
+                SyncCompletionDialog( #info
+                    self.gui,
+                    'Progress sync finished',
+                    results_message + 'All looks good!\n\n',
+                    results
+                )
+            elif num_skip > 0:
+                SyncCompletionDialog( #warn
+                    self.gui,
+                    'Some syncs failed',
+                    results_message + 'There were some errors during the sync process!\n'
+                                    'Please investigate and report if it looks like a bug\n\n',
+                    results
+                )
+            else:
+                SyncCompletionDialog( #err
+                    self.gui,
+                    'No successful syncs',
+                    results_message + 'No successful syncs\n'
+                                    'Please investigate and report if it looks like a bug\n\n',
+                    results
+                )
 
     def scheduled_progress_sync(self):
         def scheduledTask():
-            self.sync_progress_from_progresssync()
+            self.sync_progress_from_progresssync(silent=True)
 
         def main():
             # Get current local time
@@ -961,7 +966,7 @@ class KoreaderAction(InterfaceAction):
         
         main() # Runs scheduled_progress_sync
 
-    def sync_to_calibre(self):
+    def sync_to_calibre(self, silent=False):
         """This plugin’s main purpose. It syncs the contents of
         KOReader’s metadata sidecar files into calibre’s metadata.
 
@@ -1069,52 +1074,105 @@ class KoreaderAction(InterfaceAction):
             elif operation_status == OperationStatus.SKIP:
                 num_skip += 1
 
-        results_message = (
-            f'Total targets found: {len(sidecar_paths)}\n\n'
-            f'Metadata sync succeeded for: {num_success}\n'
-            f'Metadata sync skipped for: {num_skip}\n'
-            f'Metadata sync failed for: {num_fail}\n\n'
-        )
+        if not silent:
+            results_message = (
+                f'Total targets found: {len(sidecar_paths)}\n\n'
+                f'Metadata sync succeeded for: {num_success}\n'
+                f'Metadata sync skipped for: {num_skip}\n'
+                f'Metadata sync failed for: {num_fail}\n\n'
+            )
 
-        if num_success > 0 and num_fail == 0:
-            info_dialog(
-                self.gui,
-                'Metadata sync finished',
-                results_message + f'All looks good!\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_fail > 0:
-            error_dialog(
-                self.gui,
-                'Some sync failed',
-                results_message + f'There was some error during sync process!\n'
-                                  f'Please investigate and report if it looks '
-                                  f'like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_success == 0 and num_fail == 0:
-            warning_dialog(
-                self.gui,
-                'No errors but not successful syncs',
-                results_message + f'No errors but no successful syncs\n'
-                                  f'Do you have book(s) which are ready to be '
-                                  f'sync?\n'
-                                  f'Please investigate and report if it looks '
-                                  f'like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        else:
-            error_dialog(
-                self.gui,
-                'Edge case',
-                results_message + f'Seems like and bug, please report ASAP\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
+            if num_success > 0 and num_fail == 0:
+                SyncCompletionDialog( #info
+                    self.gui,
+                    'Metadata sync finished',
+                    results_message + f'All looks good!\n\n',
+                    results
+                )
+            elif num_fail > 0:
+                SyncCompletionDialog( #err
+                    self.gui,
+                    'Some sync failed',
+                    results_message + f'There was some error during sync process!\n'
+                                    f'Please investigate and report if it looks '
+                                    f'like a bug\n\n',
+                    results
+                )
+            elif num_success == 0 and num_fail == 0:
+                SyncCompletionDialog( #warn
+                    self.gui,
+                    'No errors but not successful syncs',
+                    results_message + f'No errors but no successful syncs\n'
+                                    f'Do you have book(s) which are ready to be '
+                                    f'sync?\n'
+                                    f'Please investigate and report if it looks '
+                                    f'like a bug\n\n',
+                    results
+                )
+            else:
+                error_dialog(
+                    self.gui,
+                    'Edge case',
+                    results_message + f'Seems like and bug, please report ASAP\n\n',
+                    det_msg=json.dumps(results, indent=2),
+                    show=True,
+                    show_copy_button=False
+                )
+
+class SyncCompletionDialog(QDialog):
+    def __init__(self, parent=None, title="", msg="", results=None):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setMinimumWidth(800)
+        self.setMinimumHeight(800)
+
+        layout = QVBoxLayout(self)
+
+        # Main message body
+        message_label = QLabel(msg)
+        message_label.setWordWrap(True)
+        layout.addWidget(message_label)
+
+        # Scrollable area for the table
+        self.table_area = QScrollArea(self)
+        self.table_area.setWidgetResizable(True)
+
+        # Generate the QTableWidget from results
+        if results:
+            table = self.create_results_table(results)
+            self.table_area.setWidget(table)
+            layout.addWidget(self.table_area)
+
+        # Ok Button
+        ok_button = QPushButton("OK", self)
+        ok_button.setFixedWidth(100)
+        ok_button.clicked.connect(self.accept)
+        layout.addWidget(ok_button)
+
+        self.exec_()
+
+    def create_results_table(self, results):
+        all_headers = set()
+        for result in results:
+            all_headers.update(result.keys())
+        all_headers = list(all_headers)
+
+        # Ensure 'book_id' is the first header and 'error' is the last header
+        if 'book_uuid' in all_headers:
+            all_headers.remove('book_uuid')
+        if 'error' in all_headers:
+            all_headers.remove('error')
+        all_headers = ['book_uuid'] + all_headers + ['error']
+
+        table = QTableWidget()
+        table.setRowCount(len(results))
+        table.setColumnCount(len(all_headers))
+        table.setHorizontalHeaderLabels(all_headers)
+
+        for row, result in enumerate(results):
+            for col, key in enumerate(all_headers):
+                item = QTableWidgetItem(str(result.get(key, "")))
+                table.setItem(row, col, item)
+
+        table.resizeColumnsToContents()
+        return table
