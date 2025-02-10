@@ -32,6 +32,7 @@ from calibre_plugins.koreader import (
 from calibre.utils.iso8601 import utc_tz, local_tz
 from calibre.gui2.dialogs.message_box import MessageBox
 from calibre.gui2.actions import InterfaceAction
+from calibre.gui2.device import device_signals
 from calibre.gui2 import (
     error_dialog,
     warning_dialog,
@@ -238,6 +239,10 @@ class KoreaderAction(InterfaceAction):
         if CONFIG["checkbox_enable_scheduled_progressync"]:
             self.scheduled_progress_sync()
 
+        # Start the device connection watcher if enabled
+        if CONFIG["checkbox_enable_automatic_sync"]:
+            device_signals.device_metadata_available.connect(self._on_device_metadata_available)
+
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
 
@@ -322,6 +327,9 @@ class KoreaderAction(InterfaceAction):
 
         debug_print('connected_device_type = ', connected_device_type)
         return connected_device
+
+    def _on_device_metadata_available(self):
+        self.sync_to_calibre()
 
     def get_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library

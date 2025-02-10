@@ -164,6 +164,12 @@ CHECKBOXES = [{
     'tooltip': 'Do not sync book if it has already been finished. Requires\n'
                '"Percent read column" or "Reading status column" to be synced',
 }, {
+    'name': 'checkbox_enable_automatic_sync',
+    'addToLayout': True,
+    'label': 'Automatic Sync on device connection:',
+    'tooltip': 'Sync from KOReader automatically on device connection. \n'
+               'Restart calibre to apply this setting',
+}, {
     'name': 'checkbox_enable_scheduled_progressync',
     'addToLayout': False,
     'label': 'Enable Daily ProgressSync:',
@@ -229,11 +235,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         header_label.setWordWrap(True)
         layout.addWidget(header_label)
 
-        # Add ProgressSync Account button
-        progress_sync_button = QPushButton('Add ProgressSync Account', self)
-        progress_sync_button.clicked.connect(self.show_progress_sync_popup)
-        layout.addWidget(progress_sync_button)
-
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
         scheduled_sync_layout.setAlignment(Qt.AlignLeft)
@@ -258,6 +259,11 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         scheduled_sync_layout.addWidget(self.schedule_minute_input)
 
         layout.addLayout(scheduled_sync_layout)
+
+        # Add ProgressSync Account button
+        progress_sync_button = QPushButton('Add ProgressSync Account', self)
+        progress_sync_button.clicked.connect(self.show_progress_sync_popup)
+        layout.addWidget(progress_sync_button)
 
     def show_progress_sync_popup(self):
         self.progress_sync_popup = ProgressSyncPopup(self)
