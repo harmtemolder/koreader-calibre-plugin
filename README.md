@@ -101,8 +101,9 @@ changed/removed from `sidecar_contents` data structure:
   Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
   (_Progress sync_ in the KOReader app) in order to update **current percent read**
   (both float and int) and **location you last stopped reading at** wirelessly.\
-  Add the server and user credentials in the plugin config to use this function.
   You must also have the **MD5 hash** column enabled.\
+  Add the server and user credentials in the plugin config to use this function.
+  The user password is stored as a hash, not plain text.\
   You can have calibre fetch updated data on a daily schedule.
 
 ### Things to consider

@@ -14,13 +14,13 @@ from PyQt5.Qt import (
     QPushButton,
     QLabel,
     QLineEdit,
-    QGridLayout,
     QHBoxLayout,
     QVBoxLayout,
     QFormLayout,
     QWidget,
     QSpinBox,
     QFrame,
+    QDialog,
     Qt,
 )
 
@@ -210,7 +210,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_DATE_MOD : {
         'column_heading': _("Date KOReader Modified"),
         'datatype' : 'datetime',
-        'description' : _("Date when the book was last modified in KOReader. Wired sync only. "),
+        'description' : _("Date when the book was last modified in KOReader. Wired sync only."),
         'config_name' : 'column_date_sidecar_modified',
         'config_label' : _('Date Modified column:'),
         'config_tool_tip' : _('A "Date" column to store when the sidecar file was last '
@@ -239,36 +239,34 @@ CUSTOM_COLUMN_DEFAULTS = {
     },
 }
 
-CHECKBOXES = [{
-    'name': 'checkbox_sync_if_more_recent',
-    'addToLayout': True,
-    'label': 'Sync only if changes are more recent:',
-    'tooltip': 'Sync book only if the metadata is more recent. Requires\n'
-               '"Date Modified Column" or "Percent read column" to be synced',
-}, {
-    'name': 'checkbox_no_sync_if_finished',
-    'addToLayout': True,
-    'label': 'No sync if book has already been finished:',
-    'tooltip': 'Do not sync book if it has already been finished. Requires\n'
-               '"Percent read column" or "Reading status column" to be synced',
-}, {
-    'name': 'checkbox_enable_automatic_sync',
-    'addToLayout': False,
-    'label': 'Automatic Sync on device connection:',
-    'tooltip': 'Sync from KOReader automatically on device connection. \n'
-               'Restart calibre to apply this setting',
-}, {
-    'name': 'checkbox_enable_scheduled_progressync',
-    'addToLayout': False,
-    'label': 'Enable Daily ProgressSync:',
-    'tooltip': 'Enable daily sync of reading progress and location using KOReader\'s ProgressSync server.',
-}]
+CHECKBOXES = { # Each entry in the below dict is keyed with config_name
+    'checkbox_sync_if_more_recent': {
+        'config_label': 'Sync only if changes are more recent',
+        'config_tool_tip': 'Sync book only if the metadata is more recent. Requires\n'
+                '"Date Modified Column" or "Percent read column" to be synced',
+    },
+    'checkbox_no_sync_if_finished': {
+        'config_label': 'No sync if book has already been finished',
+        'config_tool_tip': 'Do not sync book if it has already been finished. Requires\n'
+                '"Percent read column" or "Reading status column" to be synced',
+    },
+    'checkbox_enable_automatic_sync': {
+        'config_label': 'Automatic Sync on device connection',
+        'config_tool_tip': 'Sync from KOReader automatically on device connection. \n'
+                'Restart calibre to apply this setting',
+    },
+    'checkbox_enable_scheduled_progressync': {
+        'config_label': 'Enable Daily ProgressSync',
+        'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
+        'KOReader\'s ProgressSync server.',
+    }
+}
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
 for this_column in CUSTOM_COLUMN_DEFAULTS.values():
     CONFIG.defaults[this_column['config_name']] = ''
 for this_checkbox in CHECKBOXES:
-    CONFIG.defaults[this_checkbox['name']] = False
+    CONFIG.defaults[this_checkbox] = False
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
@@ -287,6 +285,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print = partial(module_debug_print, 'ConfigWidget:__init__:')
         debug_print('start')
         self.action = plugin_action
+        self.must_restart = False
 
         # Instantiate separator
         separator = QFrame()
@@ -329,11 +328,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                 )
 
         # Add custom checkboxes
-        custom_checkbox_layout = CustomCheckboxLayout(self)
-        layout.addLayout(custom_checkbox_layout)
-        self.enable_automatic_sync_checkbox = QCheckBox('Automatic Sync on device connection')
-        self.enable_automatic_sync_checkbox.setCheckState(Qt.Checked if CONFIG['checkbox_enable_automatic_sync'] else Qt.Unchecked)
-        layout.addWidget(self.enable_automatic_sync_checkbox)
+        layout.addLayout(self.add_checkbox('checkbox_sync_if_more_recent'))
+        layout.addLayout(self.add_checkbox('checkbox_no_sync_if_finished'))
+
+        layout.addLayout(self.add_checkbox('checkbox_enable_automatic_sync'))
 
         # Add separator and header
         layout.addWidget(separator)
@@ -349,9 +347,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
         scheduled_sync_layout.setAlignment(Qt.AlignLeft)
-        self.enable_scheduled_sync_checkbox = QCheckBox('Enable Daily ProgressSync')
-        self.enable_scheduled_sync_checkbox.setCheckState(Qt.Checked if CONFIG['checkbox_enable_scheduled_progressync'] else Qt.Unchecked)
-        scheduled_sync_layout.addWidget(self.enable_scheduled_sync_checkbox)
+        scheduled_sync_layout.addLayout(self.add_checkbox('checkbox_enable_scheduled_progressync'))
 
         scheduled_sync_layout.addWidget(QLabel('Scheduled Time:'))
 
@@ -387,8 +383,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Check relevant settings for changes in order to show restart warning
         needRestart = ( self.must_restart or # Custom Column Addition
-            CONFIG['checkbox_enable_automatic_sync'] != (self.enable_automatic_sync_checkbox.checkState() == Qt.Checked) or
-            CONFIG['checkbox_enable_scheduled_progressync'] != (self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync'][checkbox].checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync'][checkbox].checkState() == Qt.Checked) or
             CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
             CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
         )
@@ -399,7 +395,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Save Checkbox Settings
         for checkbox in CHECKBOXES:
-            CONFIG[checkbox['name']] = checkbox['checkbox'].checkState() == Qt.Checked
+            CONFIG[checkbox] = checkbox['checkbox'].checkState() == Qt.Checked
 
         # Save Automatic Sync
         CONFIG['checkbox_enable_automatic_sync'] = self.enable_automatic_sync_checkbox.checkState() == Qt.Checked
@@ -413,6 +409,21 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print('new CONFIG = ', CONFIG)
         if needRestart and show_restart_warning('Changes have been made that require a restart to take effect. \n Restart now?'):
             self.action.gui.quit(restart=True)
+
+    def add_checkbox(self, checkboxKey):
+        layout = QHBoxLayout()
+        checkboxMeta = CHECKBOXES[checkboxKey]
+        checkbox = QCheckBox()
+        checkbox.setCheckState(Qt.Checked if CONFIG[checkboxKey] else Qt.Unchecked)
+        label = QLabel(checkboxMeta['config_label'])
+        label.setToolTip(checkboxMeta['config_tool_tip'])
+        label.setBuddy(checkbox)
+        layout.addWidget(checkbox)
+        layout.addWidget(label)
+        layout.addStretch()
+        CHECKBOXES[checkboxKey]['checkbox'] = checkbox
+
+        return layout
 
     def create_custom_column_controls(self, columns_group_box_layout, custom_col_name, min_width=300):
         current_Location_label = QLabel(CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_label'], self)
@@ -472,9 +483,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         return available_columns
 
-class ProgressSyncPopup(QWidget):
+class ProgressSyncPopup(QDialog):
     def __init__(self, parent):
-        QWidget.__init__(self, parent)
+        QDialog.__init__(self, parent)
         self.setWindowTitle('Add ProgressSync Account')
         self.setGeometry(100, 100, 400, 200)
 
@@ -505,6 +516,7 @@ class ProgressSyncPopup(QWidget):
             'Also make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location',
             self
         )
+        self.note_label.setWordWrap(True)
         layout.addWidget(self.note_label)
 
         self.login_button = QPushButton('Log In', self)
@@ -515,7 +527,7 @@ class ProgressSyncPopup(QWidget):
         CONFIG['progress_sync_url'] = self.url_input.text()
         CONFIG['progress_sync_username'] = self.username_input.text()
         CONFIG['progress_sync_password'] = self.hash_password(self.password_input.text())
-        self.close()
+        self.accept()
 
     def hash_password(self, password):
         import hashlib
@@ -558,28 +570,6 @@ class TitleLayout(QHBoxLayout):
             Qt.LinksAccessibleByMouse | Qt.LinksAccessibleByKeyboard)
         about_label.linkActivated.connect(parent.action.show_about)
         self.addWidget(about_label)
-
-class CustomCheckboxLayout(QGridLayout):
-    """A sub-layout to the main layout used in ConfigWidget that contains a
-    grid of checkboxes for various settings.
-    """
-
-    def __init__(self, parent):
-        QGridLayout.__init__(self)
-        self.action = parent.action
-        row = 1
-
-        # Add custom checkboxes
-        for checkbox in CHECKBOXES:
-            label = QLabel(checkbox['label'], parent)
-            label.setToolTip(checkbox['tooltip'])
-            checkbox['checkbox'] = QCheckBox()
-            checkbox['checkbox'].setCheckState(Qt.Checked if CONFIG[checkbox['name']] else Qt.Unchecked)
-            label.setBuddy(checkbox['checkbox'])
-            if checkbox['addToLayout']:
-                self.addWidget(label, row, 1, Qt.AlignRight)
-                self.addWidget(checkbox['checkbox'], row, 2, 1, 2)
-                row += 1
 
 class CustomColumnComboBox(QComboBox):
     CREATE_NEW_COLUMN_ITEM = _("Create new column")
