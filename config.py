@@ -372,6 +372,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
             "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
+            "You also need a reading progress column and status text column.\n"
             "This functionality can optionally be scheduled into a daily sync from within calibre. "
             "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
         )

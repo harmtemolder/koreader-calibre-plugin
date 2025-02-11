@@ -564,11 +564,11 @@ class KoreaderAction(InterfaceAction):
                                 date_read_key = CONFIG['column_date_book_finished']
                                 review_text = None
                                 review_text_key = CONFIG['column_review']
-                                if rating_key is not '':
+                                if rating_key != '':
                                     rating = keys_values_to_update.get(rating_key) / 2
-                                if date_read_key is not '':
+                                if date_read_key != '':
                                     date_read = keys_values_to_update.get(date_read_key).date() #formatted as yyyy-mm-dd
-                                if review_text_key is not '':
+                                if review_text_key != '':
                                     review_text = keys_values_to_update.get(review_text_key)
                                 self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)
                             else:
@@ -876,6 +876,17 @@ class KoreaderAction(InterfaceAction):
             )
             return None
         
+        if (CONFIG["column_percent_read_int"] == '' and CONFIG["column_percent_read"] == '') or CONFIG["column_status"] == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'This feature needs a KOReader Progress (int or float) and Status Text column.\n'
+                'Add those in plugin settings and try again.',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+        
         'Get list of books with MD5 column'
         db = self.gui.current_db.new_api
         md5_column = CONFIG["column_md5"]
@@ -900,71 +911,76 @@ class KoreaderAction(InterfaceAction):
             md5_value = metadata.get(md5_column)
             book_uuid = metadata.get('uuid')
 
-            try:
-                url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
-                request = Request(url, headers=headers)
-                with urlopen(request, timeout=20) as response:
-                    response_data = response.read()
-                    if response_data == b'{}':
-                        results.append({
-                            'book_id': book_id,
-                            'md5_value': md5_value,
-                            'error': 'No ProgressSync entry for md5 hash'
-                        })
-                        num_skip += 1
-                        continue
-                    progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
-                
-                # List of keys to check
-                ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
-
-                # Map of progress_data keys to match each config key
-                progress_mapping = { 
-                    'column_percent_read': progress_data['percentage'],
-                    'column_percent_read_int': round(progress_data['percentage']*100),
-                    'column_last_read_location': progress_data['progress']
-                    # Device, Device ID, and timestamps could also be added
-                }
-
-                # Dictionary to store values to be updated
-                keys_values_to_update = {}
-
-                for key in ProgressSync_Columns:
-                    internal_column = CONFIG.get(key, '')  # Get internal column name from CONFIG
-                    if not internal_column:  # Skip if internal column name is blank
-                        continue
+            # Only get sync status if curr progress < 100 and status = reading
+            status_key = CONFIG['column_status']
+            read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
+            if metadata.get(status_key) == 'reading' and metadata.get(read_percent_key) < 100:
+                try:
+                    url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
+                    request = Request(url, headers=headers)
+                    with urlopen(request, timeout=20) as response:
+                        response_data = response.read()
+                        if response_data == b'{}':
+                            results.append({
+                                'book_id': book_id,
+                                'md5_value': md5_value,
+                                'error': 'No ProgressSync entry for md5 hash'
+                            })
+                            num_skip += 1
+                            continue
+                        progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
                     
-                    current_value = metadata.get(internal_column)  # Get current value from metadata
-                    remote_value = progress_mapping[key]
+                    # List of keys to check
+                    ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
 
-                    # Compare current and remote values
-                    if current_value != remote_value:
-                        keys_values_to_update[internal_column] = remote_value
-                    #TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
+                    # Map of progress_data keys to match each config key
+                    progress_mapping = { 
+                        'column_percent_read': progress_data['percentage'],
+                        'column_percent_read_int': round(progress_data['percentage']*100),
+                        'column_last_read_location': progress_data['progress']
+                        # Device, Device ID, and timestamp could also be added
+                    }
 
-                # Update only if there are differences
-                if keys_values_to_update:
-                    operation_status, result = self.update_metadata(book_uuid, keys_values_to_update)
-                else:
-                    result = {}
+                    # Dictionary to store values to be updated
+                    keys_values_to_update = {}
 
-                results.append({
-                    **result,
-                    'book_uuid': book_uuid,
-                    'md5_value': md5_value,
-                    **progress_data
-                }) 
-                num_success += 1
+                    for key in ProgressSync_Columns:
+                        internal_column = CONFIG.get(key, '')  # Get internal column name from CONFIG
+                        if not internal_column:  # Skip if internal column name is blank
+                            continue
+                        
+                        current_value = metadata.get(internal_column)  # Get current value from metadata
+                        remote_value = progress_mapping[key]
 
-            except (HTTPError, URLError) as e:
-                msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
-                debug_print(msg)
-                results.append({
-                    'book_uuid': book_uuid,
-                    'md5_value': md5_value,
-                    'error': 'No data received'
-                })
-                num_skip += 1
+                        # Compare current and remote values
+                        if current_value != remote_value:
+                            keys_values_to_update[internal_column] = remote_value
+                        #TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
+
+                    # Update only if there are differences
+                    if keys_values_to_update:
+                        operation_status, result = self.update_metadata(book_uuid, keys_values_to_update)
+                    else:
+                        result = {}
+
+                    results.append({
+                        **result,
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        **progress_data
+                    }) 
+                    num_success += 1
+
+                except (HTTPError, URLError) as e:
+                    msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
+                    debug_print(msg)
+                    results.append({
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        'error': 'No data received'
+                    })
+                    num_skip += 1
+
         if not silent:
             results_message = (
                 f'Total books with MD5 values: {len(books_with_md5)}\n\n'
@@ -1088,17 +1104,17 @@ class KoreaderAction(InterfaceAction):
                     continue
 
                 # Special handling for date started/finished
-                if name is 'column_date_book_started':
+                if name == 'column_date_book_started':
                     db = self.gui.current_db.new_api
                     book_id = db.lookup_by_uuid(book_uuid)
                     metadata = db.get_metadata(book_id)
-                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'reading':
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
                         sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
-                if name is 'column_date_book_finished':
+                if name == 'column_date_book_finished':
                     db = self.gui.current_db.new_api
                     book_id = db.lookup_by_uuid(book_uuid)
                     metadata = db.get_metadata(book_id)
-                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'complete':
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
                         sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
                 sidecar_property = column['sidecar_property']
