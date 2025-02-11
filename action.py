@@ -422,6 +422,8 @@ class KoreaderAction(InterfaceAction):
                 pass
             parsed_contents['calculated'][
                 'date_synced'] = datetime.now().replace(tzinfo=local_tz)
+            parsed_contents['calculated'][
+                'date_status_changed'] = datetime.strptime(parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
 
         return parsed_contents
 
@@ -438,7 +440,7 @@ class KoreaderAction(InterfaceAction):
         )
 
         try:
-            debug_print('Looking uuid in calibre db: ', uuid)
+            debug_print('Looking for uuid in calibre db: ', uuid)
             db = self.gui.current_db.new_api
             book_id = db.lookup_by_uuid(uuid)
         except:
@@ -451,6 +453,9 @@ class KoreaderAction(InterfaceAction):
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
+        
+        # Dict for use in logging
+        updateLog = {}
 
         # Check config to sync only if data is more recent
         if CONFIG['checkbox_sync_if_more_recent']:
@@ -526,6 +531,52 @@ class KoreaderAction(InterfaceAction):
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
+        
+        # Sync to GR if wanted/needed
+        if CONFIG["checkbox_enable_GR_progress_update"]:
+            read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
+            new_read_percent = keys_values_to_update.get(read_percent_key)
+            old_read_percent = metadata.get(read_percent_key)
+            goodreads_id = metadata.get('identifiers')['goodreads']
+            if new_read_percent != old_read_percent:
+                import calibre_plugins.goodreads_sync.config as cfg
+                from calibre_plugins.goodreads_sync.core import HttpHelper
+                username = list(cfg.plugin_prefs[cfg.STORE_USERS].keys())[0]
+                progress_is_percent = cfg.plugin_prefs[cfg.STORE_PLUGIN].get(cfg.KEY_PROGRESS_IS_PERCENT, True)
+                grhttp = HttpHelper(self.gui, self)
+                client = grhttp.create_oauth_client(username)
+                try:
+                    # Update Reading Progress
+                    grhttp.update_status(client, goodreads_id, new_read_percent, progress_is_percent)
+                    updateLog['Goodreads Prog'] = f'Updated to {new_read_percent}'
+                    # Update Shelves
+                    if CONFIG["checkbox_enable_GR_shelf_update"]:
+                        if new_read_percent < 100:
+                            grhttp.add_remove_book_to_shelf(client, 'currently-reading', goodreads_id, 'add')
+                            updateLog['Goodreads Shelf'] = f'currently-reading'
+                        elif new_read_percent >= 100:
+                            review_id = grhttp.add_remove_book_to_shelf(client, 'read', goodreads_id, 'add')
+                            if CONFIG["checkbox_enable_GR_rating_update"]:
+                                updateLog['Goodreads Shelf'] = f'read, rating'
+                                rating = None
+                                rating_key = CONFIG['column_rating']
+                                date_read = None
+                                date_read_key = CONFIG['column_date_book_finished']
+                                review_text = None
+                                review_text_key = CONFIG['column_review']
+                                if rating_key is not '':
+                                    rating = keys_values_to_update.get(rating_key) / 2
+                                if date_read_key is not '':
+                                    date_read = keys_values_to_update.get(date_read_key).date() #formatted as yyyy-mm-dd
+                                if review_text_key is not '':
+                                    review_text = keys_values_to_update.get(review_text_key)
+                                self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)
+                            else:
+                                updateLog['Goodreads Shelf'] = f'read'
+                except Exception as e:
+                    msg = f'Error updating Goodreads reading progress/shelf/rating: {str(e)}'
+                    debug_print(msg)
+                    updateLog['error'] = f'error updating goodreads for book id {book_id}'
 
         updates = []
         # Update that metadata locally
@@ -535,6 +586,9 @@ class KoreaderAction(InterfaceAction):
             if new_value != old_value:
                 updates.append(key)
                 metadata.set(key, new_value)
+                updateLog[key] = f'{old_value} >> {new_value}'
+            else:
+                updateLog[key] = f'{old_value} -- {new_value}'
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
@@ -560,6 +614,7 @@ class KoreaderAction(InterfaceAction):
         return OperationStatus.PASS, {
             'result': 'success',
             'book_id': book_id,
+            **updateLog
         }
 
     def check_device(self, device):
@@ -885,6 +940,7 @@ class KoreaderAction(InterfaceAction):
                     # Compare current and remote values
                     if current_value != remote_value:
                         keys_values_to_update[internal_column] = remote_value
+                    #TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
 
                 # Update only if there are differences
                 if keys_values_to_update:
@@ -1030,6 +1086,20 @@ class KoreaderAction(InterfaceAction):
                 if target == '':
                     # No column mapped, so do not sync
                     continue
+
+                # Special handling for date started/finished
+                if name is 'column_date_book_started':
+                    db = self.gui.current_db.new_api
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'reading':
+                        sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
+                if name is 'column_date_book_finished':
+                    db = self.gui.current_db.new_api
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'complete':
+                        sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
                 sidecar_property = column['sidecar_property']
                 value = sidecar_contents
