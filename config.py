@@ -116,7 +116,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_LOC : {
         'column_heading': _("KOReader Last Location"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("Last location you stopped reading at in the book."),
         'config_name' : 'column_last_read_location',
         'config_label' : _('Last read location column:'),
@@ -151,7 +151,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_STATUS_TEXT : {
         'column_heading': _("KOReader Book Status"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("Reading status of the book, either Finished, Reading, or On hold."),
         'config_name' : 'column_status',
         'config_label' : _('Reading status column (text):'),
@@ -187,7 +187,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_MD5 : {
         'column_heading': _("KOReader MD5"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("MD5 hash used by KOReader, allowed for ProgressSync Support."),
         'config_name' : 'column_md5',
         'config_label' : _('MD5 hash column:'),
@@ -383,8 +383,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Check relevant settings for changes in order to show restart warning
         needRestart = ( self.must_restart or # Custom Column Addition
-            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync'][checkbox].checkState() == Qt.Checked) or
-            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync'][checkbox].checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
             CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
             CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
         )
@@ -394,14 +394,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             CONFIG[values['config_name']] = values['comboBox'].get_selected_column()
 
         # Save Checkbox Settings
-        for checkbox in CHECKBOXES:
-            CONFIG[checkbox] = checkbox['checkbox'].checkState() == Qt.Checked
-
-        # Save Automatic Sync
-        CONFIG['checkbox_enable_automatic_sync'] = self.enable_automatic_sync_checkbox.checkState() == Qt.Checked
+        for config_name in CHECKBOXES:
+            CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState() == Qt.Checked
         
         # Save Scheduled ProgressSync Settings
-        CONFIG['checkbox_enable_scheduled_progressync'] = self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
