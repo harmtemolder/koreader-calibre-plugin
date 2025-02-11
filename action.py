@@ -438,7 +438,7 @@ class KoreaderAction(InterfaceAction):
         )
 
         try:
-            debug_print('Looking uuid in calibre db: ', uuid)
+            debug_print('Looking for uuid in calibre db: ', uuid)
             db = self.gui.current_db.new_api
             book_id = db.lookup_by_uuid(uuid)
         except:
@@ -451,6 +451,9 @@ class KoreaderAction(InterfaceAction):
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
+        
+        # Dict for use in logging
+        updateLog = {}
 
         # Check config to sync only if data is more recent
         if CONFIG['checkbox_sync_if_more_recent']:
@@ -526,6 +529,49 @@ class KoreaderAction(InterfaceAction):
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
+        
+        # Sync to GR if wanted/needed
+        if CONFIG["checkbox_enable_GR_progress_update"]:
+            read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
+            new_read_percent = keys_values_to_update.get(read_percent_key)
+            old_read_percent = metadata.get(read_percent_key)
+            goodreads_id = metadata.get('identifiers')['goodreads']
+            if new_read_percent != old_read_percent:
+                import calibre_plugins.goodreads_sync.config as cfg
+                from calibre_plugins.goodreads_sync.core import HttpHelper
+                username = list(cfg.plugin_prefs[cfg.STORE_USERS].keys())[0]
+                progress_is_percent = cfg.plugin_prefs[cfg.STORE_PLUGIN].get(cfg.KEY_PROGRESS_IS_PERCENT, True)
+                grhttp = HttpHelper(self.gui, self)
+                client = grhttp.create_oauth_client(username)
+                try:
+                    # Update Reading Progress
+                    grhttp.update_status(client, goodreads_id, new_read_percent, progress_is_percent)
+                    updateLog['Goodreads Prog'] = f'Updated to {new_read_percent}'
+                    # Update Shelves
+                    if new_read_percent < 100:
+                        grhttp.add_remove_book_to_shelf(client, 'currently-reading', goodreads_id, 'add')
+                        updateLog['Goodreads Shelf'] = f'currently-reading'
+                    elif new_read_percent >= 100:
+                        review_id = grhttp.add_remove_book_to_shelf(client, 'read', goodreads_id, 'add')
+                        updateLog['Goodreads Shelf'] = f'read'
+                        """rating = None
+                        date_read = None
+                        review_text = None
+                        if upload_rating:
+                            rating = calibre_book['calibre_rating'] / 2
+                            if rating:
+                                calibre_book['goodreads_rating'] = rating
+                        if upload_date_read:
+                            date_read = calibre_book['calibre_date_read']
+                            if date_read:
+                                calibre_book['goodreads_read_at'] = date_read
+                        if upload_review_text:
+                            review_text = calibre_book['calibre_review_text']
+                            if review_text:
+                                calibre_book['goodreads_review_text'] = review_text
+                        self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)"""
+                except Exception as e:
+                    print(f"Error updating reading progress: {e}")
 
         updates = []
         # Update that metadata locally
@@ -535,6 +581,9 @@ class KoreaderAction(InterfaceAction):
             if new_value != old_value:
                 updates.append(key)
                 metadata.set(key, new_value)
+                updateLog[key] = f'{old_value} >> {new_value}'
+            else:
+                updateLog[key] = f'{old_value} -- {new_value}'
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
@@ -560,6 +609,7 @@ class KoreaderAction(InterfaceAction):
         return OperationStatus.PASS, {
             'result': 'success',
             'book_id': book_id,
+            **updateLog
         }
 
     def check_device(self, device):
@@ -885,6 +935,7 @@ class KoreaderAction(InterfaceAction):
                     # Compare current and remote values
                     if current_value != remote_value:
                         keys_values_to_update[internal_column] = remote_value
+                    #TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
 
                 # Update only if there are differences
                 if keys_values_to_update:

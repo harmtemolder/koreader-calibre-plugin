@@ -2,7 +2,6 @@
 
 """Config for KOReader Sync plugin for Calibre."""
 
-import math
 import os
 import json
 from functools import partial
@@ -29,7 +28,9 @@ from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 from calibre_plugins.koreader import clean_bookmarks
-from calibre.gui2 import show_restart_warning
+from calibre.gui2 import show_restart_warning, error_dialog
+from calibre.customize.ui import initialized_plugins
+from calibre.customize import PluginInstallationType
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -111,7 +112,7 @@ CUSTOM_COLUMN_DEFAULTS = {
         'config_tool_tip' : _('An "Integers" column to store the current percent read.'),
         "column_types": ['int'],
         'sidecar_property': ['percent_finished'],
-        'transform': (lambda value: math.floor(float(value) * 100)),
+        'transform': (lambda value: round(float(value) * 100)),
     },
     SYNC_CCD_LOOKUP_LOC : {
         'column_heading': _("KOReader Last Location"),
@@ -259,6 +260,11 @@ CHECKBOXES = { # Each entry in the below dict is keyed with config_name
         'config_label': 'Enable Daily ProgressSync',
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
         'KOReader\'s ProgressSync server.',
+    },
+    'checkbox_enable_GR_progress_update': {
+        'config_label': 'Enable Goodreads Progress Update',
+        'config_tool_tip': 'Enable sync of reading progress to Goodreads whenever \n'
+        'updated in calibre by KOReader Sync.',
     }
 }
 
@@ -372,6 +378,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         progress_sync_button.clicked.connect(self.show_progress_sync_popup)
         layout.addWidget(progress_sync_button)
 
+        layout.addWidget(separator)
+        layout.addLayout(self.add_checkbox('checkbox_enable_GR_progress_update'))
+
     def show_progress_sync_popup(self):
         self.progress_sync_popup = ProgressSyncPopup(self)
         self.progress_sync_popup.show()
@@ -383,8 +392,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Check relevant settings for changes in order to show restart warning
         needRestart = ( self.must_restart or # Custom Column Addition
-            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync'][checkbox].checkState() == Qt.Checked) or
-            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync'][checkbox].checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
+            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
             CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
             CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
         )
@@ -395,16 +404,25 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         # Save Checkbox Settings
         for checkbox in CHECKBOXES:
-            CONFIG[checkbox] = checkbox['checkbox'].checkState() == Qt.Checked
-
-        # Save Automatic Sync
-        CONFIG['checkbox_enable_automatic_sync'] = self.enable_automatic_sync_checkbox.checkState() == Qt.Checked
+            CONFIG[checkbox] = CHECKBOXES[checkbox]['checkbox'].checkState() == Qt.Checked
         
         # Save Scheduled ProgressSync Settings
-        CONFIG['checkbox_enable_scheduled_progressync'] = self.enable_scheduled_sync_checkbox.checkState() == Qt.Checked
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
+
+        # Check GR Sync Dependency
+        if CONFIG["checkbox_enable_GR_progress_update"]:
+            #Check if GR Sync is installed
+            if 'Goodreads Sync' not in [plugin.name for plugin in initialized_plugins() if getattr(plugin, 'installation_type', None) is not PluginInstallationType.BUILTIN]:
+                CONFIG["checkbox_enable_GR_progress_update"] = False
+                error_dialog(
+                    self.action.gui,
+                    'Goodreads Sync',
+                    'The Goodreads Progress Update depends on the Goodreads Sync plugin.\nInstall, restart calibre, and try to enable this setting again.',
+                    show=True,
+                    show_copy_button=False
+                )
 
         debug_print('new CONFIG = ', CONFIG)
         if needRestart and show_restart_warning('Changes have been made that require a restart to take effect. \n Restart now?'):
