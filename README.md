@@ -56,6 +56,7 @@ that thread.
      the book's status page.
    - A regular _Text_ column to store the **reading status** of the book, as
      entered on the book status page (_Finished_, _Reading_, _On hold_).
+     Translates to complete, reading, and abandoned respectively in calibre.
    - A _Yes/No_ column to store the **reading status** of the book, as a
      boolean (_Yes_ = _Finished_, _No_ = everything else).
    - A _Long text_ column to store your **bookmarks and highlights** of the
@@ -75,7 +76,7 @@ that thread.
   
    There are additional settings for:
    - Sync only if changes are more recent: Checks retrieved **Last Sync Date** against date on file.
-   - No sync if book has already been finished: If **percent read** is _100_ don't update data.
+   - No sync if book has already been finished: If **percent read** is _100_ or if **reading status** is _finished_ don't update data.
    - Automatic Sync on device connection: Silently sync's from KOReader when device is connected
 
 2.  Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
