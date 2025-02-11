@@ -31,7 +31,7 @@ from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
     UNSUPPORTED_DEVICES,
-    COLUMNS,
+    CUSTOM_COLUMN_DEFAULTS as COLUMNS,
     CONFIG,
 )
 from calibre_plugins.koreader import (
@@ -1023,8 +1023,8 @@ class KoreaderAction(InterfaceAction):
 
             keys_values_to_update = {}
 
-            for column in COLUMNS:
-                name = column['name']
+            for column in COLUMNS.values():
+                name = column['config_name']
                 target = CONFIG[name]
 
                 if target == '':

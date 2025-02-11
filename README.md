@@ -42,13 +42,14 @@ that thread.
 ### Setup
 
 1. Pick and choose the metadata you would like to sync and create the
-   appropriate columns in calibre. These are your options:
-
+   appropriate columns in calibre. The plugin makes this easy, simply select
+   the **create new columns** option in the config dropdowns.
+   
+   These are your options:
    - A _Floating point numbers_ column to store the **current percent read**,
      with _Format for numbers_ set to `{:.0%}`.
    - An _Integers_ column to store the **current percent read**.
-   - A regular _Text_ column to store the **location you last stopped reading
-     at **.
+   - A regular _Text_ column to store the **location you last stopped reading at**
    - A _Rating_ column to store your **rating** of the book, as entered on the
      book's status page.
    - A _Long text_ column to store your **review** of the book, as entered on
@@ -62,23 +63,27 @@ that thread.
      markdown_. (Highlights are an unordered list with their metadata in an
      HTML comment.)
    - A regular _Text_ column to store the **MD5 hash** KOReader uses to sync
-     progress to a [**KOReader Sync Server
-     **](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
-     . (_Progress sync_ in the KOReader app.) This might allow for syncing
-     progress to calibre without having to connect your KOReader device, in the
-     future.
+     progress to a [KOReader Sync 
+     Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
+     (_Progress sync_ in the KOReader app). This allows for syncing
+     progress and location to calibre without having to connect your KOReader device.
    - A _Date_ column to store **when the last sync was performed**.
    - A _Date_ column to store **when the sidecar file was last modified**. Works
      for wired connection only, wireless will be always empty,
    - A _Long text_ column to store the **contents of the metadata sidecar** as
      HTML, with _Interpret this column as_ set to _HTML_.
+  
+   There are additional settings for:
+   - Sync only if changes are more recent: Checks retrieved **Last Sync Date** against date on file.
+   - No sync if book has already been finished: If **percent read** is _100_ don't update data.
+   - Automatic Sync on device connection: Silently sync's from KOReader when device is connected
 
-10. Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
+2.  Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
     isn't there already.
-11. Right-click the _KOReader Sync_ icon and _Configure_.
-12. Map the metadata you want to sync to the newly created calibre columns.
-13. Click _OK_ to save your mapping.
-14. From now on just click the _KOReader Sync_ icon to sync all mapped metadata
+3.  Right-click the _KOReader Sync_ icon and _Configure_.
+4.  Map the metadata you want to sync to the newly created calibre columns.
+5.  Click _OK_ to save your mapping.
+6.  From now on just click the _KOReader Sync_ icon to sync all mapped metadata
     for all books on the connected device to calibre.
 
 **Note:** Some field are depreciated and removed from plugin since they are
@@ -87,9 +92,18 @@ changed/removed from `sidecar_contents` data structure:
 - `first_bookmark` removed
 - `last_bookmark` removed
 - `bookmarks` renamed to `annotations`
-- `rating` KOreader uses 5-point but calibre 10-point scale
-- `date_sidecar_modified` seems to be present in `calculated` if connected via
+- `rating` KOreader uses 5-point but calibre 10-point scale (whole starts, not half stars)
+- `date_sidecar_modified` seems to be present in `calculated` only if connected via
   cable (not wireless)
+
+### ProgressSync
+  This plugin supports use of a [KOReader Sync 
+  Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
+  (_Progress sync_ in the KOReader app) in order to update **current percent read**
+  (both float and int) and **location you last stopped reading at** wirelessly.\
+  Add the server and user credentials in the plugin config to use this function.
+  You must also have the **MD5 hash** column enabled.\
+  You can have calibre fetch updated data on a daily schedule.
 
 ### Things to consider
 
@@ -154,6 +168,9 @@ them [here](https://github.com/harmtemolder/koreader-calibre-plugin/issues).
   in Python.
 - Some code borrowed from--and heavily inspired by--the
   great [Kobo Utilities](https://www.mobileread.com/forums/showthread.php?t=215339)
+  calibre plugin.
+- Some code borrowed from--and heavily inspired by--the
+  great [Goodreads Sync](https://www.mobileread.com/forums/showthread.php?t=123281)
   calibre plugin.
 
 ## Contributing to this plugin
