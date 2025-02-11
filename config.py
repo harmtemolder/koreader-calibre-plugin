@@ -75,6 +75,8 @@ SYNC_CCD_LOOKUP_BOOKMARKS               = '#ko_bookmarks'
 SYNC_CCD_LOOKUP_MD5                     = '#ko_md5'
 SYNC_CCD_LOOKUP_DATE_SYNC               = '#ko_lastsync'
 SYNC_CCD_LOOKUP_DATE_MOD                = '#ko_lastmod'
+SYNC_CCD_LOOKUP_DATE_STARTED            = '#ko_start'
+SYNC_CCD_LOOKUP_DATE_FINISHED           = '#ko_finish'
 SYNC_CCD_LOOKUP_RAW_SIDECAR             = '#ko_sidecar'
 
 '''
@@ -218,7 +220,29 @@ CUSTOM_COLUMN_DEFAULTS = {
                'modified. Works for wired connection only, wireless will be '
                'always empty'),
         "column_types": ['datetime'],
-        'sidecar_property': ['calculated', ''],
+        'sidecar_property': ['calculated', 'date_sidecar_modified'],
+    },
+    SYNC_CCD_LOOKUP_DATE_STARTED : {
+        'column_heading': _("Date KOReader Started"),
+        'datatype' : 'datetime',
+        'description' : _("Date when the book was started."),
+        'config_name' : 'column_date_book_started',
+        'config_label' : _('Date Book Started column:'),
+        'config_tool_tip' : _('A "Date" column to store when the book was started. '
+               'Will only be set once when synced with reading status.'),
+        "column_types": ['datetime'],
+        'sidecar_property': ['calculated', 'date_book_started'], #'summary', 'modified'
+    },
+    SYNC_CCD_LOOKUP_DATE_FINISHED : {
+        'column_heading': _("Date KOReader Finished"),
+        'datatype' : 'datetime',
+        'description' : _("Date when the book was finished."),
+        'config_name' : 'column_date_book_finished',
+        'config_label' : _('Date Book Finished column:'),
+        'config_tool_tip' : _('A "Date" column to store when the book was finished. '
+               'Will only be set once when synced with finished status.'),
+        "column_types": ['datetime'],
+        'sidecar_property': ['calculated', 'date_book_finished'],
     },
     SYNC_CCD_LOOKUP_RAW_SIDECAR : { # Unsure about Interpret this column as
         'column_heading': _("KOReader Raw Sidecar"),

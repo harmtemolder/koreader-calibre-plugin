@@ -422,6 +422,8 @@ class KoreaderAction(InterfaceAction):
                 pass
             parsed_contents['calculated'][
                 'date_synced'] = datetime.now().replace(tzinfo=local_tz)
+            parsed_contents['calculated'][
+                'date_status_changed'] = datetime.strptime(parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
 
         return parsed_contents
 
@@ -536,6 +538,7 @@ class KoreaderAction(InterfaceAction):
             new_read_percent = keys_values_to_update.get(read_percent_key)
             old_read_percent = metadata.get(read_percent_key)
             goodreads_id = metadata.get('identifiers')['goodreads']
+            print(f'Key: {read_percent_key} Old: {old_read_percent} New: {new_read_percent}')
             if new_read_percent != old_read_percent:
                 import calibre_plugins.goodreads_sync.config as cfg
                 from calibre_plugins.goodreads_sync.core import HttpHelper
@@ -1081,6 +1084,20 @@ class KoreaderAction(InterfaceAction):
                 if target == '':
                     # No column mapped, so do not sync
                     continue
+
+                # Special handling for date started/finished
+                if name is 'column_date_book_started':
+                    db = self.gui.current_db.new_api
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'reading':
+                        sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
+                if name is 'column_date_book_finished':
+                    db = self.gui.current_db.new_api
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    if metadata.get(target) is None and sidecar_contents['summary']['status'] is 'complete':
+                        sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
                 sidecar_property = column['sidecar_property']
                 value = sidecar_contents

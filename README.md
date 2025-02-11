@@ -70,7 +70,8 @@ that thread.
      progress and location to calibre without having to connect your KOReader device.
    - A _Date_ column to store **when the last sync was performed**.
    - A _Date_ column to store **when the sidecar file was last modified**. Works
-     for wired connection only, wireless will be always empty,
+   - A _Date_ column to store **when the book status was first marked reading**.
+   - A _Date_ column to store **when the book status was first marked finished**.
    - A _Long text_ column to store the **contents of the metadata sidecar** as
      HTML, with _Interpret this column as_ set to _HTML_.
   
