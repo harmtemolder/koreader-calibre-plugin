@@ -119,7 +119,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_LOC : {
         'column_heading': _("KOReader Last Location"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("Last location you stopped reading at in the book."),
         'config_name' : 'column_last_read_location',
         'config_label' : _('Last read location column:'),
@@ -154,7 +154,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_STATUS_TEXT : {
         'column_heading': _("KOReader Book Status"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("Reading status of the book, either Finished, Reading, or On hold."),
         'config_name' : 'column_status',
         'config_label' : _('Reading status column (text):'),
@@ -190,7 +190,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     SYNC_CCD_LOOKUP_MD5 : {
         'column_heading': _("KOReader MD5"),
         'datatype' : 'text',
-        'is_multiple' : True,
+        'is_multiple' : False,
         'description' : _("MD5 hash used by KOReader, allowed for ProgressSync Support."),
         'config_name' : 'column_md5',
         'config_label' : _('MD5 hash column:'),
@@ -289,7 +289,17 @@ CHECKBOXES = { # Each entry in the below dict is keyed with config_name
         'config_label': 'Enable Goodreads Progress Update',
         'config_tool_tip': 'Enable sync of reading progress to Goodreads whenever \n'
         'updated in calibre by KOReader Sync.',
-    }
+    },
+    'checkbox_enable_GR_shelf_update': {
+        'config_label': 'Enable Goodreads Shelf Updates',
+        'config_tool_tip': 'Enable sync of current-reading or reading shelf to \n'
+        'Goodreads based on reading progress in KOReader.',
+    },
+    'checkbox_enable_GR_rating_update': {
+        'config_label': 'Enable Goodreads Rating Update',
+        'config_tool_tip': 'Enable sync of rating/review/finish-date to \n'
+        'Goodreads whenever reading progress in KOReader reaches 100%.',
+    },
 }
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
@@ -316,12 +326,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print('start')
         self.action = plugin_action
         self.must_restart = False
-
-        # Instantiate separator
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setFrameShadow(QFrame.Sunken)
-        # Add with layout.addWidget(separator)
 
         # Set up main layout
         layout = QVBoxLayout()
@@ -363,16 +367,16 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         layout.addLayout(self.add_checkbox('checkbox_enable_automatic_sync'))
 
-        # Add separator and header
-        layout.addWidget(separator)
-        header_label = QLabel(
+        # Progress Sync Section
+        layout.addWidget(self.create_separator())
+        ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
             "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
             "This functionality can optionally be scheduled into a daily sync from within calibre. "
             "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
         )
-        header_label.setWordWrap(True)
-        layout.addWidget(header_label)
+        ps_header_label.setWordWrap(True)
+        layout.addWidget(ps_header_label)
 
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
@@ -402,8 +406,21 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         progress_sync_button.clicked.connect(self.show_progress_sync_popup)
         layout.addWidget(progress_sync_button)
 
-        layout.addWidget(separator)
+        # Goodreads Sync Section
+        layout.addWidget(self.create_separator())
+        grs_header_label = QLabel(
+            "This plugin supports use of the Goodreads Sync plugin to push updated reading progress to Goodreads."
+            "It also updated the shelf to currently-reading and read. When updating to read it can push the"
+            "KOReader rating, review, and finish date as well.\n"
+            "You must have the Goodreads Sync plugin installed and set up in order for this feature to work.\n"
+            "This function doesn't support all features of Goodreads Sync, just the basic ones described above."
+            "Direct all bug reports about this feature to the KOReader Sync Github, not Goodreads Sync. "
+        )
+        grs_header_label.setWordWrap(True)
+        layout.addWidget(grs_header_label)
         layout.addLayout(self.add_checkbox('checkbox_enable_GR_progress_update'))
+        layout.addLayout(self.add_checkbox('checkbox_enable_GR_shelf_update'))
+        layout.addLayout(self.add_checkbox('checkbox_enable_GR_rating_update'))
 
     def show_progress_sync_popup(self):
         self.progress_sync_popup = ProgressSyncPopup(self)
@@ -427,8 +444,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             CONFIG[values['config_name']] = values['comboBox'].get_selected_column()
 
         # Save Checkbox Settings
-        for checkbox in CHECKBOXES:
-            CONFIG[checkbox] = CHECKBOXES[checkbox]['checkbox'].checkState() == Qt.Checked
+        for config_name in CHECKBOXES:
+            CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState() == Qt.Checked
         
         # Save Scheduled ProgressSync Settings
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
@@ -500,7 +517,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                 )
             self.must_restart = True
             return True
-        print(self.sync_custom_columns[lookup_name]['current_columns'])
         return False
 
     @property
@@ -524,6 +540,12 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             available_columns['rating'] = {'name': ratings_column_name}
 
         return available_columns
+    
+    def create_separator():
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        return separator
 
 class ProgressSyncPopup(QDialog):
     def __init__(self, parent):

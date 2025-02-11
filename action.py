@@ -538,7 +538,6 @@ class KoreaderAction(InterfaceAction):
             new_read_percent = keys_values_to_update.get(read_percent_key)
             old_read_percent = metadata.get(read_percent_key)
             goodreads_id = metadata.get('identifiers')['goodreads']
-            print(f'Key: {read_percent_key} Old: {old_read_percent} New: {new_read_percent}')
             if new_read_percent != old_read_percent:
                 import calibre_plugins.goodreads_sync.config as cfg
                 from calibre_plugins.goodreads_sync.core import HttpHelper
@@ -551,30 +550,33 @@ class KoreaderAction(InterfaceAction):
                     grhttp.update_status(client, goodreads_id, new_read_percent, progress_is_percent)
                     updateLog['Goodreads Prog'] = f'Updated to {new_read_percent}'
                     # Update Shelves
-                    if new_read_percent < 100:
-                        grhttp.add_remove_book_to_shelf(client, 'currently-reading', goodreads_id, 'add')
-                        updateLog['Goodreads Shelf'] = f'currently-reading'
-                    elif new_read_percent >= 100:
-                        review_id = grhttp.add_remove_book_to_shelf(client, 'read', goodreads_id, 'add')
-                        updateLog['Goodreads Shelf'] = f'read'
-                        """rating = None
-                        date_read = None
-                        review_text = None
-                        if upload_rating:
-                            rating = calibre_book['calibre_rating'] / 2
-                            if rating:
-                                calibre_book['goodreads_rating'] = rating
-                        if upload_date_read:
-                            date_read = calibre_book['calibre_date_read']
-                            if date_read:
-                                calibre_book['goodreads_read_at'] = date_read
-                        if upload_review_text:
-                            review_text = calibre_book['calibre_review_text']
-                            if review_text:
-                                calibre_book['goodreads_review_text'] = review_text
-                        self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)"""
+                    if CONFIG["checkbox_enable_GR_shelf_update"]:
+                        if new_read_percent < 100:
+                            grhttp.add_remove_book_to_shelf(client, 'currently-reading', goodreads_id, 'add')
+                            updateLog['Goodreads Shelf'] = f'currently-reading'
+                        elif new_read_percent >= 100:
+                            review_id = grhttp.add_remove_book_to_shelf(client, 'read', goodreads_id, 'add')
+                            if CONFIG["checkbox_enable_GR_rating_update"]:
+                                updateLog['Goodreads Shelf'] = f'read, rating'
+                                rating = None
+                                rating_key = CONFIG['column_rating']
+                                date_read = None
+                                date_read_key = CONFIG['column_date_book_finished']
+                                review_text = None
+                                review_text_key = CONFIG['column_review']
+                                if rating_key is not '':
+                                    rating = keys_values_to_update.get(rating_key) / 2
+                                if date_read_key is not '':
+                                    date_read = keys_values_to_update.get(date_read_key).date() #formatted as yyyy-mm-dd
+                                if review_text_key is not '':
+                                    review_text = keys_values_to_update.get(review_text_key)
+                                self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)
+                            else:
+                                updateLog['Goodreads Shelf'] = f'read'
                 except Exception as e:
-                    print(f"Error updating reading progress: {e}")
+                    msg = f'Error updating Goodreads reading progress/shelf/rating: {str(e)}'
+                    debug_print(msg)
+                    updateLog['error'] = f'error updating goodreads for book id {book_id}'
 
         updates = []
         # Update that metadata locally

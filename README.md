@@ -70,6 +70,7 @@ that thread.
      progress and location to calibre without having to connect your KOReader device.
    - A _Date_ column to store **when the last sync was performed**.
    - A _Date_ column to store **when the sidecar file was last modified**. Works
+     for wired connection only, wireless will be always empty.
    - A _Date_ column to store **when the book status was first marked reading**.
    - A _Date_ column to store **when the book status was first marked finished**.
    - A _Long text_ column to store the **contents of the metadata sidecar** as
@@ -80,12 +81,12 @@ that thread.
    - No sync if book has already been finished: If **percent read** is _100_ or if **reading status** is _finished_ don't update data.
    - Automatic Sync on device connection: Silently sync's from KOReader when device is connected
 
-2.  Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
+1.  Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
     isn't there already.
-3.  Right-click the _KOReader Sync_ icon and _Configure_.
-4.  Map the metadata you want to sync to the newly created calibre columns.
-5.  Click _OK_ to save your mapping.
-6.  From now on just click the _KOReader Sync_ icon to sync all mapped metadata
+2.  Right-click the _KOReader Sync_ icon and _Configure_.
+3.  Map the metadata you want to sync to the newly created calibre columns.
+4.  Click _OK_ to save your mapping.
+5.  From now on just click the _KOReader Sync_ icon to sync all mapped metadata
     for all books on the connected device to calibre.
 
 **Note:** Some field are depreciated and removed from plugin since they are
