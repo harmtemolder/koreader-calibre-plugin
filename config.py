@@ -413,7 +413,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             "This plugin supports use of the Goodreads Sync plugin to push updated reading progress to Goodreads. "
             "It also updated the shelf to currently-reading and read. When updating to read it can push the"
             "KOReader rating, review, and finish date as well.\n"
-            "You must have the Goodreads Sync plugin installed and set up in order for this feature to work.\n"
+            "You must have the Goodreads Sync plugin installed and set up in order for this feature to work. "
+            "The book also needs the goodreads_id already linked, great for updates not set up.\n"
             "This function doesn't support all features of Goodreads Sync, just the basic ones described above. "
             "Direct all bug reports about this feature to the KOReader Sync Github, not Goodreads Sync. "
         )

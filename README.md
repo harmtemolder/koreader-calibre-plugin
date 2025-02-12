@@ -100,6 +100,7 @@ changed/removed from `sidecar_contents` data structure:
   cable (not wireless)
 
 ### ProgressSync
+
   This plugin supports use of a [KOReader Sync 
   Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
   (_Progress sync_ in the KOReader app) in order to update **current percent read**
@@ -108,6 +109,20 @@ changed/removed from `sidecar_contents` data structure:
   Add the server and user credentials in the plugin config to use this function.
   The user password is stored as a hash, not plain text.\
   You can have calibre fetch updated data on a daily schedule.
+
+### Goodreads Sync
+
+  This plugin builds upon the wonderful [Goodreads Sync](
+  https://www.mobileread.com/forums/showthread.php?t=123281) plugin to allow
+  for you to automatically sync progress, shelf, and rating/review/read-date
+  at the same time as you synchronize with KOReader (or ProgressSync).\
+  This function depends on you already having the Goodreads Sync plugin
+  set up and configured and the goodreads_id added to your book in calibre.\
+  There are 3 settings for this plugin:
+  - Sync your reading progress.
+  - Sync books to your currently-reading and read shelves.
+  - Sync KOReader rating/review/date-read. It will sync those mapped of the 3
+    and there is no configuration to allow other columns to be used.
 
 ### Things to consider
 

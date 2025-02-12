@@ -547,8 +547,8 @@ class KoreaderAction(InterfaceAction):
             read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
             new_read_percent = keys_values_to_update.get(read_percent_key)
             old_read_percent = metadata.get(read_percent_key)
-            goodreads_id = metadata.get('identifiers')['goodreads']
-            if new_read_percent != old_read_percent:
+            goodreads_id = metadata.get('identifiers').get('goodreads')
+            if goodreads_id is not None and new_read_percent != old_read_percent:
                 import calibre_plugins.goodreads_sync.config as cfg
                 from calibre_plugins.goodreads_sync.core import HttpHelper
                 username = list(cfg.plugin_prefs[cfg.STORE_USERS].keys())[0]
@@ -588,7 +588,9 @@ class KoreaderAction(InterfaceAction):
                     msg = f'Error updating Goodreads reading progress/shelf/rating: {str(e)}'
                     debug_print(msg)
                     updateLog['error'] = f'error updating goodreads for book id {book_id}'
-
+            else:
+                updateLog['Goodreads Prog'] = 'Skipped, no change or goodreads id missing'
+        
         updates = []
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
