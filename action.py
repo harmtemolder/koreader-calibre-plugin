@@ -20,12 +20,20 @@ from PyQt5.Qt import (
     QTime,
     QTableWidget,
     QTableWidgetItem,
+    QHBoxLayout,
     QVBoxLayout,
     QDialog,
+    QWidget,
+    QPainter,
     QLabel,
+    QIcon,
     QPushButton,
     QScrollArea,
+    QApplication,
+    QSize,
+    QSizePolicy,
 )
+from PyQt5.QtGui import QPixmap
 
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
@@ -272,6 +280,8 @@ class KoreaderAction(InterfaceAction):
         text = get_resources('about.txt').decode(
             'utf-8'
         )
+        if DEBUG:
+            text += '\n\nRunning in debug mode'
         icon = get_icons(
             'images/icon.png'
         )
@@ -341,7 +351,7 @@ class KoreaderAction(InterfaceAction):
         return connected_device
 
     def _on_device_metadata_available(self):
-        self.sync_to_calibre(silent=True)
+        self.sync_to_calibre(silent = True if not DEBUG else False)
 
     def get_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library
@@ -547,6 +557,7 @@ class KoreaderAction(InterfaceAction):
                 client = grhttp.create_oauth_client(username)
                 try:
                     # Update Reading Progress
+                    print(str(keys_values_to_update))
                     grhttp.update_status(client, goodreads_id, new_read_percent, progress_is_percent)
                     updateLog['Goodreads Prog'] = f'Updated to {new_read_percent}'
                     # Update Shelves
@@ -822,25 +833,28 @@ class KoreaderAction(InterfaceAction):
             )
 
             if num_success > 0 and num_fail > 0:
-                SyncCompletionDialog( #warn
+                SyncCompletionDialog(
                     self.gui,
                     'Results',
                     results_message,
-                    results
+                    results,
+                    'warn'
                 )
             elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
-                SyncCompletionDialog( #info
+                SyncCompletionDialog(
                     self.gui,
                     'Success',
                     results_message,
-                    results
+                    results,
+                    'info'
                 )
             else:
-                SyncCompletionDialog( #err
+                SyncCompletionDialog(
                     self.gui,
                     'Failure',
                     results_message,
-                    results
+                    results,
+                    'error'
                 )
 
     def sync_progress_from_progresssync(self, silent=False):
@@ -981,40 +995,60 @@ class KoreaderAction(InterfaceAction):
                     })
                     num_skip += 1
 
+                except brotli.error as e:
+                    msg = f'Brotli decompression failed for query: {url}, error: {str(e)}'
+                    debug_print(msg)
+                    results.append({
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        'error': 'Brotli decompression failed'
+                    })
+
+            else:
+                results.append({
+                    'book_id': book_id,
+                    'md5_value': md5_value,
+                    'error': 'Book has already been read'
+                })
+                num_skip += 1
+
         if not silent:
             results_message = (
                 f'Total books with MD5 values: {len(books_with_md5)}\n\n'
                 f'Successful syncs: {num_success}\n'
-                f'Failed syncs: {num_skip}\n\n'
+                f'Failed/Skipped syncs: {num_skip}\n\n'
             )
 
             if num_success > 0 and num_skip == 0:
-                SyncCompletionDialog( #info
+                SyncCompletionDialog(
                     self.gui,
                     'Progress sync finished',
                     results_message + 'All looks good!\n\n',
-                    results
+                    results,
+                    'info'
                 )
             elif num_skip > 0:
-                SyncCompletionDialog( #warn
+                SyncCompletionDialog(
                     self.gui,
                     'Some syncs failed',
                     results_message + 'There were some errors during the sync process!\n'
                                     'Please investigate and report if it looks like a bug\n\n',
-                    results
+                    results,
+                    'warn'
                 )
             else:
-                SyncCompletionDialog( #err
+                SyncCompletionDialog(
                     self.gui,
                     'No successful syncs',
                     results_message + 'No successful syncs\n'
                                     'Please investigate and report if it looks like a bug\n\n',
-                    results
+                    results,
+                    'error'
                 )
 
     def scheduled_progress_sync(self):
         def scheduledTask():
-            self.sync_progress_from_progresssync(silent=True)
+            self.sync_progress_from_progresssync(silent = True if not DEBUG else False)
 
         def main():
             # Get current local time
@@ -1169,23 +1203,25 @@ class KoreaderAction(InterfaceAction):
             )
 
             if num_success > 0 and num_fail == 0:
-                SyncCompletionDialog( #info
+                SyncCompletionDialog(
                     self.gui,
                     'Metadata sync finished',
                     results_message + f'All looks good!\n\n',
-                    results
+                    results,
+                    'info'
                 )
             elif num_fail > 0:
-                SyncCompletionDialog( #err
+                SyncCompletionDialog(
                     self.gui,
                     'Some sync failed',
                     results_message + f'There was some error during sync process!\n'
                                     f'Please investigate and report if it looks '
                                     f'like a bug\n\n',
-                    results
+                    results,
+                    'error'
                 )
             elif num_success == 0 and num_fail == 0:
-                SyncCompletionDialog( #warn
+                SyncCompletionDialog(
                     self.gui,
                     'No errors but not successful syncs',
                     results_message + f'No errors but no successful syncs\n'
@@ -1193,7 +1229,8 @@ class KoreaderAction(InterfaceAction):
                                     f'sync?\n'
                                     f'Please investigate and report if it looks '
                                     f'like a bug\n\n',
-                    results
+                    results,
+                    'warn'
                 )
             else:
                 error_dialog(
@@ -1206,7 +1243,7 @@ class KoreaderAction(InterfaceAction):
                 )
 
 class SyncCompletionDialog(QDialog):
-    def __init__(self, parent=None, title="", msg="", results=None):
+    def __init__(self, parent=None, title="", msg="", results=None, type=None):
         super().__init__(parent)
         self.setWindowTitle(title)
         self.setMinimumWidth(800)
@@ -1214,10 +1251,26 @@ class SyncCompletionDialog(QDialog):
 
         layout = QVBoxLayout(self)
 
-        # Main message body
+        # Main Message Area
+        mainMessageLayout = QHBoxLayout()
+        type = {
+            'info': 'dialog_information',
+            'error': 'dialog_error',
+            'warn': 'dialog_warning',
+        }.get(type)
+        if type is not None:
+            icon = QIcon.ic(f'{type}.png')
+            mainMessageLayout.setSpacing(10)
+            self.setWindowIcon(icon)
+            icon_widget = Icon(self)
+            mainMessageLayout.addWidget(icon_widget)
+            icon_widget.set_icon(icon)
+
         message_label = QLabel(msg)
         message_label.setWordWrap(True)
-        layout.addWidget(message_label)
+        mainMessageLayout.addWidget(message_label)
+        
+        layout.addLayout(mainMessageLayout)
 
         # Scrollable area for the table
         self.table_area = QScrollArea(self)
@@ -1229,11 +1282,27 @@ class SyncCompletionDialog(QDialog):
             self.table_area.setWidget(table)
             layout.addWidget(self.table_area)
 
-        # Ok Button
+        # Bottom Buttons
+        bottomButtonLayout = QHBoxLayout()
+        
+        if results:
+            copy_button = QPushButton("COPY", self)
+            copy_button.setFixedWidth(100)
+            copy_button.setIcon(QIcon.ic('edit-copy.png'))
+            copy_button.clicked.connect(lambda: (
+                QApplication.clipboard().setText(str(results)), 
+                copy_button.setText('Copied')
+            ))
+            bottomButtonLayout.addWidget(copy_button)
+        
+        bottomButtonLayout.addStretch() # Right align the rest of this layout
         ok_button = QPushButton("OK", self)
         ok_button.setFixedWidth(100)
+        ok_button.setIcon(QIcon.ic('ok.png'))
         ok_button.clicked.connect(self.accept)
-        layout.addWidget(ok_button)
+        bottomButtonLayout.addWidget(ok_button)
+
+        layout.addLayout(bottomButtonLayout)
 
         self.exec_()
 
@@ -1259,6 +1328,29 @@ class SyncCompletionDialog(QDialog):
             for col, key in enumerate(all_headers):
                 item = QTableWidgetItem(str(result.get(key, "")))
                 table.setItem(row, col, item)
+                item.setToolTip(item.text())  # Set the tooltip to the full text
 
-        table.resizeColumnsToContents()
+        #table.resizeColumnsToContents() # Makes the columns take up the content width, generally causes a really wide table.
         return table
+
+class Icon(QWidget):
+
+    def __init__(self, parent=None, size=None):
+        QWidget.__init__(self, parent)
+        self.pixmap = None
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.size = size or 64
+
+    def set_icon(self, qicon):
+        self.pixmap = qicon.pixmap(self.size, self.size)
+        self.update()
+
+    def sizeHint(self):
+        return QSize(self.size, self.size)
+
+    def paintEvent(self, ev):
+        if self.pixmap is not None:
+            x = (self.width() - self.size) // 2
+            y = (self.height() - self.size) // 2
+            p = QPainter(self)
+            p.drawPixmap(x, y, self.size, self.size, self.pixmap)

@@ -410,11 +410,11 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # Goodreads Sync Section
         layout.addWidget(self.create_separator())
         grs_header_label = QLabel(
-            "This plugin supports use of the Goodreads Sync plugin to push updated reading progress to Goodreads."
+            "This plugin supports use of the Goodreads Sync plugin to push updated reading progress to Goodreads. "
             "It also updated the shelf to currently-reading and read. When updating to read it can push the"
             "KOReader rating, review, and finish date as well.\n"
             "You must have the Goodreads Sync plugin installed and set up in order for this feature to work.\n"
-            "This function doesn't support all features of Goodreads Sync, just the basic ones described above."
+            "This function doesn't support all features of Goodreads Sync, just the basic ones described above. "
             "Direct all bug reports about this feature to the KOReader Sync Github, not Goodreads Sync. "
         )
         grs_header_label.setWordWrap(True)
@@ -542,7 +542,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         return available_columns
     
-    def create_separator():
+    def create_separator(self):
         separator = QFrame()
         separator.setFrameShape(QFrame.HLine)
         separator.setFrameShadow(QFrame.Sunken)
@@ -576,9 +576,10 @@ class ProgressSyncPopup(QDialog):
         layout.addWidget(self.password_input)
 
         self.note_label = QLabel(
-            'Enter any custom server or leave the default filled in. '
-            'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.'
-            'Also make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location',
+            'Enter any custom server or leave the default filled in.\n'
+            'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.\n'
+            'Make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location\n'
+            'You must have a percent read (int or float) and status text column.',
             self
         )
         self.note_label.setWordWrap(True)
