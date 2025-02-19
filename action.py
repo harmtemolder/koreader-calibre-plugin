@@ -946,6 +946,10 @@ class KoreaderAction(InterfaceAction):
                             continue
                         progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
                     
+                    # Kinda Janky edge case handling
+                    if len(str(progress_data)) < 8:
+                        continue
+
                     # List of keys to check
                     ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
 
@@ -1050,6 +1054,8 @@ class KoreaderAction(InterfaceAction):
 
     def scheduled_progress_sync(self):
         def scheduledTask():
+            # Set another timer for the next day and order sync
+            QTimer.singleShot(24 * 3600 * 1000, scheduledTask)
             self.sync_progress_from_progresssync(silent = True if not DEBUG else False)
 
         def main():
@@ -1068,9 +1074,6 @@ class KoreaderAction(InterfaceAction):
 
             # Create a QTimer to trigger the task at the desired time
             QTimer.singleShot(timeDiff, scheduledTask)
-
-            # After the task, set another timer for the next day
-            QTimer.singleShot(24 * 3600 * 1000, scheduledTask)
         
         main() # Runs scheduled_progress_sync
 
