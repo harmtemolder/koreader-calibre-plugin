@@ -477,7 +477,6 @@ class KoreaderAction(InterfaceAction):
                         f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
                     return OperationStatus.SKIP, {
                         'result': 'skipped, data in calibre is newer',
-                        'book_id': book_id,
                     }
             # Fallback if no 'Date Modified Column' is set or not obtainable (wireless)
             elif new_date_modified is None:
@@ -498,7 +497,6 @@ class KoreaderAction(InterfaceAction):
                         f'book {book_id} read_percent is None but existing is {current_read_percent}')
                     return OperationStatus.SKIP, {
                         'result': 'skipped, no new read percent found',
-                        'book_id': book_id,
                     }
 
         # Check config to sync only if the book is not yet finished
@@ -513,7 +511,6 @@ class KoreaderAction(InterfaceAction):
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
-                    'book_id': book_id,
                 }
 
         # Check and correct reading status if required
@@ -578,7 +575,6 @@ class KoreaderAction(InterfaceAction):
 
         return OperationStatus.PASS, {
             'result': 'success',
-            'book_id': book_id,
             **updateLog
         }
 
@@ -679,13 +675,11 @@ class KoreaderAction(InterfaceAction):
             return "failure", {
                 'result': f'Unable to create directory at: '
                           f'{path} due to {perm_e}',
-                'book_id': book_id,
             }
         except OSError as os_e:
             return "failure", {
                 'result': f'Unexpectable exception is occurred, '
                           f'please report: {os_e}',
-                'book_id': book_id,
             }
 
         with open(path, "w", encoding="utf-8") as f:
@@ -694,7 +688,6 @@ class KoreaderAction(InterfaceAction):
 
         return "success", {
             'result': 'success',
-            'book_id': book_id,
         }
 
     def sync_missing_sidecars_to_koreader(self, silent=False):
@@ -890,7 +883,6 @@ class KoreaderAction(InterfaceAction):
                         response_data = response.read()
                         if response_data == b'{}':
                             results.append({
-                                'book_id': book_id,
                                 'md5_value': md5_value,
                                 'error': 'No ProgressSync entry for md5 hash'
                             })
@@ -964,7 +956,6 @@ class KoreaderAction(InterfaceAction):
 
             else:
                 results.append({
-                    'book_id': book_id,
                     'md5_value': md5_value,
                     'error': 'Book has already been read'
                 })
@@ -1179,6 +1170,7 @@ class KoreaderAction(InterfaceAction):
                     f"Metadata sync skipped for: {res['num_skip']}\n"
                     f"Metadata sync failed for: {res['num_fail']}\n\n"
                 )
+                res['results'].sort(key=lambda row: (not row.get('error', False), -len(row))) # Sort by if error, then # of changes
                 if res['num_success'] > 0 and res['num_fail'] == 0:
                     SyncCompletionDialog(
                         self.gui,
@@ -1296,29 +1288,48 @@ class SyncCompletionDialog(QDialog):
         self.exec_()
 
     def create_results_table(self, results):
-        all_headers = set()
-        for result in results:
-            all_headers.update(result.keys())
-        all_headers = list(all_headers)
+        # Get all possible headers from results and save as set
+        all_headers = {key for result in results for key in result.keys()}
 
-        # Ensure 'book_id' is the first header and 'error' is the last header
+        headers = []
+        custom_columns = sorted(h for h in all_headers 
+                               if h not in ('book_uuid', 'status', 'result', 'error'))
+
         if 'book_uuid' in all_headers:
-            all_headers.remove('book_uuid')
+            headers.append('book_uuid')
+        if 'status' in all_headers:
+            headers.append('status')
+        if 'result' in all_headers:
+            headers.append('result')
         if 'error' in all_headers:
-            all_headers.remove('error')
-        all_headers = ['book_uuid'] + all_headers + ['error']
+            headers.append('error')
+        if custom_columns:
+            headers.extend(custom_columns)
 
         table = QTableWidget()
         table.setRowCount(len(results))
-        table.setColumnCount(len(all_headers))
-        table.setHorizontalHeaderLabels(all_headers)
+        table.setColumnCount(len(headers))
+        table.setHorizontalHeaderLabels(headers)
 
         for row, result in enumerate(results):
-            for col, key in enumerate(all_headers):
-                item = QTableWidgetItem(str(result.get(key, "")))
+            for col, header in enumerate(headers):
+                item = QTableWidgetItem(str(result.get(header, "")))
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 item.setToolTip(item.text())  # Set the tooltip to the full text
                 table.setItem(row, col, item)
 
-        #table.resizeColumnsToContents() # Makes the columns take up the content width, generally causes a really wide table.
+        max_lines = 1
+        for col, header in enumerate(headers):
+            words, line, lines, col_len_limit = header.split(), "", [], max(table.columnWidth(col) // 7, 10)
+            for word in words:
+                line = f"{line} {word}".strip()
+                if len(line) > col_len_limit:
+                    lines.append(line.rsplit(' ', 1)[0])
+                    line = word if ' ' in line else ''
+            lines.append(line)
+            max_lines = max(len(lines), max_lines)
+            wrapped = '\n'.join(lines)
+            table.setHorizontalHeaderItem(col, QTableWidgetItem(wrapped))
+        table.horizontalHeader().setFixedHeight(20 * max_lines) # Default = 20
+
         return table
