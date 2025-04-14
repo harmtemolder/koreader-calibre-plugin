@@ -148,3 +148,9 @@ release
 # scripts extras
 .scripts/output.forumbb
 .scripts/input.md
+
+# ToDo File
+TODO*
+
+# Python Debug Files
+test_*.py
