@@ -552,10 +552,12 @@ class KoreaderAction(InterfaceAction):
                 metadata.set(key, new_value)
                 updateLog[key] = f'{old_value} >> {new_value}'
             else:
-                updateLog[key] = f'{old_value} -- {new_value}'
+                if DEBUG:
+                    updateLog[key] = f'{old_value} -- {new_value}'
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
+            updateLog['status'] = 'no updates needed'
             debug_print(
                 'no changed metadata for uuid = ', uuid,
                 ', id = ', book_id
