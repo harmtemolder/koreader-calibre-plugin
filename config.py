@@ -383,23 +383,20 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         scheduled_sync_layout = QHBoxLayout()
         scheduled_sync_layout.setAlignment(Qt.AlignLeft)
         scheduled_sync_layout.addLayout(self.add_checkbox('checkbox_enable_scheduled_progressync'))
-
         scheduled_sync_layout.addWidget(QLabel('Scheduled Time:'))
-
         self.schedule_hour_input = QSpinBox()
         self.schedule_hour_input.setRange(0, 23)
         self.schedule_hour_input.setValue(CONFIG['scheduleSyncHour'])
         self.schedule_hour_input.setSuffix('h')
+        self.schedule_hour_input.wheelEvent = lambda event: event.ignore()
         scheduled_sync_layout.addWidget(self.schedule_hour_input)
-
         scheduled_sync_layout.addWidget(QLabel(':'))
-
         self.schedule_minute_input = QSpinBox()
         self.schedule_minute_input.setRange(0, 59)
         self.schedule_minute_input.setValue(CONFIG['scheduleSyncMinute'])
         self.schedule_minute_input.setSuffix('m')
+        self.schedule_minute_input.wheelEvent = lambda event: event.ignore()
         scheduled_sync_layout.addWidget(self.schedule_minute_input)
-
         layout.addLayout(scheduled_sync_layout)
 
         # Add ProgressSync Account button
@@ -479,11 +476,11 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         label = QLabel(checkboxMeta['config_label'])
         label.setToolTip(checkboxMeta['config_tool_tip'])
         label.setBuddy(checkbox)
+        label.mousePressEvent = lambda event, checkbox=checkbox: checkbox.toggle()
         layout.addWidget(checkbox)
         layout.addWidget(label)
         layout.addStretch()
         CHECKBOXES[checkboxKey]['checkbox'] = checkbox
-
         return layout
 
     def create_custom_column_controls(self, columns_group_box_layout, custom_col_name, min_width=300):
@@ -496,7 +493,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         current_Location_label.setBuddy(custom_column_combo)
         columns_group_box_layout.addRow(current_Location_label, custom_column_combo)
         self.sync_custom_columns[custom_col_name]['combo_box'] = custom_column_combo
-
         return custom_column_combo
 
     def create_custom_column(self, lookup_name=None):
