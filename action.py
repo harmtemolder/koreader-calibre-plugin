@@ -169,7 +169,6 @@ def parse_sidecar_lua(sidecar_lua):
 
     return decoded_lua
 
-
 class KoreaderAction(InterfaceAction):
     name = KoreaderSync.name
     action_spec = (name, 'edit-redo.png', KoreaderSync.description, None)
@@ -1098,30 +1097,29 @@ class KoreaderAction(InterfaceAction):
 
                     keys_values_to_update = {}
 
-                    for column in COLUMNS.values():
-                        name = column['config_name']
-                        target = CONFIG[name]
+                    for config_name, column in COLUMNS.items():
+                        target = CONFIG[config_name]
 
                         if target == '':
                             # No column mapped, so do not sync
                             continue
 
                         # Special handling for date started/finished
-                        if name == 'column_date_book_started':
+                        if config_name == 'column_date_book_started':
                             book_id = db.lookup_by_uuid(book_uuid)
                             metadata = db.get_metadata(book_id)
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
                                 sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
-                        if name == 'column_date_book_finished':
+                        if config_name == 'column_date_book_finished':
                             book_id = db.lookup_by_uuid(book_uuid)
                             metadata = db.get_metadata(book_id)
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
                                 sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
-                        sidecar_property = column['sidecar_property']
+                        data_location = column['data_location']
                         value = sidecar_contents
 
-                        for subproperty in sidecar_property:
+                        for subproperty in data_location:
                             if subproperty in value:
                                 value = value[subproperty]
                             else:
@@ -1149,8 +1147,7 @@ class KoreaderAction(InterfaceAction):
                             **result,
                             'book_uuid': book_uuid,
                             'sidecar_path': sidecar_path,
-                            # too much data, hard to read for user
-                            # 'updated': json.dumps(keys_values_to_update, default=str),
+                            **({'updated': json.dumps(keys_values_to_update, default=str)} if DEBUG else {})
                         }
                     )
 

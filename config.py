@@ -55,206 +55,194 @@ UNSUPPORTED_DEVICES = [
     'MTP_DEVICE',
 ]
 
-SUPPORTS_CREATE_CUSTOM_COLUMN = False
 try:
     from calibre.gui2.preferences.create_custom_column import CreateNewCustomColumn
     SUPPORTS_CREATE_CUSTOM_COLUMN = True
 except ImportError:
     SUPPORTS_CREATE_CUSTOM_COLUMN = False
 
-# List of default 'lookup names' for the custom columns
-# CCD = Custom Column Default (lookup name)
-SYNC_CCD_LOOKUP_READING_PROGRESS_FLOAT  = '#ko_progfloat'
-SYNC_CCD_LOOKUP_READING_PROGRESS_INT    = '#ko_progint'
-SYNC_CCD_LOOKUP_LOC                     = '#ko_loc'
-SYNC_CCD_LOOKUP_RATING                  = '#ko_rating'
-SYNC_CCD_LOOKUP_REVIEW_TEXT             = '#ko_review'
-SYNC_CCD_LOOKUP_STATUS_TEXT             = '#ko_status'
-SYNC_CCD_LOOKUP_STATUS_YN               = '#ko_statusbool'
-SYNC_CCD_LOOKUP_BOOKMARKS               = '#ko_bookmarks'
-SYNC_CCD_LOOKUP_MD5                     = '#ko_md5'
-SYNC_CCD_LOOKUP_DATE_SYNC               = '#ko_lastsync'
-SYNC_CCD_LOOKUP_DATE_MOD                = '#ko_lastmod'
-SYNC_CCD_LOOKUP_DATE_STARTED            = '#ko_start'
-SYNC_CCD_LOOKUP_DATE_FINISHED           = '#ko_finish'
-SYNC_CCD_LOOKUP_RAW_SIDECAR             = '#ko_sidecar'
-
-'''
-Each entry in the below dict has the following keys
-column_heading: Default custom column heading
-datatype: Default custom column datatype (column type)
-is_multiple (optional): only for text columns, whether to allow multiple values. True = "Comma separated text..." and False = "Text, column shown in the Tag browser"
-description: Default custom column description
-config_name: Name of the config item to store the selected column
-config_label: Label for the item in the Config UI
-config_tool_tip: Tooltip for the item in the Config UI
-column_types: list of calibre column types to show in the combo box (int, float, text, comments, rating, datetime, bool)
-sidecar_property (optional): Reference to the sidecar_property for use in action.py
-transform (optional): lambda expression to be applied in formatting the value
-'''
+"""
+Each entry in the below dict has the following keys:
+Each entry is keyed by the name of the config item used to store the selected column's lookup name
+  first_in_group (optional): If present and true, a separator will be added before this item in the Config UI.
+                             If this is a string a QLabel with bolded string value will be added below the separator.
+  column_heading: Default custom column heading
+  datatype: Custom column datatype
+  is_multiple (optional): For text columns, specified as a tuple (default_multiple, only_multiple_in_dropdown)
+  additional_params (optional): Additional parameters for the custom column display parameter as specified in the calibre API as a dictionary.
+    https://github.com/kovidgoyal/calibre/blob/bc29562c0c8534b349c9d330ac9aec72eef2be99/src/calibre/gui2/preferences/create_custom_column.py#L901
+  description: Default custom column description
+  default_lookup_name: The suggested column lookup string in calibre (e.g. "#ko_progfloat")
+  config_label: Label for the item in the Config UI
+  config_tool_tip: Tooltip for the item in the Config UI
+  data_source: Source of the data; 'sidecar' is the KOReader sidecar file.
+  data_location: List of keys used to locate the data in the data_source dictionary
+  transform (optional): lambda expression to format the value
+"""
 CUSTOM_COLUMN_DEFAULTS = {
-    SYNC_CCD_LOOKUP_READING_PROGRESS_FLOAT : { # Does not currently apply formatting {:.0%}
+    'column_percent_read': {
         'column_heading': _("KOReader Precise Progress"),
-        'datatype' : 'float',
-        'description' : _("Reading progress for the book with decimal precision."),
-        'config_name' : 'column_percent_read',
-        'config_label' : _('Percent read column (float):'),
-        'config_tool_tip' : _('A "Floating point numbers" column to store the current\n'
-                'percent read, with "Format for numbers" set to `{:.0%}`.'),
-        "column_types": ['float'],
-        'sidecar_property': ['percent_finished'],
+        'datatype': 'float',
+        'additional_params': {'number_format': "{:.2f}%"},
+        'description': _("Reading progress for the book with decimal precision."),
+        'default_lookup_name': '#ko_progfloat',
+        'config_label': _('Percent read column (float):'),
+        'config_tool_tip': _('A "Floating point numbers" column to store the current\n'
+                             'percent read, with "Format for numbers" set to 0.00%.'),
+        'data_source': 'sidecar',
+        'data_location': ['percent_finished'],
         'transform': (lambda value: float(value)),
     },
-    SYNC_CCD_LOOKUP_READING_PROGRESS_INT : {
+    'column_percent_read_int': {
         'column_heading': _("KOReader Progress"),
-        'datatype' : 'int',
-        'description' : _("Reading progress for the book."),
-        'config_name' : 'column_percent_read_int',
-        'config_label' : _('Percent read column (int):'),
-        'config_tool_tip' : _('An "Integers" column to store the current percent read.'),
-        "column_types": ['int'],
-        'sidecar_property': ['percent_finished'],
+        'datatype': 'int',
+        'additional_params': {'number_format': "{}%"},
+        'description': _("Reading progress for the book."),
+        'default_lookup_name': '#ko_progint',
+        'config_label': _('Percent read column (int):'),
+        'config_tool_tip': _('An "Integers" column to store the current percent read.'),
+        'data_source': 'sidecar',
+        'data_location': ['percent_finished'],
         'transform': (lambda value: round(float(value) * 100)),
     },
-    SYNC_CCD_LOOKUP_LOC : {
-        'column_heading': _("KOReader Last Location"),
-        'datatype' : 'text',
-        'is_multiple' : False,
-        'description' : _("Last location you stopped reading at in the book."),
-        'config_name' : 'column_last_read_location',
-        'config_label' : _('Last read location column:'),
-        'config_tool_tip' : _('A regular "Text" column to store the location you last\n'
-                'stopped reading at.'),
-        "column_types": ['text'],
-        'sidecar_property': ['last_xpointer'],
-    },
-    SYNC_CCD_LOOKUP_RATING : {
-        'column_heading': _("KOReader Rating"),
-        'datatype' : 'rating',
-        'description' : _("Rating for the book."),
-        'config_name' : 'column_rating',
-        'config_label' : _('Rating column:'),
-        'config_tool_tip' : _('A "Rating" column to store your rating of the book,\n'
-               'as entered on the book’s status page.'),
-        "column_types": ['rating'],
-        'sidecar_property': ['summary', 'rating'],
-        'transform': (lambda value: value * 2),  # calibre uses a 10-point scale,
-    },
-    SYNC_CCD_LOOKUP_REVIEW_TEXT : { # Unsure about Interpret this column as
-        'column_heading': _("KOReader Review"),
-        'datatype' : 'comments',
-        'description' : _("Review of book."),
-        'config_name' : 'column_review',
-        'config_label' : _('Review column:'),
-        'config_tool_tip' : _('A "Long text" column to store your review of the book,\n'
-               'as entered on the book’s status page.'),
-        "column_types": ['comments'],
-        'sidecar_property': ['summary', 'note'],
-    },
-    SYNC_CCD_LOOKUP_STATUS_TEXT : {
+    'column_status': {
         'column_heading': _("KOReader Book Status"),
-        'datatype' : 'text',
-        'is_multiple' : False,
-        'description' : _("Reading status of the book, either Finished, Reading, or On hold."),
-        'config_name' : 'column_status',
-        'config_label' : _('Reading status column (text):'),
-        'config_tool_tip' : _('A regular "Text" column to store the reading status of the\n'
-               'book, as entered on the book status page ("Finished",\n'
-               '"Reading", "On hold").'),
-        "column_types": ['text'],
-        'sidecar_property': ['summary', 'status'],
+        'datatype': 'text',
+        'description': _("Reading status of the book, either Finished, Reading, or On hold."),
+        'default_lookup_name': '#ko_status',
+        'config_label': _('Reading status column (text):'),
+        'config_tool_tip': _('A regular "Text" column to store the reading status of the\n'
+                             'book, as entered on the book status page ("Finished",\n'
+                             '"Reading", "On hold").'),
+        'data_source': 'sidecar',
+        'data_location': ['summary', 'status'],
     },
-    SYNC_CCD_LOOKUP_STATUS_YN : {
+    'column_status_bool': {
         'column_heading': _("KOReader Book Status Y/N"),
-        'datatype' : 'bool',
-        'description' : _("Yes if the book is marked as finished in KOReader, otherwise No."),
-        'config_name' : 'column_status_bool',
-        'config_label' : _('Reading status column (yes/no):'),
-        'config_tool_tip' : _('A "Yes/No" column to store the reading status of the book,\n'
-               'as a boolean ("Yes" = "Finished", "No" = everything else).'),
-        "column_types": ['bool'],
-        'sidecar_property': ['summary', 'status'],
+        'datatype': 'bool',
+        'description': _("Yes if the book is marked as finished in KOReader, otherwise No."),
+        'default_lookup_name': '#ko_statusbool',
+        'config_label': _('Reading status column (yes/no):'),
+        'config_tool_tip': _('A "Yes/No" column to store the reading status of the book,\n'
+                             'as a boolean ("Yes" = "Finished", "No" = everything else).'),
+        'data_source': 'sidecar',
+        'data_location': ['summary', 'status'],
         'transform': (lambda val: bool(val == 'complete')),
     },
-    SYNC_CCD_LOOKUP_BOOKMARKS : { # Unsure about Interpret this column as
+    'column_last_read_location': {
+        'column_heading': _("KOReader Last Location"),
+        'datatype': 'text',
+        'description': _("Last location you stopped reading at in the book."),
+        'default_lookup_name': '#ko_loc',
+        'config_label': _('Last read location column:'),
+        'config_tool_tip': _('A regular "Text" column to store the location you last\n'
+                             'stopped reading at.'),
+        'data_source': 'sidecar',
+        'data_location': ['last_xpointer'],
+    },
+    'column_date_book_started': {
+        'column_heading': _("Date KOReader Started"),
+        'datatype': 'datetime',
+        'description': _("Date when the book was started."),
+        'default_lookup_name': '#ko_start',
+        'config_label': _('Date Book Started column:'),
+        'config_tool_tip': _('A "Date" column to store when the book was started. '
+                             'Will only be set once when synced with reading status.'),
+        'data_source': 'sidecar',
+        'data_location': ['calculated', 'date_book_started'],
+    },
+    'column_date_book_finished': {
+        'column_heading': _("Date KOReader Finished"),
+        'datatype': 'datetime',
+        'description': _("Date when the book was finished."),
+        'default_lookup_name': '#ko_finish',
+        'config_label': _('Date Book Finished column:'),
+        'config_tool_tip': _('A "Date" column to store when the book was finished. '
+                             'Will only be set once when synced with finished status.'),
+        'data_source': 'sidecar',
+        'data_location': ['calculated', 'date_book_finished'],
+    },
+    'column_rating': {
+        'first_in_group': True,
+        'column_heading': _("KOReader Rating"),
+        'datatype': 'rating',
+        'description': _("Rating for the book."),
+        'default_lookup_name': '#ko_rating',
+        'config_label': _('Rating column:'),
+        'config_tool_tip': _('A "Rating" column to store your rating of the book,\n'
+                             'as entered on the book’s status page.'),
+        'data_source': 'sidecar',
+        'data_location': ['summary', 'rating'],
+        'transform': (lambda value: value * 2),  # calibre uses a 10-point scale,
+    },
+    'column_review': {  # Unsure about Interpret this column as
+        'column_heading': _("KOReader Review"),
+        'datatype': 'comments',
+        'description': _("Review of book."),
+        'default_lookup_name': '#ko_review',
+        'config_label': _('Review column:'),
+        'config_tool_tip': _('A "Long text" column to store your review of the book,\n'
+                             'as entered on the book’s status page.'),
+        'data_source': 'sidecar',
+        'data_location': ['summary', 'note'],
+    },
+    'column_bookmarks': {
         'column_heading': _("KOReader Bookmarks"),
-        'datatype' : 'comments',
-        'description' : _("All the bookmarks and highlights from KOReader."),
-        'config_name' : 'column_bookmarks',
-        'config_label' : _('Bookmarks column:'),
-        'config_tool_tip' : _('A "Long text" column to store your bookmarks and highlights.'),
-        "column_types": ['comments'],
-        'sidecar_property': ['annotations'],
+        'datatype': 'comments',
+        'description': _("All the bookmarks and highlights from KOReader."),
+        'default_lookup_name': '#ko_bookmarks',
+        'config_label': _('Bookmarks column:'),
+        'config_tool_tip': _('A "Long text" column to store your bookmarks and highlights.'),
+        'data_source': 'sidecar',
+        'data_location': ['annotations'],
         'transform': clean_bookmarks,
     },
-    SYNC_CCD_LOOKUP_MD5 : {
+    'column_md5': {
+        'first_in_group': True,
         'column_heading': _("KOReader MD5"),
-        'datatype' : 'text',
-        'is_multiple' : False,
-        'description' : _("MD5 hash used by KOReader, allowed for ProgressSync Support."),
-        'config_name' : 'column_md5',
-        'config_label' : _('MD5 hash column:'),
-        'config_tool_tip' : _('A regular "Text" column to store the MD5 hash KOReader uses\n'
-               'to sync progress to a KOReader Sync Server. ("Progress sync"\n'
-               'in the KOReader app.)'),
-        "column_types": ['text'],
-        'sidecar_property': ['partial_md5_checksum'],
+        'datatype': 'text',
+        'description': _("MD5 hash used by KOReader, allowed for ProgressSync Support."),
+        'default_lookup_name': '#ko_md5',
+        'config_label': _('MD5 hash column:'),
+        'config_tool_tip': _('A regular "Text" column to store the MD5 hash KOReader uses\n'
+                             'to sync progress to a KOReader Sync Server. ("Progress sync"\n'
+                             'in the KOReader app.)'),
+        'data_source': 'sidecar',
+        'data_location': ['partial_md5_checksum'],
     },
-    SYNC_CCD_LOOKUP_DATE_SYNC : {
+    'column_date_synced': {
         'column_heading': _("Date KOReader Synced"),
-        'datatype' : 'datetime',
-        'description' : _("Date when the book was last synced from KOReader."),
-        'config_name' : 'column_date_synced',
-        'config_label' : _('Date Synced column:'),
-        'config_tool_tip' : _('A "Date" column to store when the last sync was performed.'),
-        "column_types": ['datetime'],
-        'sidecar_property': ['calculated', 'date_synced'],
+        'datatype': 'datetime',
+        'description': _("Date when the book was last synced from KOReader."),
+        'default_lookup_name': '#ko_lastsync',
+        'config_label': _('Date Synced column:'),
+        'config_tool_tip': _('A "Date" column to store when the last sync was performed.'),
+        'data_source': 'sidecar',
+        'data_location': ['calculated', 'date_synced'],
     },
-    SYNC_CCD_LOOKUP_DATE_MOD : {
+    'column_date_sidecar_modified': {
         'column_heading': _("Date KOReader Modified"),
-        'datatype' : 'datetime',
-        'description' : _("Date when the book was last modified in KOReader. Wired sync only."),
-        'config_name' : 'column_date_sidecar_modified',
-        'config_label' : _('Date Modified column:'),
-        'config_tool_tip' : _('A "Date" column to store when the sidecar file was last '
-               'modified. Works for wired connection only, wireless will be '
-               'always empty'),
-        "column_types": ['datetime'],
-        'sidecar_property': ['calculated', 'date_sidecar_modified'],
+        'datatype': 'datetime',
+        'description': _("Date when the book was last modified in KOReader. Wired sync only."),
+        'default_lookup_name': '#ko_lastmod',
+        'config_label': _('Date Modified column:'),
+        'config_tool_tip': _('A "Date" column to store when the sidecar file was last '
+                             'modified. Works for wired connection only, wireless will be '
+                             'always empty'),
+        'data_source': 'sidecar',
+        'data_location': ['calculated', 'date_sidecar_modified'],
     },
-    SYNC_CCD_LOOKUP_DATE_STARTED : {
-        'column_heading': _("Date KOReader Started"),
-        'datatype' : 'datetime',
-        'description' : _("Date when the book was started."),
-        'config_name' : 'column_date_book_started',
-        'config_label' : _('Date Book Started column:'),
-        'config_tool_tip' : _('A "Date" column to store when the book was started. '
-               'Will only be set once when synced with reading status.'),
-        "column_types": ['datetime'],
-        'sidecar_property': ['calculated', 'date_book_started'], #'summary', 'modified'
-    },
-    SYNC_CCD_LOOKUP_DATE_FINISHED : {
-        'column_heading': _("Date KOReader Finished"),
-        'datatype' : 'datetime',
-        'description' : _("Date when the book was finished."),
-        'config_name' : 'column_date_book_finished',
-        'config_label' : _('Date Book Finished column:'),
-        'config_tool_tip' : _('A "Date" column to store when the book was finished. '
-               'Will only be set once when synced with finished status.'),
-        "column_types": ['datetime'],
-        'sidecar_property': ['calculated', 'date_book_finished'],
-    },
-    SYNC_CCD_LOOKUP_RAW_SIDECAR : { # Unsure about Interpret this column as
+    'column_sidecar': {  # Unsure about Interpret this column as
         'column_heading': _("KOReader Raw Sidecar"),
-        'datatype' : 'comments',
-        'description' : _("Raw sidecar data directly from KOReader. Allows sync to KOReader, also serves as a backup."),
-        'config_name' : 'column_sidecar',
-        'config_label' : _('Raw sidecar column:'),
-        'config_tool_tip' : _('A "Long text" column to store the contents of the\n'
-               'metadata sidecar as JSON, with "Interpret this column as" set to\n'
-               '"Plain text". This is required to sync metadata back to KOReader sidecars.'),
-        "column_types": ['comments'],
-        'sidecar_property': [],  # `[]` gives the entire sidecar dict
+        'datatype': 'comments',
+        'description': _("Raw sidecar data directly from KOReader. Allows sync to KOReader, also serves as a backup."),
+        'default_lookup_name': '#ko_sidecar',
+        'config_label': _('Raw sidecar column:'),
+        'config_tool_tip': _('A "Long text" column to store the contents of the\n'
+                             'metadata sidecar as JSON, with "Interpret this column as" set to\n'
+                             '"Plain text". This is required to sync metadata back to KOReader sidecars.'),
+        'data_source': 'sidecar',
+        'data_location': [],  # [] gives the entire sidecar dict
         'transform': (lambda d: json.dumps(
             {k: d[k] for k in d if k != 'calculated'},
             skipkeys=True,
@@ -288,8 +276,8 @@ CHECKBOXES = { # Each entry in the below dict is keyed with config_name
 }
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
-for this_column in CUSTOM_COLUMN_DEFAULTS.values():
-    CONFIG.defaults[this_column['config_name']] = ''
+for this_column in CUSTOM_COLUMN_DEFAULTS:
+    CONFIG.defaults[this_column] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox] = False
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
@@ -303,6 +291,11 @@ if numeric_version >= (5, 5, 0):
 else:
     module_debug_print = partial(root_debug_print, 'koreader:config:')
 
+def create_separator():
+    separator = QFrame()
+    separator.setFrameShape(QFrame.HLine)
+    separator.setFrameShadow(QFrame.Sunken)
+    return separator
 
 class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     def __init__(self, plugin_action):
@@ -337,14 +330,14 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         columns_group_box_layout.addLayout(columns_group_box_layout2)
         columns_group_box_layout.addStretch()
 
-        for columnName, metadata in CUSTOM_COLUMN_DEFAULTS.items():
-            self.sync_custom_columns[columnName] = {'current_columns': self.get_custom_columns(metadata['column_types'])}
-            self._column_combo = self.create_custom_column_controls(columns_group_box_layout2, columnName)
+        for config_name, metadata in CUSTOM_COLUMN_DEFAULTS.items():
+            self.sync_custom_columns[config_name] = {'current_columns': self.get_custom_columns(metadata['datatype'], metadata.get('is_multiple', (False, False))[1])}
+            self._column_combo = self.create_custom_column_controls(columns_group_box_layout2, config_name)
             metadata['comboBox'] = self._column_combo
             self._column_combo.populate_combo(
-                self.sync_custom_columns[columnName]['current_columns'],
-                CONFIG[metadata['config_name']]
-                )
+                self.sync_custom_columns[config_name]['current_columns'],
+                CONFIG[config_name]
+            )
 
         # Add custom checkboxes
         layout.addLayout(self.add_checkbox('checkbox_sync_if_more_recent'))
@@ -353,7 +346,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout.addLayout(self.add_checkbox('checkbox_enable_automatic_sync'))
 
         # Progress Sync Section
-        layout.addWidget(self.create_separator())
+        layout.addWidget(create_separator())
         ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
             "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
@@ -407,8 +400,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         )
         
         # Save Column Settings
-        for values in CUSTOM_COLUMN_DEFAULTS.values():
-            CONFIG[values['config_name']] = values['comboBox'].get_selected_column()
+        for config_name, metadata in CUSTOM_COLUMN_DEFAULTS.items():
+            CONFIG[config_name] = metadata['comboBox'].get_selected_column()
 
         # Save Checkbox Settings
         for config_name in CHECKBOXES:
@@ -420,7 +413,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
 
         debug_print('new CONFIG = ', CONFIG)
-        if needRestart and show_restart_warning('Changes have been made that require a restart to take effect. \n Restart now?'):
+        if needRestart and show_restart_warning('Changes have been made that require a restart to take effect.\nRestart now?'):
             self.action.gui.quit(restart=True)
 
     def add_checkbox(self, checkboxKey):
@@ -439,9 +432,13 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         return layout
 
     def create_custom_column_controls(self, columns_group_box_layout, custom_col_name, min_width=300):
+        if fig := CUSTOM_COLUMN_DEFAULTS[custom_col_name].get('first_in_group', False):
+            columns_group_box_layout.addRow(create_separator())
+            if isinstance(fig, str):
+                columns_group_box_layout.addRow(QLabel(f'<b>{fig}</b>', self))
         current_Location_label = QLabel(CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_label'], self)
         current_Location_label.setToolTip(CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_tool_tip'])
-        create_column_callback=partial(self.create_custom_column, custom_col_name) if SUPPORTS_CREATE_CUSTOM_COLUMN else None
+        create_column_callback = partial(self.create_custom_column, custom_col_name) if SUPPORTS_CREATE_CUSTOM_COLUMN else None
         avail_columns = self.sync_custom_columns[custom_col_name]['current_columns']
         custom_column_combo = CustomColumnComboBox(self, avail_columns, create_column_callback=create_column_callback)
         custom_column_combo.setMinimumWidth(min_width)
@@ -451,21 +448,28 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         return custom_column_combo
 
     def create_custom_column(self, lookup_name=None):
+        if not lookup_name or lookup_name not in CUSTOM_COLUMN_DEFAULTS:
+            return False
+            
+        column_meta = CUSTOM_COLUMN_DEFAULTS[lookup_name]
         display_params = {
-            'description': CUSTOM_COLUMN_DEFAULTS[lookup_name]['description']
+            'description': column_meta['description'],
+            **column_meta.get('additional_params', {})
         }
-        datatype = CUSTOM_COLUMN_DEFAULTS[lookup_name]['datatype']
-        column_heading  = CUSTOM_COLUMN_DEFAULTS[lookup_name]['column_heading']
-        is_multiple = CUSTOM_COLUMN_DEFAULTS[lookup_name].get('is_multiple', False)
+        datatype = column_meta['datatype']
+        column_heading = column_meta['column_heading']
+        is_multiple = column_meta.get('is_multiple', (False, False))
 
-        new_lookup_name = lookup_name
-
+        # Get the create column instance
         create_new_custom_column_instance = self.get_create_new_custom_column_instance
-        result = create_new_custom_column_instance.create_column(new_lookup_name, column_heading, datatype, is_multiple, display=display_params, generate_unused_lookup_name=True, freeze_lookup_name=False)
-        if result[0] == CreateNewCustomColumn.Result.COLUMN_ADDED:
+        if not create_new_custom_column_instance:
+            return False
+
+        result = create_new_custom_column_instance.create_column(column_meta['default_lookup_name'], column_heading, datatype, is_multiple[0], display=display_params, generate_unused_lookup_name=True, freeze_lookup_name=False)
+        if result and result[0] == CreateNewCustomColumn.Result.COLUMN_ADDED:
             self.sync_custom_columns[lookup_name]['current_columns'][result[1]] = {'name': column_heading}
             self.sync_custom_columns[lookup_name]['combo_box'].populate_combo(
-                self.sync_custom_columns[lookup_name]['current_columns'], 
+                self.sync_custom_columns[lookup_name]['current_columns'],
                 result[1]
                 )
             self.must_restart = True
@@ -478,7 +482,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             self._get_create_new_custom_column_instance = CreateNewCustomColumn(self.action.gui)
         return self._get_create_new_custom_column_instance
 
-    def get_custom_columns(self, column_types):
+    def get_custom_columns(self, datatype, only_is_multiple=False):
         if SUPPORTS_CREATE_CUSTOM_COLUMN:
             custom_columns = self.get_create_new_custom_column_instance.current_columns()
         else:
@@ -486,19 +490,17 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         available_columns = {}
         for key, column in custom_columns.items():
             typ = column['datatype']
-            if typ in column_types:
+            if typ == datatype:
                 available_columns[key] = column
-        if 'rating' in column_types: # Add rating columns if requested
+        if datatype == 'rating': # Add rating column if requested
             ratings_column_name = self.action.gui.library_view.model().orig_headers['rating']
             available_columns['rating'] = {'name': ratings_column_name}
-
+        if only_is_multiple: # If user requests only is_multiple columns check and filter
+            available_columns = {
+                key: column for key, column in available_columns.items()
+                if column.get('is_multiple', False) != {}
+            }
         return available_columns
-    
-    def create_separator(self):
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setFrameShadow(QFrame.Sunken)
-        return separator
 
 class ProgressSyncPopup(QDialog):
     def __init__(self, parent):
@@ -570,6 +572,7 @@ class TitleLayout(QHBoxLayout):
 
         # Add title
         title_label = QLabel(f'<h2>{title}</h2>', parent)
+        title_label.setContentsMargins(10, 0, 10, 0)
         self.addWidget(title_label)
 
         # Add empty space
@@ -590,35 +593,25 @@ class TitleLayout(QHBoxLayout):
         self.addWidget(about_label)
 
 class CustomColumnComboBox(QComboBox):
-    CREATE_NEW_COLUMN_ITEM = _("Create new column")
-
     def __init__(self, parent, custom_columns={}, selected_column='', create_column_callback=None):
         super(CustomColumnComboBox, self).__init__(parent)
         self.create_column_callback = create_column_callback
-        self.current_index = 0
-        self.initial_items=['do not sync']
         if create_column_callback is not None:
             self.currentTextChanged.connect(self.current_text_changed)
         self.populate_combo(custom_columns, selected_column)
 
     def populate_combo(self, custom_columns, selected_column, show_lookup_name=True):
+        self.blockSignals(True)
         self.clear()
         self.column_names = []
-        selected_idx = 0
 
-        if isinstance(self.initial_items, dict):
-            for key in sorted(self.initial_items.keys()):
-                self.column_names.append(key)
-                display_name = self.initial_items[key]
-                self.addItem(display_name)
-                if key == selected_column:
-                    selected_idx = len(self.column_names) - 1
-        else:
-            for display_name in self.initial_items:
-                self.column_names.append(display_name)
-                self.addItem(display_name)
-                if display_name == selected_column:
-                    selected_idx = len(self.column_names) - 1
+        if self.create_column_callback is not None:
+            self.column_names.append('Create new column')
+            self.addItem('Create new column')
+
+        self.column_names.append('do not sync')
+        self.addItem('do not sync')
+        selected_idx = 1
 
         for key in sorted(custom_columns.keys()):
             self.column_names.append(key)
@@ -626,23 +619,19 @@ class CustomColumnComboBox(QComboBox):
             self.addItem(display_name)
             if key == selected_column:
                 selected_idx = len(self.column_names) - 1
-        
-        if self.create_column_callback is not None:
-            self.addItem(self.CREATE_NEW_COLUMN_ITEM)
-            self.column_names.append(self.CREATE_NEW_COLUMN_ITEM)
 
         self.setCurrentIndex(selected_idx)
+        self.current_index = selected_idx
+        self.blockSignals(False)
 
     def get_selected_column(self):
         selected_column = self.column_names[self.currentIndex()]
-        if selected_column == self.CREATE_NEW_COLUMN_ITEM:
-            selected_column = ''
-        if selected_column == 'do not sync':
+        if selected_column == 'Create new column' or selected_column == 'do not sync':
             selected_column = ''
         return selected_column
 
     def current_text_changed(self, new_text):
-        if new_text == self.CREATE_NEW_COLUMN_ITEM:
+        if new_text == 'Create new column':
             result = self.create_column_callback()
             if not result:
                 self.setCurrentIndex(self.current_index)
