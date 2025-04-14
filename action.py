@@ -32,6 +32,8 @@ from PyQt5.Qt import (
     QApplication,
     QSize,
     QSizePolicy,
+    QThread,
+    pyqtSignal,
 )
 from PyQt5.QtGui import QPixmap
 
@@ -1047,156 +1049,196 @@ class KoreaderAction(InterfaceAction):
         sidecar_paths = self.get_paths(device)
         debug_print('sidecar_paths:', sidecar_paths)
 
-        results = []
-        num_success = 0
-        num_fail = 0
-        num_skip = 0
+        class KOSyncWorker(QThread):
+            progress_update = pyqtSignal(int)
+            finished_signal = pyqtSignal(dict)
 
-        for book_uuid, sidecar_path in sidecar_paths.items():
-            debug_print('Trying to get sidecar from ', device,
-                        ', with sidecar_path: ', sidecar_path)
+            def __init__(self, action, db, sidecar_paths):
+                super().__init__()
+                self.action = action
+                self.db = db
+                self.sidecar_paths = sidecar_paths
 
-            # pre-checks before parsing
-            if book_uuid is None:
-                status = 'skipped, no UUID'
-                append_results(results, status, book_uuid, sidecar_path)
-                num_skip += 1
-                continue
+            def run(self):
+                results = []
+                num_success = 0
+                num_fail = 0
+                num_skip = 0
 
-            sidecar_contents = self.get_sidecar(device, sidecar_path)
+                for idx, (book_uuid, sidecar_path) in enumerate(sidecar_paths.items()):
+                    debug_print('Trying to get sidecar from ', device,
+                                ', with sidecar_path: ', sidecar_path)
 
-            debug_print("sidecar_contents:", sidecar_contents)
+                    # pre-checks before parsing
+                    if book_uuid is None:
+                        status = 'skipped, no UUID'
+                        append_results(results, status, book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
 
-            if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
-                status = ('skipped, sidecar does not exist '
-                          '(seems like book is never opened)')
-                append_results(results, status, book_uuid, sidecar_path)
-                num_skip += 1
-                continue
+                    sidecar_contents = self.action.get_sidecar(device, sidecar_path)
 
-            elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
-                status = 'decoding is failed see debug for more details'
-                append_results(results, status, book_uuid, sidecar_path)
-                num_fail += 1
-                continue
+                    debug_print("sidecar_contents:", sidecar_contents)
 
-            else:
-                debug_print('sidecar_contents is found!')
+                    if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
+                        status = ('skipped, sidecar does not exist '
+                                '(seems like book is never opened)')
+                        append_results(results, status, book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
 
-            keys_values_to_update = {}
+                    elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
+                        status = 'decoding is failed see debug for more details'
+                        append_results(results, status, book_uuid, sidecar_path)
+                        num_fail += 1
+                        continue
 
-            for column in COLUMNS.values():
-                name = column['config_name']
-                target = CONFIG[name]
-
-                if target == '':
-                    # No column mapped, so do not sync
-                    continue
-
-                # Special handling for date started/finished
-                if name == 'column_date_book_started':
-                    db = self.gui.current_db.new_api
-                    book_id = db.lookup_by_uuid(book_uuid)
-                    metadata = db.get_metadata(book_id)
-                    if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
-                        sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
-                if name == 'column_date_book_finished':
-                    db = self.gui.current_db.new_api
-                    book_id = db.lookup_by_uuid(book_uuid)
-                    metadata = db.get_metadata(book_id)
-                    if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
-                        sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
-
-                sidecar_property = column['sidecar_property']
-                value = sidecar_contents
-
-                for subproperty in sidecar_property:
-                    if subproperty in value:
-                        value = value[subproperty]
                     else:
-                        debug_print(
-                            f'subproperty "{subproperty}" not found in value')
-                        value = None
-                        break
+                        debug_print('sidecar_contents is found!')
 
-                if not value:
-                    continue
+                    keys_values_to_update = {}
 
-                # Transform value if required
-                if 'transform' in column:
-                    debug_print('transforming value for ', target)
-                    value = column['transform'](value)
+                    for column in COLUMNS.values():
+                        name = column['config_name']
+                        target = CONFIG[name]
 
-                keys_values_to_update[target] = value
+                        if target == '':
+                            # No column mapped, so do not sync
+                            continue
 
-            operation_status, result = self.update_metadata(
-                book_uuid, keys_values_to_update
-            )
+                        # Special handling for date started/finished
+                        if name == 'column_date_book_started':
+                            book_id = db.lookup_by_uuid(book_uuid)
+                            metadata = db.get_metadata(book_id)
+                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
+                                sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
+                        if name == 'column_date_book_finished':
+                            book_id = db.lookup_by_uuid(book_uuid)
+                            metadata = db.get_metadata(book_id)
+                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
+                                sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
-            results.append(
-                {
-                    **result,
-                    'book_uuid': book_uuid,
-                    'sidecar_path': sidecar_path,
-                    # too much data, hard to read for user
-                    # 'updated': json.dumps(keys_values_to_update, default=str),
-                }
-            )
+                        sidecar_property = column['sidecar_property']
+                        value = sidecar_contents
 
-            if operation_status == OperationStatus.PASS:
-                num_success += 1
-            elif operation_status == OperationStatus.FAIL:
-                num_fail += 1
-            elif operation_status == OperationStatus.SKIP:
-                num_skip += 1
+                        for subproperty in sidecar_property:
+                            if subproperty in value:
+                                value = value[subproperty]
+                            else:
+                                debug_print(
+                                    f'subproperty "{subproperty}" not found in value')
+                                value = None
+                                break
 
-        if not silent:
-            results_message = (
-                f'Total targets found: {len(sidecar_paths)}\n\n'
-                f'Metadata sync succeeded for: {num_success}\n'
-                f'Metadata sync skipped for: {num_skip}\n'
-                f'Metadata sync failed for: {num_fail}\n\n'
-            )
+                        if not value:
+                            continue
 
-            if num_success > 0 and num_fail == 0:
-                SyncCompletionDialog(
-                    self.gui,
-                    'Metadata sync finished',
-                    results_message + f'All looks good!\n\n',
-                    results,
-                    'info'
+                        # Transform value if required
+                        if 'transform' in column:
+                            debug_print('transforming value for ', target)
+                            value = column['transform'](value)
+
+                        keys_values_to_update[target] = value
+
+                    operation_status, result = self.action.update_metadata(
+                        book_uuid, keys_values_to_update
+                    )
+
+                    results.append(
+                        {
+                            **result,
+                            'book_uuid': book_uuid,
+                            'sidecar_path': sidecar_path,
+                            # too much data, hard to read for user
+                            # 'updated': json.dumps(keys_values_to_update, default=str),
+                        }
+                    )
+
+                    if operation_status == OperationStatus.PASS:
+                        num_success += 1
+                    elif operation_status == OperationStatus.FAIL:
+                        num_fail += 1
+                    elif operation_status == OperationStatus.SKIP:
+                        num_skip += 1
+
+                    self.progress_update.emit(idx + 1)
+                self.finished_signal.emit({'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
+
+
+        db = self.gui.current_db.new_api
+        self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths)
+        progress_dialog = None
+        if not silent and len(sidecar_paths)>10:
+            progress_dialog = ProgressDialog(self.gui, "Syncing Sidecars...", len(sidecar_paths))
+            progress_dialog.show()
+            self.koSyncWorker.progress_update.connect(progress_dialog.setValue)
+        def on_finished(res):
+            if not silent:
+                if progress_dialog:
+                    progress_dialog.close()
+                results_message = (
+                    f"Total targets found: {len(sidecar_paths)}\n\n"
+                    f"Metadata sync succeeded for: {res['num_success']}\n"
+                    f"Metadata sync skipped for: {res['num_skip']}\n"
+                    f"Metadata sync failed for: {res['num_fail']}\n\n"
                 )
-            elif num_fail > 0:
-                SyncCompletionDialog(
-                    self.gui,
-                    'Some sync failed',
-                    results_message + f'There was some error during sync process!\n'
-                                    f'Please investigate and report if it looks '
-                                    f'like a bug\n\n',
-                    results,
-                    'error'
-                )
-            elif num_success == 0 and num_fail == 0:
-                SyncCompletionDialog(
-                    self.gui,
-                    'No errors but not successful syncs',
-                    results_message + f'No errors but no successful syncs\n'
-                                    f'Do you have book(s) which are ready to be '
-                                    f'sync?\n'
-                                    f'Please investigate and report if it looks '
-                                    f'like a bug\n\n',
-                    results,
-                    'warn'
-                )
-            else:
-                error_dialog(
-                    self.gui,
-                    'Edge case',
-                    results_message + f'Seems like and bug, please report ASAP\n\n',
-                    det_msg=json.dumps(results, indent=2),
-                    show=True,
-                    show_copy_button=False
-                )
+                if res['num_success'] > 0 and res['num_fail'] == 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'Metadata sync finished',
+                        results_message + f'All looks good!\n\n',
+                        res['results'],
+                        'info'
+                    )
+                elif res['num_fail'] > 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'Some sync failed',
+                        results_message + f'There was some error during sync process!\n'
+                                        f'Please investigate and report if it looks '
+                                        f'like a bug\n\n',
+                        res['results'],
+                        'error'
+                    )
+                elif res['num_success'] == 0 and res['num_fail'] == 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'No errors but not successful syncs',
+                        results_message + f'No errors but no successful syncs\n'
+                                        f'Do you have book(s) which are ready to be '
+                                        f'sync?\n'
+                                        f'Please investigate and report if it looks '
+                                        f'like a bug\n\n',
+                        res['results'],
+                        'warn'
+                    )
+                else:
+                    error_dialog(
+                        self.gui,
+                        'Edge case',
+                        results_message + f'Seems like and bug, please report ASAP\n\n',
+                        det_msg=json.dumps(res['results'], indent=2),
+                        show=True,
+                        show_copy_button=False
+                    )
+        self.koSyncWorker.finished_signal.connect(on_finished)
+        self.koSyncWorker.start()
+
+class ProgressDialog(QDialog):
+    def __init__(self, parent, title: str, count: int):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.setWindowModality(Qt.WindowModal)
+        layout = QVBoxLayout(self)
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(count)
+        self.progressBar.setFormat("%v of %m")
+        layout.addWidget(self.progressBar)
+    
+    def setValue(self, value: int):
+        self.progressBar.setValue(value)
 
 class SyncCompletionDialog(QDialog):
     def __init__(self, parent=None, title="", msg="", results=None, type=None):
