@@ -23,15 +23,13 @@ from PyQt5.Qt import (
     QHBoxLayout,
     QVBoxLayout,
     QDialog,
-    QWidget,
-    QPainter,
     QLabel,
     QIcon,
     QPushButton,
     QScrollArea,
+    QProgressBar,
     QApplication,
-    QSize,
-    QSizePolicy,
+    Qt,
     QThread,
     pyqtSignal,
 )
@@ -1248,58 +1246,52 @@ class SyncCompletionDialog(QDialog):
         self.setMinimumHeight(800)
 
         layout = QVBoxLayout(self)
+        layout.setSpacing(10)
 
         # Main Message Area
         mainMessageLayout = QHBoxLayout()
-        type = {
+        type_icon = {
             'info': 'dialog_information',
             'error': 'dialog_error',
             'warn': 'dialog_warning',
         }.get(type)
-        if type is not None:
-            icon = QIcon.ic(f'{type}.png')
-            mainMessageLayout.setSpacing(10)
+        if type_icon is not None:
+            icon = QIcon.ic(f'{type_icon}.png')
             self.setWindowIcon(icon)
-            icon_widget = Icon(self)
+            icon_widget = QLabel(self)
+            icon_widget.setPixmap(icon.pixmap(64, 64))
             mainMessageLayout.addWidget(icon_widget)
-            icon_widget.set_icon(icon)
-
         message_label = QLabel(msg)
-        message_label.setWordWrap(True)
         mainMessageLayout.addWidget(message_label)
-        
+        mainMessageLayout.addStretch() # Left align the message/text
         layout.addLayout(mainMessageLayout)
 
-        # Scrollable area for the table
-        self.table_area = QScrollArea(self)
-        self.table_area.setWidgetResizable(True)
-
-        # Generate the QTableWidget from results
+        # Table in scrollable area if results are provided
         if results:
+            self.table_area = QScrollArea(self)
+            self.table_area.setWidgetResizable(True)
             table = self.create_results_table(results)
             self.table_area.setWidget(table)
             layout.addWidget(self.table_area)
 
         # Bottom Buttons
         bottomButtonLayout = QHBoxLayout()
-        
         if results:
             copy_button = QPushButton("COPY", self)
-            copy_button.setFixedWidth(100)
+            copy_button.setFixedWidth(200)
             copy_button.setIcon(QIcon.ic('edit-copy.png'))
             copy_button.clicked.connect(lambda: (
                 QApplication.clipboard().setText(str(results)), 
                 copy_button.setText('Copied')
             ))
             bottomButtonLayout.addWidget(copy_button)
-        
         bottomButtonLayout.addStretch() # Right align the rest of this layout
         ok_button = QPushButton("OK", self)
-        ok_button.setFixedWidth(100)
+        ok_button.setFixedWidth(200)
         ok_button.setIcon(QIcon.ic('ok.png'))
         ok_button.clicked.connect(self.accept)
+        ok_button.setDefault(True)
         bottomButtonLayout.addWidget(ok_button)
-
         layout.addLayout(bottomButtonLayout)
 
         self.exec_()
@@ -1325,30 +1317,9 @@ class SyncCompletionDialog(QDialog):
         for row, result in enumerate(results):
             for col, key in enumerate(all_headers):
                 item = QTableWidgetItem(str(result.get(key, "")))
-                table.setItem(row, col, item)
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 item.setToolTip(item.text())  # Set the tooltip to the full text
+                table.setItem(row, col, item)
 
         #table.resizeColumnsToContents() # Makes the columns take up the content width, generally causes a really wide table.
         return table
-
-class Icon(QWidget):
-
-    def __init__(self, parent=None, size=None):
-        QWidget.__init__(self, parent)
-        self.pixmap = None
-        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.size = size or 64
-
-    def set_icon(self, qicon):
-        self.pixmap = qicon.pixmap(self.size, self.size)
-        self.update()
-
-    def sizeHint(self):
-        return QSize(self.size, self.size)
-
-    def paintEvent(self, ev):
-        if self.pixmap is not None:
-            x = (self.width() - self.size) // 2
-            y = (self.height() - self.size) // 2
-            p = QPainter(self)
-            p.drawPixmap(x, y, self.size, self.size, self.pixmap)
