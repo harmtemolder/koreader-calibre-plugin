@@ -285,21 +285,6 @@ CHECKBOXES = { # Each entry in the below dict is keyed with config_name
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
         'KOReader\'s ProgressSync server.',
     },
-    'checkbox_enable_GR_progress_update': {
-        'config_label': 'Enable Goodreads Progress Update',
-        'config_tool_tip': 'Enable sync of reading progress to Goodreads whenever \n'
-        'updated in calibre by KOReader Sync.',
-    },
-    'checkbox_enable_GR_shelf_update': {
-        'config_label': 'Enable Goodreads Shelf Updates',
-        'config_tool_tip': 'Enable sync of current-reading or reading shelf to \n'
-        'Goodreads based on reading progress in KOReader.',
-    },
-    'checkbox_enable_GR_rating_update': {
-        'config_label': 'Enable Goodreads Rating Update',
-        'config_tool_tip': 'Enable sync of rating/review/finish-date to \n'
-        'Goodreads whenever reading progress in KOReader reaches 100%.',
-    },
 }
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
@@ -404,23 +389,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         progress_sync_button.clicked.connect(self.show_progress_sync_popup)
         layout.addWidget(progress_sync_button)
 
-        # Goodreads Sync Section
-        layout.addWidget(self.create_separator())
-        grs_header_label = QLabel(
-            "This plugin supports use of the Goodreads Sync plugin to push updated reading progress to Goodreads. "
-            "It also updated the shelf to currently-reading and read. When updating to read it can push the"
-            "KOReader rating, review, and finish date as well.\n"
-            "You must have the Goodreads Sync plugin installed and set up in order for this feature to work. "
-            "The book also needs the goodreads_id already linked, great for updates not set up.\n"
-            "This function doesn't support all features of Goodreads Sync, just the basic ones described above. "
-            "Direct all bug reports about this feature to the KOReader Sync Github, not Goodreads Sync. "
-        )
-        grs_header_label.setWordWrap(True)
-        layout.addWidget(grs_header_label)
-        layout.addLayout(self.add_checkbox('checkbox_enable_GR_progress_update'))
-        layout.addLayout(self.add_checkbox('checkbox_enable_GR_shelf_update'))
-        layout.addLayout(self.add_checkbox('checkbox_enable_GR_rating_update'))
-
     def show_progress_sync_popup(self):
         self.progress_sync_popup = ProgressSyncPopup(self)
         self.progress_sync_popup.show()
@@ -450,19 +418,6 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
-
-        # Check GR Sync Dependency
-        if CONFIG["checkbox_enable_GR_progress_update"]:
-            #Check if GR Sync is installed
-            if 'Goodreads Sync' not in [plugin.name for plugin in initialized_plugins() if getattr(plugin, 'installation_type', None) is not PluginInstallationType.BUILTIN]:
-                CONFIG["checkbox_enable_GR_progress_update"] = False
-                error_dialog(
-                    self.action.gui,
-                    'Goodreads Sync',
-                    'The Goodreads Progress Update depends on the Goodreads Sync plugin.\nInstall, restart calibre, and try to enable this setting again.',
-                    show=True,
-                    show_copy_button=False
-                )
 
         debug_print('new CONFIG = ', CONFIG)
         if needRestart and show_restart_warning('Changes have been made that require a restart to take effect. \n Restart now?'):

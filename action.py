@@ -542,55 +542,6 @@ class KoreaderAction(InterfaceAction):
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
         
-        # Sync to GR if wanted/needed
-        if CONFIG["checkbox_enable_GR_progress_update"]:
-            read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
-            new_read_percent = keys_values_to_update.get(read_percent_key)
-            old_read_percent = metadata.get(read_percent_key)
-            goodreads_id = metadata.get('identifiers').get('goodreads')
-            if goodreads_id is not None and new_read_percent != old_read_percent:
-                import calibre_plugins.goodreads_sync.config as cfg
-                from calibre_plugins.goodreads_sync.core import HttpHelper
-                username = list(cfg.plugin_prefs[cfg.STORE_USERS].keys())[0]
-                progress_is_percent = cfg.plugin_prefs[cfg.STORE_PLUGIN].get(cfg.KEY_PROGRESS_IS_PERCENT, True)
-                grhttp = HttpHelper(self.gui, self)
-                client = grhttp.create_oauth_client(username)
-                try:
-                    # Update Reading Progress
-                    print(str(keys_values_to_update))
-                    grhttp.update_status(client, goodreads_id, new_read_percent, progress_is_percent)
-                    updateLog['Goodreads Prog'] = f'Updated to {new_read_percent}'
-                    # Update Shelves
-                    if CONFIG["checkbox_enable_GR_shelf_update"]:
-                        if new_read_percent < 100:
-                            grhttp.add_remove_book_to_shelf(client, 'currently-reading', goodreads_id, 'add')
-                            updateLog['Goodreads Shelf'] = f'currently-reading'
-                        elif new_read_percent >= 100:
-                            review_id = grhttp.add_remove_book_to_shelf(client, 'read', goodreads_id, 'add')
-                            if CONFIG["checkbox_enable_GR_rating_update"]:
-                                updateLog['Goodreads Shelf'] = f'read, rating'
-                                rating = None
-                                rating_key = CONFIG['column_rating']
-                                date_read = None
-                                date_read_key = CONFIG['column_date_book_finished']
-                                review_text = None
-                                review_text_key = CONFIG['column_review']
-                                if rating_key != '':
-                                    rating = keys_values_to_update.get(rating_key) / 2
-                                if date_read_key != '':
-                                    date_read = keys_values_to_update.get(date_read_key).date() #formatted as yyyy-mm-dd
-                                if review_text_key != '':
-                                    review_text = keys_values_to_update.get(review_text_key)
-                                self.grhttp.update_review(client, 'read', review_id, goodreads_id, rating, date_read, review_text)
-                            else:
-                                updateLog['Goodreads Shelf'] = f'read'
-                except Exception as e:
-                    msg = f'Error updating Goodreads reading progress/shelf/rating: {str(e)}'
-                    debug_print(msg)
-                    updateLog['error'] = f'error updating goodreads for book id {book_id}'
-            else:
-                updateLog['Goodreads Prog'] = 'Skipped, no change or goodreads id missing'
-        
         updates = []
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
