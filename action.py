@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import importlib.util
 
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -91,17 +92,14 @@ if DEBUG and PYDEVD:
         module_debug_print('could not start pydevd_pycharm, e = ', e)
         PYDEVD = False
 
-
 class GetSidecarStatus(Enum):
     PATH_NOT_FOUND = auto()
     DECODE_FAILED = auto()
-
 
 class OperationStatus(Enum):
     PASS = auto()
     FAIL = auto()
     SKIP = auto()
-
 
 def is_system_path(path):
     """
@@ -189,6 +187,7 @@ class KoreaderAction(InterfaceAction):
 
         base = self.interface_action_base_plugin
         self.version = f'{base.name} (v{".".join(map(str, base.version))})'
+        self.EXTENSION_CALLBACK = None
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons(
@@ -261,6 +260,21 @@ class KoreaderAction(InterfaceAction):
         # Start the device connection watcher if enabled
         if CONFIG["checkbox_enable_automatic_sync"]:
             device_signals.device_metadata_available.connect(self._on_device_metadata_available)
+
+        basedir = os.path.dirname(base.plugin_path)
+        for filename in os.listdir(basedir):
+            if filename.startswith("KOSync_extension") and filename.endswith(".py"):
+                filepath = os.path.join(basedir, filename)
+                try:
+                    spec = importlib.util.spec_from_file_location("KOSync_extension", filepath)
+                    extension = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(extension)
+                    if hasattr(extension, "onItemUpdate"):
+                        self.EXTENSION_CALLBACK = extension.onItemUpdate
+                        print(f"Loaded onItemUpdate from {filename}")
+                        return
+                except Exception as e:
+                    print(f"Failed to load extension: {e}")
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
@@ -538,6 +552,20 @@ class KoreaderAction(InterfaceAction):
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
         
+        # Call the extension callback if it exists
+        if self.EXTENSION_CALLBACK:
+            try:
+                updateLog = self.EXTENSION_CALLBACK(
+                    self=self,
+                    metadata=metadata,
+                    keys_values_to_update=keys_values_to_update,
+                    updateLog=updateLog,
+                    CONFIG=CONFIG,
+                    book_id=book_id
+                )
+            except Exception as e:
+                debug_print(f'Error in extension onItemUpdate: {e}')
+
         updates = []
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
