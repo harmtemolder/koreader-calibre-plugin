@@ -149,8 +149,5 @@ release
 .scripts/output.forumbb
 .scripts/input.md
 
-# ToDo File
-TODO*
-
-# Python Debug Files
-test_*.py
+# Temporary files
+.temp/

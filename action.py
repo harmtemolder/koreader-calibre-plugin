@@ -187,7 +187,7 @@ class KoreaderAction(InterfaceAction):
 
         base = self.interface_action_base_plugin
         self.version = f'{base.name} (v{".".join(map(str, base.version))})'
-        self.EXTENSION_CALLBACK = None
+        self.extension_callback = None
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons(
@@ -270,7 +270,7 @@ class KoreaderAction(InterfaceAction):
                     extension = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(extension)
                     if hasattr(extension, "onItemUpdate"):
-                        self.EXTENSION_CALLBACK = extension.onItemUpdate
+                        self.extension_callback = extension.onItemUpdate
                         print(f"Loaded onItemUpdate from {filename}")
                         return
                 except Exception as e:
@@ -553,15 +553,15 @@ class KoreaderAction(InterfaceAction):
                             keys_values_to_update[status_bool_key] = True
         
         # Call the extension callback if it exists
-        if self.EXTENSION_CALLBACK:
+        if self.extension_callback:
             try:
-                updateLog = self.EXTENSION_CALLBACK(
-                    self=self,
-                    metadata=metadata,
-                    keys_values_to_update=keys_values_to_update,
-                    updateLog=updateLog,
-                    CONFIG=CONFIG,
-                    book_id=book_id
+                updateLog = self.extension_callback(
+                    self = self,
+                    metadata = metadata,
+                    keys_values_to_update = keys_values_to_update,
+                    updateLog = updateLog,
+                    CONFIG = CONFIG,
+                    book_id = book_id
                 )
             except Exception as e:
                 debug_print(f'Error in extension onItemUpdate: {e}')
