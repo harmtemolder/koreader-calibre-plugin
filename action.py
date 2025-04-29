@@ -121,7 +121,7 @@ def append_results(results, status_msg, book_uuid, sidecar_path):
     debug_print(f'{sidecar_path} - {status_msg}')
     return results.append(
         {
-            'status': status_msg,
+            'result': status_msg,
             'book_uuid': book_uuid,
             'sidecar_path': sidecar_path,
         }
@@ -581,7 +581,7 @@ class KoreaderAction(InterfaceAction):
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
-            updateLog['status'] = 'no updates needed'
+            updateLog['result'] = 'no updates needed'
             debug_print(
                 'no changed metadata for uuid = ', uuid,
                 ', id = ', book_id
@@ -1328,12 +1328,10 @@ class SyncCompletionDialog(QDialog):
 
         headers = []
         custom_columns = sorted(h for h in all_headers 
-                               if h not in ('book_uuid', 'status', 'result', 'error'))
+                               if h not in ('book_uuid', 'result', 'error'))
 
         if 'book_uuid' in all_headers:
             headers.append('book_uuid')
-        if 'status' in all_headers:
-            headers.append('status')
         if 'result' in all_headers:
             headers.append('result')
         if 'error' in all_headers:
