@@ -92,14 +92,17 @@ if DEBUG and PYDEVD:
         module_debug_print('could not start pydevd_pycharm, e = ', e)
         PYDEVD = False
 
+
 class GetSidecarStatus(Enum):
     PATH_NOT_FOUND = auto()
     DECODE_FAILED = auto()
+
 
 class OperationStatus(Enum):
     PASS = auto()
     FAIL = auto()
     SKIP = auto()
+
 
 def is_system_path(path):
     """
@@ -149,7 +152,9 @@ def parse_sidecar_lua(sidecar_lua):
 
     if 'bookmarks' in decoded_lua:
         if type(decoded_lua['bookmarks']) is list:
-            decoded_lua['bookmarks'] = {i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}  # Starts from 1
+            decoded_lua['bookmarks'] = {
+                # Starts from 1
+                i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}
 
         debug_print('calculating first and last bookmark dates')
         bookmark_dates = [
@@ -167,6 +172,7 @@ def parse_sidecar_lua(sidecar_lua):
             }
 
     return decoded_lua
+
 
 class KoreaderAction(InterfaceAction):
     name = KoreaderSync.name
@@ -253,21 +259,23 @@ class KoreaderAction(InterfaceAction):
             description='About KOReader Sync',
             triggered=self.show_about
         )
-        
+
         # Start the scheduled progress sync if enabled
         if CONFIG["checkbox_enable_scheduled_progressync"]:
             self.scheduled_progress_sync()
 
         # Start the device connection watcher if enabled
         if CONFIG["checkbox_enable_automatic_sync"]:
-            device_signals.device_metadata_available.connect(self._on_device_metadata_available)
+            device_signals.device_metadata_available.connect(
+                self._on_device_metadata_available)
 
         basedir = os.path.dirname(base.plugin_path)
         for filename in os.listdir(basedir):
             if filename.startswith("KOSync_extension") and filename.endswith(".py"):
                 filepath = os.path.join(basedir, filename)
                 try:
-                    spec = importlib.util.spec_from_file_location("KOSync_extension", filepath)
+                    spec = importlib.util.spec_from_file_location(
+                        "KOSync_extension", filepath)
                     extension = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(extension)
                     if hasattr(extension, "onItemUpdate"):
@@ -281,7 +289,8 @@ class KoreaderAction(InterfaceAction):
         self.interface_action_base_plugin.do_user_config(self.gui)
 
     def show_readme(self):
-        debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
             'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
@@ -365,7 +374,7 @@ class KoreaderAction(InterfaceAction):
         return connected_device
 
     def _on_device_metadata_available(self):
-        self.sync_to_calibre(silent = True if not DEBUG else False)
+        self.sync_to_calibre(silent=True if not DEBUG else False)
 
     def get_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library
@@ -476,7 +485,7 @@ class KoreaderAction(InterfaceAction):
 
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
-        
+
         # Dict for use in logging
         updateLog = {}
 
@@ -521,7 +530,7 @@ class KoreaderAction(InterfaceAction):
             status_key = CONFIG['column_status']
             current_status = metadata.get(status_key)
             if current_read_percent is not None and current_read_percent >= 100 \
-                or current_status is not None and current_status == "complete":
+                    or current_status is not None and current_status == "complete":
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
@@ -551,17 +560,17 @@ class KoreaderAction(InterfaceAction):
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
-        
+
         # Call the extension callback if it exists
         if self.extension_callback:
             try:
                 updateLog = self.extension_callback(
-                    self = self,
-                    metadata = metadata,
-                    keys_values_to_update = keys_values_to_update,
-                    updateLog = updateLog,
-                    CONFIG = CONFIG,
-                    book_id = book_id
+                    self=self,
+                    metadata=metadata,
+                    keys_values_to_update=keys_values_to_update,
+                    updateLog=updateLog,
+                    CONFIG=CONFIG,
+                    book_id=book_id
                 )
             except Exception as e:
                 debug_print(f'Error in extension onItemUpdate: {e}')
@@ -680,7 +689,7 @@ class KoreaderAction(InterfaceAction):
             debug_print(f'could not find {book_uuid} in calibre’s library')
             return "failure", {
                 'result': f"Could not find uuid {book_uuid} in Calibre's "
-                          f"library."
+                f"library."
             }
 
         # Get the current metadata for the book from the library
@@ -689,7 +698,7 @@ class KoreaderAction(InterfaceAction):
         if not sidecar_metadata:
             return "no_metadata", {
                 'result': f'No KOReader metadata for book_id {book_id}, no '
-                          f'need to push.'
+                f'need to push.'
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
@@ -709,12 +718,12 @@ class KoreaderAction(InterfaceAction):
         except PermissionError as perm_e:
             return "failure", {
                 'result': f'Unable to create directory at: '
-                          f'{path} due to {perm_e}',
+                f'{path} due to {perm_e}',
             }
         except OSError as os_e:
             return "failure", {
                 'result': f'Unexpectable exception is occurred, '
-                          f'please report: {os_e}',
+                f'please report: {os_e}',
             }
 
         with open(path, "w", encoding="utf-8") as f:
@@ -861,7 +870,7 @@ class KoreaderAction(InterfaceAction):
                 show_copy_button=False
             )
             return None
-        
+
         if CONFIG["progress_sync_password"] == '':
             error_dialog(
                 self.gui,
@@ -871,7 +880,7 @@ class KoreaderAction(InterfaceAction):
                 show_copy_button=False
             )
             return None
-        
+
         if (CONFIG["column_percent_read_int"] == '' and CONFIG["column_percent_read"] == '') or CONFIG["column_status"] == '':
             error_dialog(
                 self.gui,
@@ -882,12 +891,12 @@ class KoreaderAction(InterfaceAction):
                 show_copy_button=False
             )
             return None
-        
+
         'Get list of books with MD5 column'
         db = self.gui.current_db.new_api
         md5_column = CONFIG["column_md5"]
         books_with_md5 = db.search(f'{md5_column}:!''')
-        
+
         results = []
         num_success = 0
         num_skip = 0
@@ -924,17 +933,19 @@ class KoreaderAction(InterfaceAction):
                             })
                             num_skip += 1
                             continue
-                        progress_data =  json.loads(brotli.decompress(response_data).decode('utf-8'))
-                    
+                        progress_data = json.loads(
+                            brotli.decompress(response_data).decode('utf-8'))
+
                     # Kinda Janky edge case handling
                     if len(str(progress_data)) < 8:
                         continue
 
                     # List of keys to check
-                    ProgressSync_Columns = ['column_percent_read', 'column_percent_read_int', 'column_last_read_location']
+                    ProgressSync_Columns = [
+                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location']
 
                     # Map of progress_data keys to match each config key
-                    progress_mapping = { 
+                    progress_mapping = {
                         'column_percent_read': progress_data['percentage'],
                         'column_percent_read_int': round(progress_data['percentage']*100),
                         'column_last_read_location': progress_data['progress']
@@ -945,21 +956,24 @@ class KoreaderAction(InterfaceAction):
                     keys_values_to_update = {}
 
                     for key in ProgressSync_Columns:
-                        internal_column = CONFIG.get(key, '')  # Get internal column name from CONFIG
+                        # Get internal column name from CONFIG
+                        internal_column = CONFIG.get(key, '')
                         if not internal_column:  # Skip if internal column name is blank
                             continue
-                        
-                        current_value = metadata.get(internal_column)  # Get current value from metadata
+
+                        # Get current value from metadata
+                        current_value = metadata.get(internal_column)
                         remote_value = progress_mapping[key]
 
                         # Compare current and remote values
                         if current_value != remote_value:
                             keys_values_to_update[internal_column] = remote_value
-                        #TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
+                        # TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
 
                     # Update only if there are differences
                     if keys_values_to_update:
-                        operation_status, result = self.update_metadata(book_uuid, db, keys_values_to_update)
+                        operation_status, result = self.update_metadata(
+                            book_uuid, db, keys_values_to_update)
                     else:
                         result = {}
 
@@ -969,7 +983,7 @@ class KoreaderAction(InterfaceAction):
                         'book_uuid': book_uuid,
                         'md5_value': md5_value,
                         **progress_data
-                    }) 
+                    })
                     num_success += 1
 
                 except (HTTPError, URLError) as e:
@@ -1022,7 +1036,7 @@ class KoreaderAction(InterfaceAction):
                     self.gui,
                     'Some syncs failed',
                     results_message + 'There were some errors during the sync process!\n'
-                                    'Please investigate and report if it looks like a bug\n\n',
+                    'Please investigate and report if it looks like a bug\n\n',
                     results,
                     'warn'
                 )
@@ -1031,7 +1045,7 @@ class KoreaderAction(InterfaceAction):
                     self.gui,
                     'No successful syncs',
                     results_message + 'No successful syncs\n'
-                                    'Please investigate and report if it looks like a bug\n\n',
+                    'Please investigate and report if it looks like a bug\n\n',
                     results,
                     'error'
                 )
@@ -1040,26 +1054,28 @@ class KoreaderAction(InterfaceAction):
         def scheduledTask():
             # Set another timer for the next day and order sync
             QTimer.singleShot(24 * 3600 * 1000, scheduledTask)
-            self.sync_progress_from_progresssync(silent = True if not DEBUG else False)
+            self.sync_progress_from_progresssync(
+                silent=True if not DEBUG else False)
 
         def main():
             # Get current local time
             currentTime = QTime.currentTime()
 
             # Set target time to user inputted time
-            targetTime = QTime(CONFIG["scheduleSyncHour"], CONFIG["scheduleSyncMinute"])
+            targetTime = QTime(
+                CONFIG["scheduleSyncHour"], CONFIG["scheduleSyncMinute"])
 
             # Calculate the time difference
             timeDiff = currentTime.msecsTo(targetTime)
-            
+
             # If target time has already passed today, set the target time for tomorrow
             if timeDiff < 0:
                 timeDiff = timeDiff + 86400000
 
             # Create a QTimer to trigger the task at the desired time
             QTimer.singleShot(timeDiff, scheduledTask)
-        
-        main() # Runs scheduled_progress_sync
+
+        main()  # Runs scheduled_progress_sync
 
     def sync_to_calibre(self, silent=False):
         """This plugin’s main purpose. It syncs the contents of
@@ -1103,11 +1119,13 @@ class KoreaderAction(InterfaceAction):
                     # pre-checks before parsing
                     if book_uuid is None:
                         status = 'skipped, no UUID'
-                        append_results(results, None, status, book_uuid, sidecar_path)
+                        append_results(results, None, status,
+                                       book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
-                    sidecar_contents = self.action.get_sidecar(device, sidecar_path)
+                    sidecar_contents = self.action.get_sidecar(
+                        device, sidecar_path)
                     debug_print("sidecar_contents:", sidecar_contents)
                     book_id = db.lookup_by_uuid(book_uuid)
                     metadata = db.get_metadata(book_id)
@@ -1115,14 +1133,16 @@ class KoreaderAction(InterfaceAction):
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
-                                '(seems like book is never opened)')
-                        append_results(results, title, status, book_uuid, sidecar_path)
+                                  '(seems like book is never opened)')
+                        append_results(results, title, status,
+                                       book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
                     elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
                         status = 'decoding is failed see debug for more details'
-                        append_results(results, title, status, book_uuid, sidecar_path)
+                        append_results(results, title, status,
+                                       book_uuid, sidecar_path)
                         num_fail += 1
                         continue
 
@@ -1190,16 +1210,18 @@ class KoreaderAction(InterfaceAction):
                         num_skip += 1
 
                     self.progress_update.emit(idx + 1)
-                self.finished_signal.emit({'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
-
+                self.finished_signal.emit(
+                    {'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
 
         db = self.gui.current_db.new_api
         self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths)
         progress_dialog = None
-        if not silent and len(sidecar_paths)>10:
-            progress_dialog = ProgressDialog(self.gui, "Syncing Sidecars...", len(sidecar_paths))
+        if not silent and len(sidecar_paths) > 10:
+            progress_dialog = ProgressDialog(
+                self.gui, "Syncing Sidecars...", len(sidecar_paths))
             progress_dialog.show()
             self.koSyncWorker.progress_update.connect(progress_dialog.setValue)
+
         def on_finished(res):
             if not silent:
                 if progress_dialog:
@@ -1210,7 +1232,9 @@ class KoreaderAction(InterfaceAction):
                     f"Metadata sync skipped for: {res['num_skip']}\n"
                     f"Metadata sync failed for: {res['num_fail']}\n\n"
                 )
-                res['results'].sort(key=lambda row: (not row.get('error', False), -len(row))) # Sort by if error, then # of changes
+                # Sort by if error, then # of changes
+                res['results'].sort(key=lambda row: (
+                    not row.get('error', False), -len(row)))
                 if res['num_success'] > 0 and res['num_fail'] == 0:
                     SyncCompletionDialog(
                         self.gui,
@@ -1224,8 +1248,8 @@ class KoreaderAction(InterfaceAction):
                         self.gui,
                         'Some sync failed',
                         results_message + f'There was some error during sync process!\n'
-                                        f'Please investigate and report if it looks '
-                                        f'like a bug\n\n',
+                        f'Please investigate and report if it looks '
+                        f'like a bug\n\n',
                         res['results'],
                         'error'
                     )
@@ -1234,10 +1258,10 @@ class KoreaderAction(InterfaceAction):
                         self.gui,
                         'No errors but not successful syncs',
                         results_message + f'No errors but no successful syncs\n'
-                                        f'Do you have book(s) which are ready to be '
-                                        f'sync?\n'
-                                        f'Please investigate and report if it looks '
-                                        f'like a bug\n\n',
+                        f'Do you have book(s) which are ready to be '
+                        f'sync?\n'
+                        f'Please investigate and report if it looks '
+                        f'like a bug\n\n',
                         res['results'],
                         'warn'
                     )
@@ -1253,6 +1277,7 @@ class KoreaderAction(InterfaceAction):
         self.koSyncWorker.finished_signal.connect(on_finished)
         self.koSyncWorker.start()
 
+
 class ProgressDialog(QDialog):
     def __init__(self, parent, title: str, count: int):
         super().__init__(parent)
@@ -1265,9 +1290,10 @@ class ProgressDialog(QDialog):
         self.progressBar.setMaximum(count)
         self.progressBar.setFormat("%v of %m")
         layout.addWidget(self.progressBar)
-    
+
     def setValue(self, value: int):
         self.progressBar.setValue(value)
+
 
 class SyncCompletionDialog(QDialog):
     def __init__(self, parent=None, title="", msg="", results=None, type=None):
@@ -1294,7 +1320,7 @@ class SyncCompletionDialog(QDialog):
             mainMessageLayout.addWidget(icon_widget)
         message_label = QLabel(msg)
         mainMessageLayout.addWidget(message_label)
-        mainMessageLayout.addStretch() # Left align the message/text
+        mainMessageLayout.addStretch()  # Left align the message/text
         layout.addLayout(mainMessageLayout)
 
         # Table in scrollable area if results are provided
@@ -1312,11 +1338,11 @@ class SyncCompletionDialog(QDialog):
             copy_button.setFixedWidth(200)
             copy_button.setIcon(QIcon.ic('edit-copy.png'))
             copy_button.clicked.connect(lambda: (
-                QApplication.clipboard().setText(str(results)), 
+                QApplication.clipboard().setText(str(results)),
                 copy_button.setText('Copied')
             ))
             bottomButtonLayout.addWidget(copy_button)
-        bottomButtonLayout.addStretch() # Right align the rest of this layout
+        bottomButtonLayout.addStretch()  # Right align the rest of this layout
         ok_button = QPushButton("OK", self)
         ok_button.setFixedWidth(200)
         ok_button.setIcon(QIcon.ic('ok.png'))
@@ -1332,8 +1358,8 @@ class SyncCompletionDialog(QDialog):
         all_headers = {key for result in results for key in result.keys()}
 
         headers = []
-        custom_columns = sorted(h for h in all_headers 
-                               if h not in ('title', 'book_uuid', 'result', 'error'))
+        custom_columns = sorted(h for h in all_headers
+                                if h not in ('title', 'book_uuid', 'result', 'error'))
 
         if 'title' in all_headers:
             headers.append('title')
@@ -1355,12 +1381,14 @@ class SyncCompletionDialog(QDialog):
             for col, header in enumerate(headers):
                 item = QTableWidgetItem(str(result.get(header, "")))
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                item.setToolTip(item.text())  # Set the tooltip to the full text
+                # Set the tooltip to the full text
+                item.setToolTip(item.text())
                 table.setItem(row, col, item)
 
         max_lines = 1
         for col, header in enumerate(headers):
-            words, line, lines, col_len_limit = header.split(), "", [], max(table.columnWidth(col) // 7, 10)
+            words, line, lines, col_len_limit = header.split(
+            ), "", [], max(table.columnWidth(col) // 7, 10)
             for word in words:
                 line = f"{line} {word}".strip()
                 if len(line) > col_len_limit:
@@ -1370,6 +1398,6 @@ class SyncCompletionDialog(QDialog):
             max_lines = max(len(lines), max_lines)
             wrapped = '\n'.join(lines)
             table.setHorizontalHeaderItem(col, QTableWidgetItem(wrapped))
-        table.horizontalHeader().setFixedHeight(20 * max_lines) # Default = 20
+        table.horizontalHeader().setFixedHeight(20 * max_lines)  # Default = 20
 
         return table

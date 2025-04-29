@@ -173,7 +173,8 @@ CUSTOM_COLUMN_DEFAULTS = {
                              'as entered on the book’s status page.'),
         'data_source': 'sidecar',
         'data_location': ['summary', 'rating'],
-        'transform': (lambda value: value * 2),  # calibre uses a 10-point scale,
+        # calibre uses a 10-point scale,
+        'transform': (lambda value: value * 2),
     },
     'column_review': {  # Unsure about Interpret this column as
         'column_heading': _("KOReader Review"),
@@ -252,21 +253,21 @@ CUSTOM_COLUMN_DEFAULTS = {
     },
 }
 
-CHECKBOXES = { # Each entry in the below dict is keyed with config_name
+CHECKBOXES = {  # Each entry in the below dict is keyed with config_name
     'checkbox_sync_if_more_recent': {
         'config_label': 'Sync only if changes are more recent',
         'config_tool_tip': 'Sync book only if the metadata is more recent. Requires\n'
-                '"Date Modified Column" or "Percent read column" to be synced',
+        '"Date Modified Column" or "Percent read column" to be synced',
     },
     'checkbox_no_sync_if_finished': {
         'config_label': 'No sync if book has already been finished',
         'config_tool_tip': 'Do not sync book if it has already been finished. Requires\n'
-                '"Percent read column" or "Reading status column" to be synced',
+        '"Percent read column" or "Reading status column" to be synced',
     },
     'checkbox_enable_automatic_sync': {
         'config_label': 'Automatic Sync on device connection',
         'config_tool_tip': 'Sync from KOReader automatically on device connection. \n'
-                'Restart calibre to apply this setting',
+        'Restart calibre to apply this setting',
     },
     'checkbox_enable_scheduled_progressync': {
         'config_label': 'Daily ProgressSync',
@@ -291,11 +292,13 @@ if numeric_version >= (5, 5, 0):
 else:
     module_debug_print = partial(root_debug_print, 'koreader:config:')
 
+
 def create_separator():
     separator = QFrame()
     separator.setFrameShape(QFrame.HLine)
     separator.setFrameShadow(QFrame.Sunken)
     return separator
+
 
 class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     def __init__(self, plugin_action):
@@ -322,7 +325,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         self.sync_custom_columns = {}
         bottom_options_layout = QHBoxLayout()
         layout.addLayout(bottom_options_layout)
-        columns_group_box = QGroupBox(_('Synchronisable Custom Columns:'), self)
+        columns_group_box = QGroupBox(
+            _('Synchronisable Custom Columns:'), self)
         bottom_options_layout.addWidget(columns_group_box)
         columns_group_box_layout = QHBoxLayout()
         columns_group_box.setLayout(columns_group_box_layout)
@@ -331,8 +335,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         columns_group_box_layout.addStretch()
 
         for config_name, metadata in CUSTOM_COLUMN_DEFAULTS.items():
-            self.sync_custom_columns[config_name] = {'current_columns': self.get_custom_columns(metadata['datatype'], metadata.get('is_multiple', (False, False))[1])}
-            self._column_combo = self.create_custom_column_controls(columns_group_box_layout2, config_name)
+            self.sync_custom_columns[config_name] = {'current_columns': self.get_custom_columns(
+                metadata['datatype'], metadata.get('is_multiple', (False, False))[1])}
+            self._column_combo = self.create_custom_column_controls(
+                columns_group_box_layout2, config_name)
             metadata['comboBox'] = self._column_combo
             self._column_combo.populate_combo(
                 self.sync_custom_columns[config_name]['current_columns'],
@@ -360,7 +366,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
         scheduled_sync_layout.setAlignment(Qt.AlignLeft)
-        scheduled_sync_layout.addLayout(self.add_checkbox('checkbox_enable_scheduled_progressync'))
+        scheduled_sync_layout.addLayout(self.add_checkbox(
+            'checkbox_enable_scheduled_progressync'))
         scheduled_sync_layout.addWidget(QLabel('Scheduled Time:'))
         self.schedule_hour_input = QSpinBox()
         self.schedule_hour_input.setRange(0, 23)
@@ -392,21 +399,22 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print('old CONFIG = ', CONFIG)
 
         # Check relevant settings for changes in order to show restart warning
-        needRestart = ( self.must_restart or # Custom Column Addition
-            CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
-            CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
-            CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
-            CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
-        )
-        
+        needRestart = (self.must_restart or  # Custom Column Addition
+                       CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
+                       CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
+                       CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
+                       CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
+                       )
+
         # Save Column Settings
         for config_name, metadata in CUSTOM_COLUMN_DEFAULTS.items():
             CONFIG[config_name] = metadata['comboBox'].get_selected_column()
 
         # Save Checkbox Settings
         for config_name in CHECKBOXES:
-            CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState() == Qt.Checked
-        
+            CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState(
+            ) == Qt.Checked
+
         # Save Scheduled ProgressSync Settings
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
@@ -420,7 +428,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout = QHBoxLayout()
         checkboxMeta = CHECKBOXES[checkboxKey]
         checkbox = QCheckBox()
-        checkbox.setCheckState(Qt.Checked if CONFIG[checkboxKey] else Qt.Unchecked)
+        checkbox.setCheckState(
+            Qt.Checked if CONFIG[checkboxKey] else Qt.Unchecked)
         label = QLabel(checkboxMeta['config_label'])
         label.setToolTip(checkboxMeta['config_tool_tip'])
         label.setBuddy(checkbox)
@@ -436,21 +445,26 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             columns_group_box_layout.addRow(create_separator())
             if isinstance(fig, str):
                 columns_group_box_layout.addRow(QLabel(f'<b>{fig}</b>', self))
-        current_Location_label = QLabel(CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_label'], self)
-        current_Location_label.setToolTip(CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_tool_tip'])
-        create_column_callback = partial(self.create_custom_column, custom_col_name) if SUPPORTS_CREATE_CUSTOM_COLUMN else None
+        current_Location_label = QLabel(
+            CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_label'], self)
+        current_Location_label.setToolTip(
+            CUSTOM_COLUMN_DEFAULTS[custom_col_name]['config_tool_tip'])
+        create_column_callback = partial(
+            self.create_custom_column, custom_col_name) if SUPPORTS_CREATE_CUSTOM_COLUMN else None
         avail_columns = self.sync_custom_columns[custom_col_name]['current_columns']
-        custom_column_combo = CustomColumnComboBox(self, avail_columns, create_column_callback=create_column_callback)
+        custom_column_combo = CustomColumnComboBox(
+            self, avail_columns, create_column_callback=create_column_callback)
         custom_column_combo.setMinimumWidth(min_width)
         current_Location_label.setBuddy(custom_column_combo)
-        columns_group_box_layout.addRow(current_Location_label, custom_column_combo)
+        columns_group_box_layout.addRow(
+            current_Location_label, custom_column_combo)
         self.sync_custom_columns[custom_col_name]['combo_box'] = custom_column_combo
         return custom_column_combo
 
     def create_custom_column(self, lookup_name=None):
         if not lookup_name or lookup_name not in CUSTOM_COLUMN_DEFAULTS:
             return False
-            
+
         column_meta = CUSTOM_COLUMN_DEFAULTS[lookup_name]
         display_params = {
             'description': column_meta['description'],
@@ -465,13 +479,15 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         if not create_new_custom_column_instance:
             return False
 
-        result = create_new_custom_column_instance.create_column(column_meta['default_lookup_name'], column_heading, datatype, is_multiple[0], display=display_params, generate_unused_lookup_name=True, freeze_lookup_name=False)
+        result = create_new_custom_column_instance.create_column(
+            column_meta['default_lookup_name'], column_heading, datatype, is_multiple[0], display=display_params, generate_unused_lookup_name=True, freeze_lookup_name=False)
         if result and result[0] == CreateNewCustomColumn.Result.COLUMN_ADDED:
-            self.sync_custom_columns[lookup_name]['current_columns'][result[1]] = {'name': column_heading}
+            self.sync_custom_columns[lookup_name]['current_columns'][result[1]] = {
+                'name': column_heading}
             self.sync_custom_columns[lookup_name]['combo_box'].populate_combo(
                 self.sync_custom_columns[lookup_name]['current_columns'],
                 result[1]
-                )
+            )
             self.must_restart = True
             return True
         return False
@@ -479,7 +495,8 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
     @property
     def get_create_new_custom_column_instance(self):
         if self._get_create_new_custom_column_instance is None and SUPPORTS_CREATE_CUSTOM_COLUMN:
-            self._get_create_new_custom_column_instance = CreateNewCustomColumn(self.action.gui)
+            self._get_create_new_custom_column_instance = CreateNewCustomColumn(
+                self.action.gui)
         return self._get_create_new_custom_column_instance
 
     def get_custom_columns(self, datatype, only_is_multiple=False):
@@ -492,15 +509,17 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             typ = column['datatype']
             if typ == datatype:
                 available_columns[key] = column
-        if datatype == 'rating': # Add rating column if requested
-            ratings_column_name = self.action.gui.library_view.model().orig_headers['rating']
+        if datatype == 'rating':  # Add rating column if requested
+            ratings_column_name = self.action.gui.library_view.model(
+            ).orig_headers['rating']
             available_columns['rating'] = {'name': ratings_column_name}
-        if only_is_multiple: # If user requests only is_multiple columns check and filter
+        if only_is_multiple:  # If user requests only is_multiple columns check and filter
             available_columns = {
                 key: column for key, column in available_columns.items()
                 if column.get('is_multiple', False) != {}
             }
         return available_columns
+
 
 class ProgressSyncPopup(QDialog):
     def __init__(self, parent):
@@ -546,12 +565,14 @@ class ProgressSyncPopup(QDialog):
     def save_progress_sync_settings(self):
         CONFIG['progress_sync_url'] = self.url_input.text()
         CONFIG['progress_sync_username'] = self.username_input.text()
-        CONFIG['progress_sync_password'] = self.hash_password(self.password_input.text())
+        CONFIG['progress_sync_password'] = self.hash_password(
+            self.password_input.text())
         self.accept()
 
     def hash_password(self, password):
         import hashlib
         return hashlib.md5(password.encode()).hexdigest()
+
 
 class TitleLayout(QHBoxLayout):
     """A sub-layout to the main layout used in ConfigWidget that contains an
@@ -592,6 +613,7 @@ class TitleLayout(QHBoxLayout):
         about_label.linkActivated.connect(parent.action.show_about)
         self.addWidget(about_label)
 
+
 class CustomColumnComboBox(QComboBox):
     def __init__(self, parent, custom_columns={}, selected_column='', create_column_callback=None):
         super(CustomColumnComboBox, self).__init__(parent)
@@ -615,7 +637,8 @@ class CustomColumnComboBox(QComboBox):
 
         for key in sorted(custom_columns.keys()):
             self.column_names.append(key)
-            display_name = '%s (%s)'%(key, custom_columns[key]['name']) if show_lookup_name else custom_columns[key]['name']
+            display_name = '%s (%s)' % (
+                key, custom_columns[key]['name']) if show_lookup_name else custom_columns[key]['name']
             self.addItem(display_name)
             if key == selected_column:
                 selected_idx = len(self.column_names) - 1
@@ -637,6 +660,6 @@ class CustomColumnComboBox(QComboBox):
                 self.setCurrentIndex(self.current_index)
         else:
             self.current_index = self.currentIndex()
-    
-    def wheelEvent(self, event): # Prevents the mouse wheel from changing the selected item
+
+    def wheelEvent(self, event):  # Prevents the mouse wheel from changing the selected item
         event.ignore()
