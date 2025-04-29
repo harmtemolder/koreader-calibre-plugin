@@ -611,6 +611,13 @@ class KoreaderAction(InterfaceAction):
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
+        # Lua -> JSON -> Lua conversion is lossy, because JSON does not support integer
+        # keys. This means that a key like [1] will end up as ["1"] after the round
+        # trip. The following regex strips the quotes from any Lua object key that consists of
+        # only digits. This is not entirely correct because it now converts keys with
+        # only digits that were originally string keys as well, but it doesn't seem that
+        # KOReader uses those.
+        sidecar_lua = re.sub(r'\["(\d+)"\]', r'[\1]', sidecar_lua)
         sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {sidecar_lua}\n"
         try:
             os.makedirs(os.path.dirname(path))
