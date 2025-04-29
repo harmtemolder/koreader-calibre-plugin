@@ -113,7 +113,7 @@ def is_system_path(path):
     return any(substring in path for substring in to_ignore)
 
 
-def append_results(results, status_msg, book_uuid, sidecar_path):
+def append_results(results, title, status_msg, book_uuid, sidecar_path):
     debug_print = partial(
         module_debug_print,
         'KoreaderAction:append_results:'
@@ -121,6 +121,7 @@ def append_results(results, status_msg, book_uuid, sidecar_path):
     debug_print(f'{sidecar_path} - {status_msg}')
     return results.append(
         {
+            'title': title,
             'result': status_msg,
             'book_uuid': book_uuid,
             'sidecar_path': sidecar_path,
@@ -450,7 +451,7 @@ class KoreaderAction(InterfaceAction):
 
         return parsed_contents
 
-    def update_metadata(self, uuid, keys_values_to_update):
+    def update_metadata(self, uuid, db, keys_values_to_update):
         """Update multiple metadata columns for the given book.
 
         :param uuid: identifier for the book
@@ -464,7 +465,6 @@ class KoreaderAction(InterfaceAction):
 
         try:
             debug_print('Looking for uuid in calibre db: ', uuid)
-            db = self.gui.current_db.new_api
             book_id = db.lookup_by_uuid(uuid)
         except:
             book_id = None
@@ -906,6 +906,7 @@ class KoreaderAction(InterfaceAction):
             metadata = db.get_metadata(book_id)
             md5_value = metadata.get(md5_column)
             book_uuid = metadata.get('uuid')
+            title = metadata.get('title')
 
             # Only get sync status if curr progress < 100 and status = reading
             status_key = CONFIG['column_status']
@@ -958,12 +959,13 @@ class KoreaderAction(InterfaceAction):
 
                     # Update only if there are differences
                     if keys_values_to_update:
-                        operation_status, result = self.update_metadata(book_uuid, keys_values_to_update)
+                        operation_status, result = self.update_metadata(book_uuid, db, keys_values_to_update)
                     else:
                         result = {}
 
                     results.append({
                         **result,
+                        'title': title,
                         'book_uuid': book_uuid,
                         'md5_value': md5_value,
                         **progress_data
@@ -974,6 +976,7 @@ class KoreaderAction(InterfaceAction):
                     msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
                     debug_print(msg)
                     results.append({
+                        'title': title,
                         'book_uuid': book_uuid,
                         'md5_value': md5_value,
                         'error': 'No data received'
@@ -984,6 +987,7 @@ class KoreaderAction(InterfaceAction):
                     msg = f'Brotli decompression failed for query: {url}, error: {str(e)}'
                     debug_print(msg)
                     results.append({
+                        'title': title,
                         'book_uuid': book_uuid,
                         'md5_value': md5_value,
                         'error': 'Brotli decompression failed'
@@ -991,6 +995,8 @@ class KoreaderAction(InterfaceAction):
 
             else:
                 results.append({
+                    'title': title,
+                    'book_uuid': book_uuid,
                     'md5_value': md5_value,
                     'error': 'Book has already been read'
                 })
@@ -1097,24 +1103,26 @@ class KoreaderAction(InterfaceAction):
                     # pre-checks before parsing
                     if book_uuid is None:
                         status = 'skipped, no UUID'
-                        append_results(results, status, book_uuid, sidecar_path)
+                        append_results(results, None, status, book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
                     sidecar_contents = self.action.get_sidecar(device, sidecar_path)
-
                     debug_print("sidecar_contents:", sidecar_contents)
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    title = metadata.get('title')
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
                                 '(seems like book is never opened)')
-                        append_results(results, status, book_uuid, sidecar_path)
+                        append_results(results, title, status, book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
                     elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
                         status = 'decoding is failed see debug for more details'
-                        append_results(results, status, book_uuid, sidecar_path)
+                        append_results(results, title, status, book_uuid, sidecar_path)
                         num_fail += 1
                         continue
 
@@ -1132,13 +1140,9 @@ class KoreaderAction(InterfaceAction):
 
                         # Special handling for date started/finished
                         if config_name == 'column_date_book_started':
-                            book_id = db.lookup_by_uuid(book_uuid)
-                            metadata = db.get_metadata(book_id)
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
                                 sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
                         if config_name == 'column_date_book_finished':
-                            book_id = db.lookup_by_uuid(book_uuid)
-                            metadata = db.get_metadata(book_id)
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
                                 sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
@@ -1165,12 +1169,13 @@ class KoreaderAction(InterfaceAction):
                         keys_values_to_update[target] = value
 
                     operation_status, result = self.action.update_metadata(
-                        book_uuid, keys_values_to_update
+                        book_uuid, db, keys_values_to_update
                     )
 
                     results.append(
                         {
                             **result,
+                            'title': title,
                             'book_uuid': book_uuid,
                             'sidecar_path': sidecar_path,
                             **({'updated': json.dumps(keys_values_to_update, default=str)} if DEBUG else {})
@@ -1320,7 +1325,7 @@ class SyncCompletionDialog(QDialog):
         bottomButtonLayout.addWidget(ok_button)
         layout.addLayout(bottomButtonLayout)
 
-        self.exec_()
+        self.show()
 
     def create_results_table(self, results):
         # Get all possible headers from results and save as set
@@ -1328,8 +1333,10 @@ class SyncCompletionDialog(QDialog):
 
         headers = []
         custom_columns = sorted(h for h in all_headers 
-                               if h not in ('book_uuid', 'result', 'error'))
+                               if h not in ('title', 'book_uuid', 'result', 'error'))
 
+        if 'title' in all_headers:
+            headers.append('title')
         if 'book_uuid' in all_headers:
             headers.append('book_uuid')
         if 'result' in all_headers:

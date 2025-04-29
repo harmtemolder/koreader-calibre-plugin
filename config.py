@@ -269,7 +269,7 @@ CHECKBOXES = { # Each entry in the below dict is keyed with config_name
                 'Restart calibre to apply this setting',
     },
     'checkbox_enable_scheduled_progressync': {
-        'config_label': 'Enable Daily ProgressSync',
+        'config_label': 'Daily ProgressSync',
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
         'KOReader\'s ProgressSync server.',
     },
