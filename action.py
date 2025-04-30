@@ -448,15 +448,15 @@ class KoreaderAction(InterfaceAction):
             parsed_contents['calculated'] = {}
             try:
                 parsed_contents['calculated'][
+                'date_synced'] = datetime.now().replace(tzinfo=local_tz)
+                parsed_contents['calculated'][
+                    'date_status_changed'] = datetime.strptime(
+                    parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
+                parsed_contents['calculated'][
                     'date_sidecar_modified'] = datetime.fromtimestamp(
-                    os.path.getmtime(path)).replace(tzinfo=local_tz
-                                                    )
+                    os.path.getmtime(path)).replace(tzinfo=local_tz)
             except:
                 pass
-            parsed_contents['calculated'][
-                'date_synced'] = datetime.now().replace(tzinfo=local_tz)
-            parsed_contents['calculated'][
-                'date_status_changed'] = datetime.strptime(parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
 
         return parsed_contents
 
@@ -1097,7 +1097,7 @@ class KoreaderAction(InterfaceAction):
         debug_print('sidecar_paths:', sidecar_paths)
 
         class KOSyncWorker(QThread):
-            progress_update = pyqtSignal(int)
+            progress_update = pyqtSignal(int, str)
             finished_signal = pyqtSignal(dict)
 
             def __init__(self, action, db, sidecar_paths):
@@ -1130,6 +1130,7 @@ class KoreaderAction(InterfaceAction):
                     book_id = db.lookup_by_uuid(book_uuid)
                     metadata = db.get_metadata(book_id)
                     title = metadata.get('title')
+                    self.progress_update.emit(idx + 1, title)
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
@@ -1161,10 +1162,10 @@ class KoreaderAction(InterfaceAction):
                         # Special handling for date started/finished
                         if config_name == 'column_date_book_started':
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
-                                sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
+                                sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated'].get('date_status_changed')
                         if config_name == 'column_date_book_finished':
                             if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
-                                sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
+                                sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated'].get('date_status_changed')
 
                         data_location = column['data_location']
                         value = sidecar_contents
@@ -1208,8 +1209,6 @@ class KoreaderAction(InterfaceAction):
                         num_fail += 1
                     elif operation_status == OperationStatus.SKIP:
                         num_skip += 1
-
-                    self.progress_update.emit(idx + 1)
                 self.finished_signal.emit(
                     {'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
 
@@ -1282,7 +1281,6 @@ class ProgressDialog(QDialog):
     def __init__(self, parent, title: str, count: int):
         super().__init__(parent)
         self.setWindowTitle(title)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
         self.setWindowModality(Qt.WindowModal)
         layout = QVBoxLayout(self)
         self.progressBar = QProgressBar(self)
@@ -1290,9 +1288,12 @@ class ProgressDialog(QDialog):
         self.progressBar.setMaximum(count)
         self.progressBar.setFormat("%v of %m")
         layout.addWidget(self.progressBar)
+        self.currBook = QLabel('Beginning Sync')
+        layout.addWidget(self.currBook)
 
-    def setValue(self, value: int):
-        self.progressBar.setValue(value)
+    def setValue(self, idx: int, bookTitle: str):
+        self.progressBar.setValue(idx)
+        self.currBook.setText(bookTitle)
 
 
 class SyncCompletionDialog(QDialog):
