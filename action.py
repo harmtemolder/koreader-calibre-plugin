@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import importlib.util
+import time
 
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -1131,6 +1132,8 @@ class KoreaderAction(InterfaceAction):
                     metadata = db.get_metadata(book_id)
                     title = metadata.get('title')
                     self.progress_update.emit(idx + 1, title)
+                    if DEBUG: # Add time delay when debugging
+                        time.sleep(.4)
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
@@ -1213,6 +1216,7 @@ class KoreaderAction(InterfaceAction):
                     {'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
 
         db = self.gui.current_db.new_api
+        startTime = time.perf_counter()
         self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths)
         progress_dialog = None
         if not silent and len(sidecar_paths) > 10:
@@ -1229,7 +1233,8 @@ class KoreaderAction(InterfaceAction):
                     f"Total targets found: {len(sidecar_paths)}\n\n"
                     f"Metadata sync succeeded for: {res['num_success']}\n"
                     f"Metadata sync skipped for: {res['num_skip']}\n"
-                    f"Metadata sync failed for: {res['num_fail']}\n\n"
+                    f"Metadata sync failed for: {res['num_fail']}\n"
+                    f"Time taken: {time.perf_counter() - startTime:.4f} seconds.\n\n"
                 )
                 # Sort by if error, then # of changes
                 res['results'].sort(key=lambda row: (
