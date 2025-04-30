@@ -148,3 +148,6 @@ release
 # scripts extras
 .scripts/output.forumbb
 .scripts/input.md
+
+# Temporary files
+.temp/

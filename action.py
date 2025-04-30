@@ -9,13 +9,38 @@ import json
 import os
 import re
 import sys
+import importlib.util
 
-from PyQt5.Qt import QUrl
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
+import brotli
+
+from PyQt5.Qt import (
+    QUrl,
+    QTimer,
+    QTime,
+    QTableWidget,
+    QTableWidgetItem,
+    QHBoxLayout,
+    QVBoxLayout,
+    QDialog,
+    QLabel,
+    QIcon,
+    QPushButton,
+    QScrollArea,
+    QProgressBar,
+    QApplication,
+    Qt,
+    QThread,
+    pyqtSignal,
+)
+from PyQt5.QtGui import QPixmap
+
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
     UNSUPPORTED_DEVICES,
-    COLUMNS,
+    CUSTOM_COLUMN_DEFAULTS as COLUMNS,
     CONFIG,
 )
 from calibre_plugins.koreader import (
@@ -28,6 +53,7 @@ from calibre_plugins.koreader import (
 from calibre.utils.iso8601 import utc_tz, local_tz
 from calibre.gui2.dialogs.message_box import MessageBox
 from calibre.gui2.actions import InterfaceAction
+from calibre.gui2.device import device_signals
 from calibre.gui2 import (
     error_dialog,
     warning_dialog,
@@ -90,7 +116,7 @@ def is_system_path(path):
     return any(substring in path for substring in to_ignore)
 
 
-def append_results(results, status_msg, book_uuid, sidecar_path):
+def append_results(results, title, status_msg, book_uuid, sidecar_path):
     debug_print = partial(
         module_debug_print,
         'KoreaderAction:append_results:'
@@ -98,7 +124,8 @@ def append_results(results, status_msg, book_uuid, sidecar_path):
     debug_print(f'{sidecar_path} - {status_msg}')
     return results.append(
         {
-            'status': status_msg,
+            'title': title,
+            'result': status_msg,
             'book_uuid': book_uuid,
             'sidecar_path': sidecar_path,
         }
@@ -125,7 +152,9 @@ def parse_sidecar_lua(sidecar_lua):
 
     if 'bookmarks' in decoded_lua:
         if type(decoded_lua['bookmarks']) is list:
-            decoded_lua['bookmarks'] = {i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}  # Starts from 1
+            decoded_lua['bookmarks'] = {
+                # Starts from 1
+                i+1: bookmark for i, bookmark in enumerate(decoded_lua['bookmarks'])}
 
         debug_print('calculating first and last bookmark dates')
         bookmark_dates = [
@@ -165,6 +194,7 @@ class KoreaderAction(InterfaceAction):
 
         base = self.interface_action_base_plugin
         self.version = f'{base.name} (v{".".join(map(str, base.version))})'
+        self.extension_callback = None
 
         # Overwrite icon with actual KOReader logo
         icon = get_icons(
@@ -187,6 +217,16 @@ class KoreaderAction(InterfaceAction):
                         'but KOReader does not have a sidecar file, push the '
                         'metadata from calibre to a new sidecar file.',
             triggered=self.sync_missing_sidecars_to_koreader
+        )
+
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Sync from ProgressSync',
+            'Sync from ProgressSync',
+            icon='convert.png',
+            description='Use KOReader''s built in ProgressSync Plugin '
+                        'to update percentRead int or float.',
+            triggered=self.sync_progress_from_progresssync
         )
 
         self.qaction.menu().addSeparator()
@@ -220,11 +260,37 @@ class KoreaderAction(InterfaceAction):
             triggered=self.show_about
         )
 
+        # Start the scheduled progress sync if enabled
+        if CONFIG["checkbox_enable_scheduled_progressync"]:
+            self.scheduled_progress_sync()
+
+        # Start the device connection watcher if enabled
+        if CONFIG["checkbox_enable_automatic_sync"]:
+            device_signals.device_metadata_available.connect(
+                self._on_device_metadata_available)
+
+        basedir = os.path.dirname(base.plugin_path)
+        for filename in os.listdir(basedir):
+            if filename.startswith("KOSync_extension") and filename.endswith(".py"):
+                filepath = os.path.join(basedir, filename)
+                try:
+                    spec = importlib.util.spec_from_file_location(
+                        "KOSync_extension", filepath)
+                    extension = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(extension)
+                    if hasattr(extension, "onItemUpdate"):
+                        self.extension_callback = extension.onItemUpdate
+                        print(f"Loaded onItemUpdate from {filename}")
+                        return
+                except Exception as e:
+                    print(f"Failed to load extension: {e}")
+
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
 
     def show_readme(self):
-        debug_print = partial(module_debug_print, 'KoreaderAction:show_readme:')
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:show_readme:')
         debug_print('start')
         readme_url = QUrl(
             'https://github.com/harmtemolder/koreader-calibre-plugin#readme'
@@ -237,6 +303,8 @@ class KoreaderAction(InterfaceAction):
         text = get_resources('about.txt').decode(
             'utf-8'
         )
+        if DEBUG:
+            text += '\n\nRunning in debug mode'
         icon = get_icons(
             'images/icon.png'
         )
@@ -304,6 +372,9 @@ class KoreaderAction(InterfaceAction):
 
         debug_print('connected_device_type = ', connected_device_type)
         return connected_device
+
+    def _on_device_metadata_available(self):
+        self.sync_to_calibre(silent=True if not DEBUG else False)
 
     def get_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library
@@ -384,10 +455,12 @@ class KoreaderAction(InterfaceAction):
                 pass
             parsed_contents['calculated'][
                 'date_synced'] = datetime.now().replace(tzinfo=local_tz)
+            parsed_contents['calculated'][
+                'date_status_changed'] = datetime.strptime(parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
 
         return parsed_contents
 
-    def update_metadata(self, uuid, keys_values_to_update):
+    def update_metadata(self, uuid, db, keys_values_to_update):
         """Update multiple metadata columns for the given book.
 
         :param uuid: identifier for the book
@@ -400,8 +473,7 @@ class KoreaderAction(InterfaceAction):
         )
 
         try:
-            debug_print('Looking uuid in calibre db: ', uuid)
-            db = self.gui.current_db.new_api
+            debug_print('Looking for uuid in calibre db: ', uuid)
             book_id = db.lookup_by_uuid(uuid)
         except:
             book_id = None
@@ -414,6 +486,9 @@ class KoreaderAction(InterfaceAction):
         # Get the current metadata for the book from the library
         metadata = db.get_metadata(book_id)
 
+        # Dict for use in logging
+        updateLog = {}
+
         # Check config to sync only if data is more recent
         if CONFIG['checkbox_sync_if_more_recent']:
             date_modified_key = CONFIG['column_date_sidecar_modified']
@@ -425,7 +500,6 @@ class KoreaderAction(InterfaceAction):
                         f'book {book_id} date_modified {new_date_modified} older than current {current_date_modified}')
                     return OperationStatus.SKIP, {
                         'result': 'skipped, data in calibre is newer',
-                        'book_id': book_id,
                     }
             # Fallback if no 'Date Modified Column' is set or not obtainable (wireless)
             elif new_date_modified is None:
@@ -446,7 +520,6 @@ class KoreaderAction(InterfaceAction):
                         f'book {book_id} read_percent is None but existing is {current_read_percent}')
                     return OperationStatus.SKIP, {
                         'result': 'skipped, no new read percent found',
-                        'book_id': book_id,
                     }
 
         # Check config to sync only if the book is not yet finished
@@ -457,11 +530,10 @@ class KoreaderAction(InterfaceAction):
             status_key = CONFIG['column_status']
             current_status = metadata.get(status_key)
             if current_read_percent is not None and current_read_percent >= 100 \
-                or current_status is not None and current_status == "complete":
+                    or current_status is not None and current_status == "complete":
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
-                    'book_id': book_id,
                 }
 
         # Check and correct reading status if required
@@ -489,6 +561,20 @@ class KoreaderAction(InterfaceAction):
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
 
+        # Call the extension callback if it exists
+        if self.extension_callback:
+            try:
+                updateLog = self.extension_callback(
+                    self=self,
+                    metadata=metadata,
+                    keys_values_to_update=keys_values_to_update,
+                    updateLog=updateLog,
+                    CONFIG=CONFIG,
+                    book_id=book_id
+                )
+            except Exception as e:
+                debug_print(f'Error in extension onItemUpdate: {e}')
+
         updates = []
         # Update that metadata locally
         for key, new_value in keys_values_to_update.items():
@@ -497,9 +583,14 @@ class KoreaderAction(InterfaceAction):
             if new_value != old_value:
                 updates.append(key)
                 metadata.set(key, new_value)
+                updateLog[key] = f'{old_value} >> {new_value}'
+            else:
+                if DEBUG:
+                    updateLog[key] = f'{old_value} -- {new_value}'
 
         # Write the updated metadata back to the library
         if len(updates) == 0:
+            updateLog['result'] = 'no updates needed'
             debug_print(
                 'no changed metadata for uuid = ', uuid,
                 ', id = ', book_id
@@ -521,7 +612,7 @@ class KoreaderAction(InterfaceAction):
 
         return OperationStatus.PASS, {
             'result': 'success',
-            'book_id': book_id,
+            **updateLog
         }
 
     def check_device(self, device):
@@ -598,7 +689,7 @@ class KoreaderAction(InterfaceAction):
             debug_print(f'could not find {book_uuid} in calibre’s library')
             return "failure", {
                 'result': f"Could not find uuid {book_uuid} in Calibre's "
-                          f"library."
+                f"library."
             }
 
         # Get the current metadata for the book from the library
@@ -607,7 +698,7 @@ class KoreaderAction(InterfaceAction):
         if not sidecar_metadata:
             return "no_metadata", {
                 'result': f'No KOReader metadata for book_id {book_id}, no '
-                          f'need to push.'
+                f'need to push.'
             }
         sidecar_dict = json.loads(sidecar_metadata)
         sidecar_lua = lua.encode(sidecar_dict)
@@ -627,14 +718,12 @@ class KoreaderAction(InterfaceAction):
         except PermissionError as perm_e:
             return "failure", {
                 'result': f'Unable to create directory at: '
-                          f'{path} due to {perm_e}',
-                'book_id': book_id,
+                f'{path} due to {perm_e}',
             }
         except OSError as os_e:
             return "failure", {
                 'result': f'Unexpectable exception is occurred, '
-                          f'please report: {os_e}',
-                'book_id': book_id,
+                f'please report: {os_e}',
             }
 
         with open(path, "w", encoding="utf-8") as f:
@@ -643,10 +732,9 @@ class KoreaderAction(InterfaceAction):
 
         return "success", {
             'result': 'success',
-            'book_id': book_id,
         }
 
-    def sync_missing_sidecars_to_koreader(self):
+    def sync_missing_sidecars_to_koreader(self, silent=False):
         """Push the content of Calibre's raw metadata column to KOReader
         for any files which are missing in KOReader. Does not touch existing
         metadata sidecars on KOReader.
@@ -726,43 +814,270 @@ class KoreaderAction(InterfaceAction):
                     }
                 )
 
-        results_message = (
-            f'{num_candidates} books on device without sidecars.\n'
-            f'Sidecar creation succeeded for {num_success}.\n'
-            f'Sidecar creation failed for {num_fail}.\n'
-            f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
-            f'See below for details.'
+        if not silent:
+            results_message = (
+                f'{num_candidates} books on device without sidecars.\n'
+                f'Sidecar creation succeeded for {num_success}.\n'
+                f'Sidecar creation failed for {num_fail}.\n'
+                f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
+                f'See below for details.'
+            )
+
+            if num_success > 0 and num_fail > 0:
+                SyncCompletionDialog(
+                    self.gui,
+                    'Results',
+                    results_message,
+                    results,
+                    'warn'
+                )
+            elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
+                SyncCompletionDialog(
+                    self.gui,
+                    'Success',
+                    results_message,
+                    results,
+                    'info'
+                )
+            else:
+                SyncCompletionDialog(
+                    self.gui,
+                    'Failure',
+                    results_message,
+                    results,
+                    'error'
+                )
+
+    def sync_progress_from_progresssync(self, silent=False):
+        """Use KOReader's ProgressSync Server to update Calibre metadata rather than a manual sync.
+
+        Intended to easily update Calibre with the latest reading progress from KOReader.
+
+        :return:
+        """
+
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:sync_progress_from_progresssync:'
         )
 
-        if num_success > 0 and num_fail > 0:
-            warning_dialog(
-                self.gui,
-                'Results',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_success > 0 or num_no_metadata > 0:  # and num_fail == 0
-            info_dialog(
-                self.gui,
-                'Success',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        else:
+        if CONFIG["column_md5"] == '':
             error_dialog(
                 self.gui,
                 'Failure',
-                results_message,
-                det_msg=json.dumps(results, indent=2),
+                'MD5 column not mapped, impossible to get metadata from Progress Sync Server',
                 show=True,
                 show_copy_button=False
             )
+            return None
 
-    def sync_to_calibre(self):
+        if CONFIG["progress_sync_password"] == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'Progress Sync Account is not logged in, add credentials in plugin settings',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+
+        if (CONFIG["column_percent_read_int"] == '' and CONFIG["column_percent_read"] == '') or CONFIG["column_status"] == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'This feature needs a KOReader Progress (int or float) and Status Text column.\n'
+                'Add those in plugin settings and try again.',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+
+        'Get list of books with MD5 column'
+        db = self.gui.current_db.new_api
+        md5_column = CONFIG["column_md5"]
+        books_with_md5 = db.search(f'{md5_column}:!''')
+
+        results = []
+        num_success = 0
+        num_skip = 0
+
+        headers = {
+            'x-auth-user': CONFIG["progress_sync_username"],
+            'x-auth-key': CONFIG["progress_sync_password"],
+            'Accept': 'application/vnd.koreader.v1+json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
+            'User-Agent': f'CalibreKOReaderSync/{self.version}'
+        }
+
+        for book_id in books_with_md5:
+            metadata = db.get_metadata(book_id)
+            md5_value = metadata.get(md5_column)
+            book_uuid = metadata.get('uuid')
+            title = metadata.get('title')
+
+            # Only get sync status if curr progress < 100 and status = reading
+            status_key = CONFIG['column_status']
+            read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
+            if metadata.get(status_key) == 'reading' and metadata.get(read_percent_key) < 100:
+                try:
+                    url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
+                    request = Request(url, headers=headers)
+                    with urlopen(request, timeout=20) as response:
+                        response_data = response.read()
+                        if response_data == b'{}':
+                            results.append({
+                                'md5_value': md5_value,
+                                'error': 'No ProgressSync entry for md5 hash'
+                            })
+                            num_skip += 1
+                            continue
+                        progress_data = json.loads(
+                            brotli.decompress(response_data).decode('utf-8'))
+
+                    # Kinda Janky edge case handling
+                    if len(str(progress_data)) < 8:
+                        continue
+
+                    # List of keys to check
+                    ProgressSync_Columns = [
+                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location']
+
+                    # Map of progress_data keys to match each config key
+                    progress_mapping = {
+                        'column_percent_read': progress_data['percentage'],
+                        'column_percent_read_int': round(progress_data['percentage']*100),
+                        'column_last_read_location': progress_data['progress']
+                        # Device, Device ID, and timestamp could also be added
+                    }
+
+                    # Dictionary to store values to be updated
+                    keys_values_to_update = {}
+
+                    for key in ProgressSync_Columns:
+                        # Get internal column name from CONFIG
+                        internal_column = CONFIG.get(key, '')
+                        if not internal_column:  # Skip if internal column name is blank
+                            continue
+
+                        # Get current value from metadata
+                        current_value = metadata.get(internal_column)
+                        remote_value = progress_mapping[key]
+
+                        # Compare current and remote values
+                        if current_value != remote_value:
+                            keys_values_to_update[internal_column] = remote_value
+                        # TODO This is redundant isn't it? I can remove a whole chunk of this ngl.
+
+                    # Update only if there are differences
+                    if keys_values_to_update:
+                        operation_status, result = self.update_metadata(
+                            book_uuid, db, keys_values_to_update)
+                    else:
+                        result = {}
+
+                    results.append({
+                        **result,
+                        'title': title,
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        **progress_data
+                    })
+                    num_success += 1
+
+                except (HTTPError, URLError) as e:
+                    msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
+                    debug_print(msg)
+                    results.append({
+                        'title': title,
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        'error': 'No data received'
+                    })
+                    num_skip += 1
+
+                except brotli.error as e:
+                    msg = f'Brotli decompression failed for query: {url}, error: {str(e)}'
+                    debug_print(msg)
+                    results.append({
+                        'title': title,
+                        'book_uuid': book_uuid,
+                        'md5_value': md5_value,
+                        'error': 'Brotli decompression failed'
+                    })
+
+            else:
+                results.append({
+                    'title': title,
+                    'book_uuid': book_uuid,
+                    'md5_value': md5_value,
+                    'error': 'Book has already been read'
+                })
+                num_skip += 1
+
+        if not silent:
+            results_message = (
+                f'Total books with MD5 values: {len(books_with_md5)}\n\n'
+                f'Successful syncs: {num_success}\n'
+                f'Failed/Skipped syncs: {num_skip}\n\n'
+            )
+
+            if num_success > 0 and num_skip == 0:
+                SyncCompletionDialog(
+                    self.gui,
+                    'Progress sync finished',
+                    results_message + 'All looks good!\n\n',
+                    results,
+                    'info'
+                )
+            elif num_skip > 0:
+                SyncCompletionDialog(
+                    self.gui,
+                    'Some syncs failed',
+                    results_message + 'There were some errors during the sync process!\n'
+                    'Please investigate and report if it looks like a bug\n\n',
+                    results,
+                    'warn'
+                )
+            else:
+                SyncCompletionDialog(
+                    self.gui,
+                    'No successful syncs',
+                    results_message + 'No successful syncs\n'
+                    'Please investigate and report if it looks like a bug\n\n',
+                    results,
+                    'error'
+                )
+
+    def scheduled_progress_sync(self):
+        def scheduledTask():
+            # Set another timer for the next day and order sync
+            QTimer.singleShot(24 * 3600 * 1000, scheduledTask)
+            self.sync_progress_from_progresssync(
+                silent=True if not DEBUG else False)
+
+        def main():
+            # Get current local time
+            currentTime = QTime.currentTime()
+
+            # Set target time to user inputted time
+            targetTime = QTime(
+                CONFIG["scheduleSyncHour"], CONFIG["scheduleSyncMinute"])
+
+            # Calculate the time difference
+            timeDiff = currentTime.msecsTo(targetTime)
+
+            # If target time has already passed today, set the target time for tomorrow
+            if timeDiff < 0:
+                timeDiff = timeDiff + 86400000
+
+            # Create a QTimer to trigger the task at the desired time
+            QTimer.singleShot(timeDiff, scheduledTask)
+
+        main()  # Runs scheduled_progress_sync
+
+    def sync_to_calibre(self, silent=False):
         """This plugin’s main purpose. It syncs the contents of
         KOReader’s metadata sidecar files into calibre’s metadata.
 
@@ -781,141 +1096,308 @@ class KoreaderAction(InterfaceAction):
         sidecar_paths = self.get_paths(device)
         debug_print('sidecar_paths:', sidecar_paths)
 
-        results = []
-        num_success = 0
-        num_fail = 0
-        num_skip = 0
+        class KOSyncWorker(QThread):
+            progress_update = pyqtSignal(int)
+            finished_signal = pyqtSignal(dict)
 
-        for book_uuid, sidecar_path in sidecar_paths.items():
-            debug_print('Trying to get sidecar from ', device,
-                        ', with sidecar_path: ', sidecar_path)
+            def __init__(self, action, db, sidecar_paths):
+                super().__init__()
+                self.action = action
+                self.db = db
+                self.sidecar_paths = sidecar_paths
 
-            # pre-checks before parsing
-            if book_uuid is None:
-                status = 'skipped, no UUID'
-                append_results(results, status, book_uuid, sidecar_path)
-                num_skip += 1
-                continue
+            def run(self):
+                results = []
+                num_success = 0
+                num_fail = 0
+                num_skip = 0
 
-            sidecar_contents = self.get_sidecar(device, sidecar_path)
+                for idx, (book_uuid, sidecar_path) in enumerate(sidecar_paths.items()):
+                    debug_print('Trying to get sidecar from ', device,
+                                ', with sidecar_path: ', sidecar_path)
 
-            debug_print("sidecar_contents:", sidecar_contents)
+                    # pre-checks before parsing
+                    if book_uuid is None:
+                        status = 'skipped, no UUID'
+                        append_results(results, None, status,
+                                       book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
 
-            if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
-                status = ('skipped, sidecar does not exist '
-                          '(seems like book is never opened)')
-                append_results(results, status, book_uuid, sidecar_path)
-                num_skip += 1
-                continue
+                    sidecar_contents = self.action.get_sidecar(
+                        device, sidecar_path)
+                    debug_print("sidecar_contents:", sidecar_contents)
+                    book_id = db.lookup_by_uuid(book_uuid)
+                    metadata = db.get_metadata(book_id)
+                    title = metadata.get('title')
 
-            elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
-                status = 'decoding is failed see debug for more details'
-                append_results(results, status, book_uuid, sidecar_path)
-                num_fail += 1
-                continue
+                    if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
+                        status = ('skipped, sidecar does not exist '
+                                  '(seems like book is never opened)')
+                        append_results(results, title, status,
+                                       book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
 
-            else:
-                debug_print('sidecar_contents is found!')
+                    elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
+                        status = 'decoding is failed see debug for more details'
+                        append_results(results, title, status,
+                                       book_uuid, sidecar_path)
+                        num_fail += 1
+                        continue
 
-            keys_values_to_update = {}
-
-            for column in COLUMNS:
-                name = column['name']
-                target = CONFIG[name]
-
-                if target == '':
-                    # No column mapped, so do not sync
-                    continue
-
-                sidecar_property = column['sidecar_property']
-                value = sidecar_contents
-
-                for subproperty in sidecar_property:
-                    if subproperty in value:
-                        value = value[subproperty]
                     else:
-                        debug_print(
-                            f'subproperty "{subproperty}" not found in value')
-                        value = None
-                        break
+                        debug_print('sidecar_contents is found!')
 
-                if not value:
-                    continue
+                    keys_values_to_update = {}
 
-                # Transform value if required
-                if 'transform' in column:
-                    debug_print('transforming value for ', target)
-                    value = column['transform'](value)
+                    for config_name, column in COLUMNS.items():
+                        target = CONFIG[config_name]
 
-                keys_values_to_update[target] = value
+                        if target == '':
+                            # No column mapped, so do not sync
+                            continue
 
-            operation_status, result = self.update_metadata(
-                book_uuid, keys_values_to_update
-            )
+                        # Special handling for date started/finished
+                        if config_name == 'column_date_book_started':
+                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
+                                sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated']['date_status_changed']
+                        if config_name == 'column_date_book_finished':
+                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
+                                sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated']['date_status_changed']
 
-            results.append(
-                {
-                    **result,
-                    'book_uuid': book_uuid,
-                    'sidecar_path': sidecar_path,
-                    # too much data, hard to read for user
-                    # 'updated': json.dumps(keys_values_to_update, default=str),
-                }
-            )
+                        data_location = column['data_location']
+                        value = sidecar_contents
 
-            if operation_status == OperationStatus.PASS:
-                num_success += 1
-            elif operation_status == OperationStatus.FAIL:
-                num_fail += 1
-            elif operation_status == OperationStatus.SKIP:
-                num_skip += 1
+                        for subproperty in data_location:
+                            if subproperty in value:
+                                value = value[subproperty]
+                            else:
+                                debug_print(
+                                    f'subproperty "{subproperty}" not found in value')
+                                value = None
+                                break
 
-        results_message = (
-            f'Total targets found: {len(sidecar_paths)}\n\n'
-            f'Metadata sync succeeded for: {num_success}\n'
-            f'Metadata sync skipped for: {num_skip}\n'
-            f'Metadata sync failed for: {num_fail}\n\n'
-        )
+                        if not value:
+                            continue
 
-        if num_success > 0 and num_fail == 0:
-            info_dialog(
-                self.gui,
-                'Metadata sync finished',
-                results_message + f'All looks good!\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_fail > 0:
-            error_dialog(
-                self.gui,
-                'Some sync failed',
-                results_message + f'There was some error during sync process!\n'
-                                  f'Please investigate and report if it looks '
-                                  f'like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        elif num_success == 0 and num_fail == 0:
-            warning_dialog(
-                self.gui,
-                'No errors but not successful syncs',
-                results_message + f'No errors but no successful syncs\n'
-                                  f'Do you have book(s) which are ready to be '
-                                  f'sync?\n'
-                                  f'Please investigate and report if it looks '
-                                  f'like a bug\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
-        else:
-            error_dialog(
-                self.gui,
-                'Edge case',
-                results_message + f'Seems like and bug, please report ASAP\n\n',
-                det_msg=json.dumps(results, indent=2),
-                show=True,
-                show_copy_button=False
-            )
+                        # Transform value if required
+                        if 'transform' in column:
+                            debug_print('transforming value for ', target)
+                            value = column['transform'](value)
+
+                        keys_values_to_update[target] = value
+
+                    operation_status, result = self.action.update_metadata(
+                        book_uuid, db, keys_values_to_update
+                    )
+
+                    results.append(
+                        {
+                            **result,
+                            'title': title,
+                            'book_uuid': book_uuid,
+                            'sidecar_path': sidecar_path,
+                            **({'updated': json.dumps(keys_values_to_update, default=str)} if DEBUG else {})
+                        }
+                    )
+
+                    if operation_status == OperationStatus.PASS:
+                        num_success += 1
+                    elif operation_status == OperationStatus.FAIL:
+                        num_fail += 1
+                    elif operation_status == OperationStatus.SKIP:
+                        num_skip += 1
+
+                    self.progress_update.emit(idx + 1)
+                self.finished_signal.emit(
+                    {'results': results, 'num_success': num_success, 'num_fail': num_fail, 'num_skip': num_skip})
+
+        db = self.gui.current_db.new_api
+        self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths)
+        progress_dialog = None
+        if not silent and len(sidecar_paths) > 10:
+            progress_dialog = ProgressDialog(
+                self.gui, "Syncing Sidecars...", len(sidecar_paths))
+            progress_dialog.show()
+            self.koSyncWorker.progress_update.connect(progress_dialog.setValue)
+
+        def on_finished(res):
+            if not silent:
+                if progress_dialog:
+                    progress_dialog.close()
+                results_message = (
+                    f"Total targets found: {len(sidecar_paths)}\n\n"
+                    f"Metadata sync succeeded for: {res['num_success']}\n"
+                    f"Metadata sync skipped for: {res['num_skip']}\n"
+                    f"Metadata sync failed for: {res['num_fail']}\n\n"
+                )
+                # Sort by if error, then # of changes
+                res['results'].sort(key=lambda row: (
+                    not row.get('error', False), -len(row)))
+                if res['num_success'] > 0 and res['num_fail'] == 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'Metadata sync finished',
+                        results_message + f'All looks good!\n\n',
+                        res['results'],
+                        'info'
+                    )
+                elif res['num_fail'] > 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'Some sync failed',
+                        results_message + f'There was some error during sync process!\n'
+                        f'Please investigate and report if it looks '
+                        f'like a bug\n\n',
+                        res['results'],
+                        'error'
+                    )
+                elif res['num_success'] == 0 and res['num_fail'] == 0:
+                    SyncCompletionDialog(
+                        self.gui,
+                        'No errors but not successful syncs',
+                        results_message + f'No errors but no successful syncs\n'
+                        f'Do you have book(s) which are ready to be '
+                        f'sync?\n'
+                        f'Please investigate and report if it looks '
+                        f'like a bug\n\n',
+                        res['results'],
+                        'warn'
+                    )
+                else:
+                    error_dialog(
+                        self.gui,
+                        'Edge case',
+                        results_message + f'Seems like and bug, please report ASAP\n\n',
+                        det_msg=json.dumps(res['results'], indent=2),
+                        show=True,
+                        show_copy_button=False
+                    )
+        self.koSyncWorker.finished_signal.connect(on_finished)
+        self.koSyncWorker.start()
+
+
+class ProgressDialog(QDialog):
+    def __init__(self, parent, title: str, count: int):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.setWindowModality(Qt.WindowModal)
+        layout = QVBoxLayout(self)
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(count)
+        self.progressBar.setFormat("%v of %m")
+        layout.addWidget(self.progressBar)
+
+    def setValue(self, value: int):
+        self.progressBar.setValue(value)
+
+
+class SyncCompletionDialog(QDialog):
+    def __init__(self, parent=None, title="", msg="", results=None, type=None):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        self.setMinimumWidth(800)
+        self.setMinimumHeight(800)
+
+        layout = QVBoxLayout(self)
+        layout.setSpacing(10)
+
+        # Main Message Area
+        mainMessageLayout = QHBoxLayout()
+        type_icon = {
+            'info': 'dialog_information',
+            'error': 'dialog_error',
+            'warn': 'dialog_warning',
+        }.get(type)
+        if type_icon is not None:
+            icon = QIcon.ic(f'{type_icon}.png')
+            self.setWindowIcon(icon)
+            icon_widget = QLabel(self)
+            icon_widget.setPixmap(icon.pixmap(64, 64))
+            mainMessageLayout.addWidget(icon_widget)
+        message_label = QLabel(msg)
+        mainMessageLayout.addWidget(message_label)
+        mainMessageLayout.addStretch()  # Left align the message/text
+        layout.addLayout(mainMessageLayout)
+
+        # Table in scrollable area if results are provided
+        if results:
+            self.table_area = QScrollArea(self)
+            self.table_area.setWidgetResizable(True)
+            table = self.create_results_table(results)
+            self.table_area.setWidget(table)
+            layout.addWidget(self.table_area)
+
+        # Bottom Buttons
+        bottomButtonLayout = QHBoxLayout()
+        if results:
+            copy_button = QPushButton("COPY", self)
+            copy_button.setFixedWidth(200)
+            copy_button.setIcon(QIcon.ic('edit-copy.png'))
+            copy_button.clicked.connect(lambda: (
+                QApplication.clipboard().setText(str(results)),
+                copy_button.setText('Copied')
+            ))
+            bottomButtonLayout.addWidget(copy_button)
+        bottomButtonLayout.addStretch()  # Right align the rest of this layout
+        ok_button = QPushButton("OK", self)
+        ok_button.setFixedWidth(200)
+        ok_button.setIcon(QIcon.ic('ok.png'))
+        ok_button.clicked.connect(self.accept)
+        ok_button.setDefault(True)
+        bottomButtonLayout.addWidget(ok_button)
+        layout.addLayout(bottomButtonLayout)
+
+        self.show()
+
+    def create_results_table(self, results):
+        # Get all possible headers from results and save as set
+        all_headers = {key for result in results for key in result.keys()}
+
+        headers = []
+        custom_columns = sorted(h for h in all_headers
+                                if h not in ('title', 'book_uuid', 'result', 'error'))
+
+        if 'title' in all_headers:
+            headers.append('title')
+        if 'book_uuid' in all_headers:
+            headers.append('book_uuid')
+        if 'result' in all_headers:
+            headers.append('result')
+        if 'error' in all_headers:
+            headers.append('error')
+        if custom_columns:
+            headers.extend(custom_columns)
+
+        table = QTableWidget()
+        table.setRowCount(len(results))
+        table.setColumnCount(len(headers))
+        table.setHorizontalHeaderLabels(headers)
+
+        for row, result in enumerate(results):
+            for col, header in enumerate(headers):
+                item = QTableWidgetItem(str(result.get(header, "")))
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                # Set the tooltip to the full text
+                item.setToolTip(item.text())
+                table.setItem(row, col, item)
+
+        max_lines = 1
+        for col, header in enumerate(headers):
+            words, line, lines, col_len_limit = header.split(
+            ), "", [], max(table.columnWidth(col) // 7, 10)
+            for word in words:
+                line = f"{line} {word}".strip()
+                if len(line) > col_len_limit:
+                    lines.append(line.rsplit(' ', 1)[0])
+                    line = word if ' ' in line else ''
+            lines.append(line)
+            max_lines = max(len(lines), max_lines)
+            wrapped = '\n'.join(lines)
+            table.setHorizontalHeaderItem(col, QTableWidgetItem(wrapped))
+        table.horizontalHeader().setFixedHeight(20 * max_lines)  # Default = 20
+
+        return table
