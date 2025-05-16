@@ -14,7 +14,6 @@ import time
 
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
-import brotli
 
 from PyQt5.Qt import (
     QUrl,
@@ -906,7 +905,6 @@ class KoreaderAction(InterfaceAction):
             'x-auth-user': CONFIG["progress_sync_username"],
             'x-auth-key': CONFIG["progress_sync_password"],
             'Accept': 'application/vnd.koreader.v1+json',
-            'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
             'Cache-Control': 'no-cache',
             'User-Agent': f'CalibreKOReaderSync/{self.version}'
@@ -934,8 +932,7 @@ class KoreaderAction(InterfaceAction):
                             })
                             num_skip += 1
                             continue
-                        progress_data = json.loads(
-                            brotli.decompress(response_data).decode('utf-8'))
+                        progress_data = json.loads(response_data.decode('utf-8'))
 
                     # Kinda Janky edge case handling
                     if len(str(progress_data)) < 8:
@@ -997,16 +994,6 @@ class KoreaderAction(InterfaceAction):
                         'error': 'No data received'
                     })
                     num_skip += 1
-
-                except brotli.error as e:
-                    msg = f'Brotli decompression failed for query: {url}, error: {str(e)}'
-                    debug_print(msg)
-                    results.append({
-                        'title': title,
-                        'book_uuid': book_uuid,
-                        'md5_value': md5_value,
-                        'error': 'Brotli decompression failed'
-                    })
 
             else:
                 results.append({
