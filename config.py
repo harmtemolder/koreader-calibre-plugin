@@ -83,7 +83,7 @@ CUSTOM_COLUMN_DEFAULTS = {
     'column_percent_read': {
         'column_heading': _("KOReader Precise Progress"),
         'datatype': 'float',
-        'additional_params': {'number_format': "{:.2f}%"},
+        'additional_params': {'number_format': "{:.2%}"},
         'description': _("Reading progress for the book with decimal precision."),
         'default_lookup_name': '#ko_progfloat',
         'config_label': _('Percent read column (float):'),
