@@ -913,8 +913,10 @@ class KoreaderAction(InterfaceAction):
             book_uuid = metadata.get('uuid')
             title = metadata.get('title')
 
-            # Only get sync status if curr progress < 100 and status = reading
-            if metadata.get(status_key) == 'reading' and metadata.get(read_percent_key) < 100:
+            # Only get sync status if curr progress < 100 and status = reading or if curr_progress/status is not set yet
+            metadata_status = metadata.get(status_key)
+            metadata_read_percent = metadata.get(read_percent_key)
+            if (metadata_status is None or metadata_status == "reading") and (metadata_read_percent is None or metadata_read_percent < 100):
                 try:
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
                     request = Request(url, headers=headers)
