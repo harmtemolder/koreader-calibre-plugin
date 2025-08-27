@@ -284,6 +284,7 @@ for this_checkbox in CHECKBOXES:
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
+CONFIG.defaults['progress_sync_template'] = ''
 CONFIG.defaults['scheduleSyncHour'] = 4
 CONFIG.defaults['scheduleSyncMinute'] = 0
 
@@ -548,6 +549,12 @@ class ProgressSyncPopup(QDialog):
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
 
+        self.template_label = QLabel('Template:', self)
+        self.template_input = QLineEdit(self)
+        self.template_input.setText(CONFIG['progress_sync_template'])
+        layout.addWidget(self.template_label)
+        layout.addWidget(self.template_input)
+
         self.note_label = QLabel(
             'Enter any custom server or leave the default filled in.\n'
             'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.\n'
@@ -567,6 +574,7 @@ class ProgressSyncPopup(QDialog):
         CONFIG['progress_sync_username'] = self.username_input.text()
         CONFIG['progress_sync_password'] = self.hash_password(
             self.password_input.text())
+        CONFIG['progress_sync_template'] = self.template_input.text()
         self.accept()
 
     def hash_password(self, password):

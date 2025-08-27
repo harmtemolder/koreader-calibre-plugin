@@ -62,6 +62,8 @@ from calibre.gui2 import (
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
+from calibre.ebooks.metadata.book.formatter import SafeFormat
+import hashlib
 from enum import Enum, auto
 
 __license__ = 'GNU GPLv3'
@@ -233,6 +235,17 @@ class KoreaderAction(InterfaceAction):
 
         self.create_menu_action(
             self.qaction.menu(),
+            'Calculate MD5 Filename Hash',
+            'Calculate MD5 Filename Hash',
+            icon='',
+            description='Calculates the MD5 Hash based on the Filename',
+            triggered=self.calculate_md5sum
+        )
+
+        self.qaction.menu().addSeparator()
+
+        self.create_menu_action(
+            self.qaction.menu(),
             'Configure KOReader Sync',
             'Configure',
             icon='config.png',
@@ -284,6 +297,30 @@ class KoreaderAction(InterfaceAction):
                         return
                 except Exception as e:
                     print(f"Failed to load extension: {e}")
+
+    def calculate_md5sum(self):
+        rows = self.gui.library_view.selectionModel().selectedRows()
+        if not rows or len(rows) == 0 :
+            return
+        db = self.gui.current_db.new_api
+        md5_key = CONFIG['column_md5']
+        book_ids = self.gui.library_view.get_selected_ids()
+        for book_id in book_ids:
+            metadata = db.get_metadata(book_id)
+            current_md5 = metadata.get(md5_key)
+            template = CONFIG["progress_sync_template"]
+            formats = db.formats(book_id)
+            formatter = SafeFormat()
+            result = formatter.safe_format(template, {}, 'TEMPLATE ERROR', metadata)
+            if 'EPUB' in formats:
+                result = (f"{result}.epub")
+                new_md5 = hashlib.md5(result.encode('utf-8')).hexdigest()
+                if current_md5 != new_md5:
+                    metadata.set(md5_key, new_md5)
+                    db.set_metadata(
+                        book_id, metadata, set_title=False,
+                        set_authors=False
+                    )
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
