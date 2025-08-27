@@ -254,6 +254,11 @@ CUSTOM_COLUMN_DEFAULTS = {
 }
 
 CHECKBOXES = {  # Each entry in the below dict is keyed with config_name
+    'checkbox_percent_read_100': {
+        'config_label': 'Percent read column (float) range 0.0-100.0',
+        'config_tool_tip': 'Default the range is 0.0-1.0\n'
+        'Checking this option the float value is multiplied by 100 to be in range 0.0-100.0',
+    },
     'checkbox_sync_if_more_recent': {
         'config_label': 'Sync only if changes are more recent',
         'config_tool_tip': 'Sync book only if the metadata is more recent. Requires\n'
@@ -347,6 +352,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
             )
 
         # Add custom checkboxes
+        layout.addLayout(self.add_checkbox('checkbox_percent_read_100'))
         layout.addLayout(self.add_checkbox('checkbox_sync_if_more_recent'))
         layout.addLayout(self.add_checkbox('checkbox_no_sync_if_finished'))
 

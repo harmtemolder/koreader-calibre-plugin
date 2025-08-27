@@ -950,8 +950,10 @@ class KoreaderAction(InterfaceAction):
             book_uuid = metadata.get('uuid')
             title = metadata.get('title')
 
-            # Only get sync status if curr progress < 100 and status = reading
-            if metadata.get(status_key) == 'reading' and metadata.get(read_percent_key) < 100:
+            # Only get sync status if curr progress < 100 and status = reading or if curr_progress/status is not set yet
+            metadata_status = metadata.get(status_key)
+            metadata_read_percent = metadata.get(read_percent_key)
+            if (metadata_status is None or metadata_status == "reading") and (metadata_read_percent is None or metadata_read_percent < 100):
                 try:
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
                     request = Request(url, headers=headers)
@@ -972,15 +974,19 @@ class KoreaderAction(InterfaceAction):
 
                     # List of keys to check
                     ProgressSync_Columns = [
-                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location']
+                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location', 'column_date_synced']
 
                     # Map of progress_data keys to match each config key
                     progress_mapping = {
-                        'column_percent_read': progress_data['percentage'],
+                        'column_percent_read': progress_data['percentage'] if not CONFIG["checkbox_percent_read_100"] else progress_data['percentage']*100,
                         'column_percent_read_int': round(progress_data['percentage']*100),
-                        'column_last_read_location': progress_data['progress']
-                        # Device, Device ID, and timestamp could also be added
+                        'column_last_read_location': progress_data['progress'],
+                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp']/1000, tz=local_tz)
+                        # Device and Device ID could also be added
                     }
+                    # Change percentage to be human readable on summary screen
+                    if CONFIG["checkbox_percent_read_100"]:
+                        progress_data['percentage']*=100
 
                     # Dictionary to store values to be updated
                     keys_values_to_update = {}
