@@ -935,14 +935,15 @@ class KoreaderAction(InterfaceAction):
 
                     # List of keys to check
                     ProgressSync_Columns = [
-                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location']
+                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location', 'column_date_synced']
 
                     # Map of progress_data keys to match each config key
                     progress_mapping = {
                         'column_percent_read': progress_data['percentage'],
                         'column_percent_read_int': round(progress_data['percentage']*100),
-                        'column_last_read_location': progress_data['progress']
-                        # Device, Device ID, and timestamp could also be added
+                        'column_last_read_location': progress_data['progress'],
+                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp']/1000, tz=local_tz)
+                        # Device and Device ID could also be added
                     }
 
                     # Dictionary to store values to be updated
