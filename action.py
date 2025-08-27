@@ -237,7 +237,7 @@ class KoreaderAction(InterfaceAction):
             self.qaction.menu(),
             'Calculate MD5 Filename Hash',
             'Calculate MD5 Filename Hash',
-            icon='',
+            icon='restart.png',
             description='Calculates the MD5 Hash based on the Filename',
             triggered=self.calculate_md5sum
         )

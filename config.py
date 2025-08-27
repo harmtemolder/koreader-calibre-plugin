@@ -362,7 +362,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout.addWidget(create_separator())
         ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
-            "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
+            "You must have an MD5 column mapped and use Filename matching in KOReader's ProgressSync Settings.\n"
             "You also need a reading progress column and status text column.\n"
             "This functionality can optionally be scheduled into a daily sync from within calibre. "
             "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
@@ -555,7 +555,7 @@ class ProgressSyncPopup(QDialog):
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
 
-        self.template_label = QLabel('Template:', self)
+        self.template_label = QLabel('Save template:', self)
         self.template_input = QLineEdit(self)
         self.template_input.setText(CONFIG['progress_sync_template'])
         layout.addWidget(self.template_label)
@@ -564,6 +564,10 @@ class ProgressSyncPopup(QDialog):
         self.note_label = QLabel(
             'Enter any custom server or leave the default filled in.\n'
             'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.\n'
+            'Set the Save tempalte string to the same one as the save template set when sending books to the devices (Settings -> Seding books to devices)\n'
+            'but without any folders. Also do no use title or author but title_sort and author_sort instead. This save template for the filename has to\n'
+            'be the same for every Device (this can be different for every connection type (wired/wireless) and be found with the connected device\n'
+            'in Device -> Configure this device -> Save template).\n'
             'Make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location\n'
             'You must have a percent read (int or float) and status text column.',
             self
