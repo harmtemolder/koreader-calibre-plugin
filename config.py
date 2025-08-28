@@ -274,6 +274,13 @@ CHECKBOXES = {  # Each entry in the below dict is keyed with config_name
         'config_tool_tip': 'Sync from KOReader automatically on device connection. \n'
         'Restart calibre to apply this setting',
     },
+    'checkbox_enable_progressync_filename': {
+        'config_label': 'Use Filename matching instead of Binary (allows MD5 calculation in calibre)',
+        'config_tool_tip': 'Instead of Binary matching in the KOReader\'s ProgressSync Settings \n'
+        'change to Filename matching. This allows the MD5 calculation in calibre. You also \n'
+        'have to set the Save template in the ProgressSync Settings of this plugin which has to be \n'
+        'the same for every device',
+    },
     'checkbox_enable_scheduled_progressync': {
         'config_label': 'Daily ProgressSync',
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
@@ -289,6 +296,7 @@ for this_checkbox in CHECKBOXES:
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
+CONFIG.defaults['progress_sync_template'] = ''
 CONFIG.defaults['scheduleSyncHour'] = 4
 CONFIG.defaults['scheduleSyncMinute'] = 0
 
@@ -361,13 +369,17 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout.addWidget(create_separator())
         ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
-            "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
+            "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default) or\n"
+            "Filename matching (not default, requires checkbox below). \n"
             "You also need a reading progress column and status text column.\n"
             "This functionality can optionally be scheduled into a daily sync from within calibre. "
             "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
         )
         ps_header_label.setWordWrap(True)
         layout.addWidget(ps_header_label)
+
+        # Add filename matching option
+        layout.addLayout(self.add_checkbox('checkbox_enable_progressync_filename'))
 
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
@@ -407,6 +419,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # Check relevant settings for changes in order to show restart warning
         needRestart = (self.must_restart or  # Custom Column Addition
                        CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
+                       CONFIG['checkbox_enable_progressync_filename'] != (CHECKBOXES['checkbox_enable_progressync_filename']['checkbox'].checkState() == Qt.Checked) or
                        CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
                        CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
                        CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
@@ -554,9 +567,19 @@ class ProgressSyncPopup(QDialog):
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
 
+        self.template_label = QLabel('Save template:', self)
+        self.template_input = QLineEdit(self)
+        self.template_input.setText(CONFIG['progress_sync_template'])
+        layout.addWidget(self.template_label)
+        layout.addWidget(self.template_input)
+
         self.note_label = QLabel(
             'Enter any custom server or leave the default filled in.\n'
             'Enter your username and password. Then click log in, this does not validate your account so make sure you enter the correct info.\n'
+            'Set the Save tempalte string to the same one as the save template set when sending books to the devices (Settings -> Seding books to devices)\n'
+            'but without any folders. Also do no use title or author but title_sort and author_sort instead. This save template for the filename has to\n'
+            'be the same for every Device (this can be different for every connection type (wired/wireless) and be found with the connected device\n'
+            'in Device -> Configure this device -> Save template).\n'
             'Make sure you have one or more of the following columns set up: column_percent_read, column_percent_read_int, column_last_read_location\n'
             'You must have a percent read (int or float) and status text column.',
             self
@@ -568,11 +591,23 @@ class ProgressSyncPopup(QDialog):
         self.login_button.clicked.connect(self.save_progress_sync_settings)
         layout.addWidget(self.login_button)
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        if CHECKBOXES['checkbox_enable_progressync_filename']['checkbox'].checkState() == Qt.Checked:
+            self.template_input.setEnabled(True)
+            self.template_label.setToolTip('')
+            self.template_input.setToolTip('')
+        else:
+            self.template_input.setEnabled(False)
+            self.template_label.setToolTip('Requires Filename matching')
+            self.template_input.setToolTip('Requires Filename matching')
+
     def save_progress_sync_settings(self):
         CONFIG['progress_sync_url'] = self.url_input.text()
         CONFIG['progress_sync_username'] = self.username_input.text()
         CONFIG['progress_sync_password'] = self.hash_password(
             self.password_input.text())
+        CONFIG['progress_sync_template'] = self.template_input.text()
         self.accept()
 
     def hash_password(self, password):

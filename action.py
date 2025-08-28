@@ -62,6 +62,8 @@ from calibre.gui2 import (
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
+from calibre.ebooks.metadata.book.formatter import SafeFormat
+import hashlib
 from enum import Enum, auto
 
 __license__ = 'GNU GPLv3'
@@ -231,6 +233,20 @@ class KoreaderAction(InterfaceAction):
 
         self.qaction.menu().addSeparator()
 
+
+        self.button_calculate_md5 = self.create_menu_action(
+            self.qaction.menu(),
+            'Calculate MD5 Filename Hash',
+            'Calculate MD5 Filename Hash',
+            icon='restart.png',
+            description='Calculates the MD5 Hash based on the Filename' if CONFIG['checkbox_enable_progressync_filename'] else 'Requires Filename matching',
+            triggered=self.calculate_md5sum
+        )
+        if not CONFIG['checkbox_enable_progressync_filename'] or not CONFIG['column_md5']:
+            self.button_calculate_md5.setEnabled(False)
+
+        self.qaction.menu().addSeparator()
+
         self.create_menu_action(
             self.qaction.menu(),
             'Configure KOReader Sync',
@@ -284,6 +300,35 @@ class KoreaderAction(InterfaceAction):
                         return
                 except Exception as e:
                     print(f"Failed to load extension: {e}")
+
+    def calculate_md5sum(self):
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:calculate_md5sum:')
+        rows = self.gui.library_view.selectionModel().selectedRows()
+        if not rows or len(rows) == 0:
+            return
+        db = self.gui.current_db.new_api
+        md5_key = CONFIG['column_md5']
+        template = CONFIG["progress_sync_template"]
+        book_ids = self.gui.library_view.get_selected_ids()
+        formatter = SafeFormat()
+        for book_id in book_ids:
+            md5_new = []
+            metadata = db.get_metadata(book_id)
+            md5_values = metadata.get(md5_key)
+            result = formatter.safe_format(template, {}, 'TEMPLATE ERROR', metadata)
+            formats = db.formats(book_id)
+            for fmt in sorted(formats, key=lambda x: (x.upper() != 'EPUB', x.lower())):
+                result = (f"{result}.{fmt.lower()}")
+                md5_new.append(hashlib.md5(result.encode('utf-8')).hexdigest())
+            md5_values_new = ','.join(md5_new)
+            if md5_values != md5_values_new:
+                debug_print(f"New md5values {md5_values_new} for bookid {book_id}")
+                metadata.set(md5_key, md5_values_new)
+                db.set_metadata(
+                    book_id, metadata, set_title=False,
+                    set_authors=False
+                )
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
@@ -909,7 +954,7 @@ class KoreaderAction(InterfaceAction):
 
         for book_id in books_with_md5:
             metadata = db.get_metadata(book_id)
-            md5_value = metadata.get(md5_column)
+            md5_values = metadata.get(md5_column)
             book_uuid = metadata.get('uuid')
             title = metadata.get('title')
 
@@ -917,19 +962,17 @@ class KoreaderAction(InterfaceAction):
             metadata_status = metadata.get(status_key)
             metadata_read_percent = metadata.get(read_percent_key)
             if (metadata_status is None or metadata_status == "reading") and (metadata_read_percent is None or metadata_read_percent < 100):
-                try:
+                for md5_value in md5_values.split(','):
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
-                    request = Request(url, headers=headers)
-                    with urlopen(request, timeout=20) as response:
-                        response_data = response.read()
-                        if response_data == b'{}':
-                            results.append({
-                                'md5_value': md5_value,
-                                'error': 'No ProgressSync entry for md5 hash'
-                            })
-                            num_skip += 1
-                            continue
-                        progress_data = json.loads(response_data.decode('utf-8'))
+                    try:
+                        request = Request(url, headers=headers)
+                        with urlopen(request, timeout=20) as response:
+                            response_data = response.read()
+                            if response_data == b'{}':
+                                continue
+                            progress_data = json.loads(response_data.decode('utf-8'))
+                    except (HTTPError, URLError) as e:
+                        continue
 
                     # Kinda Janky edge case handling
                     if len(str(progress_data)) < 8:
@@ -984,15 +1027,14 @@ class KoreaderAction(InterfaceAction):
                         **progress_data
                     })
                     num_success += 1
+                    break
 
-                except (HTTPError, URLError) as e:
-                    msg = f'Failed to make progress sync query: {url}, error: {str(e)}'
-                    debug_print(msg)
+                else:
                     results.append({
                         'title': title,
                         'book_uuid': book_uuid,
-                        'md5_value': md5_value,
-                        'error': 'No data received'
+                        'md5_values': md5_values,
+                        'error': 'No ProgressSync entry for md5 hash'
                     })
                     num_skip += 1
 
@@ -1000,7 +1042,7 @@ class KoreaderAction(InterfaceAction):
                 results.append({
                     'title': title,
                     'book_uuid': book_uuid,
-                    'md5_value': md5_value,
+                    'md5_values': md5_values,
                     'error': 'Book has already been read'
                 })
                 num_skip += 1
