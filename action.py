@@ -233,14 +233,17 @@ class KoreaderAction(InterfaceAction):
 
         self.qaction.menu().addSeparator()
 
-        self.create_menu_action(
+
+        self.button_calculate_md5 = self.create_menu_action(
             self.qaction.menu(),
             'Calculate MD5 Filename Hash',
             'Calculate MD5 Filename Hash',
             icon='restart.png',
-            description='Calculates the MD5 Hash based on the Filename',
+            description='Calculates the MD5 Hash based on the Filename' if CONFIG['checkbox_enable_progressync_filename'] else 'Requires Filename matching',
             triggered=self.calculate_md5sum
         )
+        if not CONFIG['checkbox_enable_progressync_filename'] or not CONFIG['column_md5']:
+            self.button_calculate_md5.setEnabled(False)
 
         self.qaction.menu().addSeparator()
 
