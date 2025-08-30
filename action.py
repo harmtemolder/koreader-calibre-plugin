@@ -954,6 +954,19 @@ class KoreaderAction(InterfaceAction):
                     # Dictionary to store values to be updated
                     keys_values_to_update = {}
 
+                    # Set column_date_book_started if this is the first sync and column not already filled
+                    date_book_started_key = CONFIG.get('column_date_book_started')
+                    if date_book_started_key is not None:
+                        if metadata.get(date_book_started_key) is None:
+                            keys_values_to_update[date_book_started_key] = progress_mapping['column_date_synced']
+
+                    # Set column_date_book_finished if this book is finished and column not already filled
+                    if progress_mapping['column_percent_read_int'] >= 100:
+                        date_book_finished_key = CONFIG.get('column_date_book_finished')
+                        if date_book_finished_key is not None:
+                            if metadata.get(date_book_finished_key) is None:
+                                keys_values_to_update[date_book_finished_key] = progress_mapping['column_date_synced']
+
                     for key in ProgressSync_Columns:
                         # Get internal column name from CONFIG
                         internal_column = CONFIG.get(key, '')
