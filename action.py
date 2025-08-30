@@ -937,15 +937,16 @@ class KoreaderAction(InterfaceAction):
 
                     # List of keys to check
                     ProgressSync_Columns = [
-                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location', 'column_date_synced']
+                        'column_percent_read', 'column_percent_read_int', 'column_last_read_location', 'column_date_synced', 'column_device_name', 'column_device_id']
 
                     # Map of progress_data keys to match each config key
                     progress_mapping = {
                         'column_percent_read': progress_data['percentage'] if not CONFIG["checkbox_percent_read_100"] else progress_data['percentage']*100,
                         'column_percent_read_int': round(progress_data['percentage']*100),
                         'column_last_read_location': progress_data['progress'],
-                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp']/1000, tz=local_tz)
-                        # Device and Device ID could also be added
+                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp']/1000, tz=local_tz),
+                        'column_device_name': progress_data['device'],
+                        'column_device_id': progress_data['device_id']
                     }
                     # Change percentage to be human readable on summary screen
                     if CONFIG["checkbox_percent_read_100"]:
