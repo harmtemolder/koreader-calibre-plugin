@@ -490,6 +490,9 @@ class KoreaderAction(InterfaceAction):
         updateLog = {}
 
         read_percent_key = CONFIG['column_percent_read'] or CONFIG['column_percent_read_int']
+        reading_status_texts_reading = CONFIG['reading_status_texts_reading']
+        reading_status_texts_complete = CONFIG['reading_status_texts_complete']
+        reading_status_texts_abandoned = CONFIG['reading_status_texts_abandoned']
 
         # Check config to sync only if data is more recent
         if CONFIG['checkbox_sync_if_more_recent']:
@@ -524,34 +527,55 @@ class KoreaderAction(InterfaceAction):
 
         # Check config to sync only if the book is not yet finished
         status_key = CONFIG['column_status']
+        status_key_enum = CONFIG['column_status_enum']
         if CONFIG['checkbox_no_sync_if_finished']:
             current_read_percent = metadata.get(read_percent_key)
             current_status = metadata.get(status_key)
-            if current_read_percent is not None and current_read_percent >= 100 \
-                    or current_status is not None and current_status == "complete":
+            current_status_enum = metadata.get(status_key_enum)
+            if (current_read_percent is not None and current_read_percent >= 100) \
+                    or (current_status is not None and current_status == reading_status_texts_complete) \
+                    or (current_status_enum is not None and current_status_enum == reading_status_texts_complete):
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
                 }
 
         # Check and correct reading status if required
-        if status_key:
+        if status_key or status_key_enum:
             new_status = keys_values_to_update.get(status_key)
-            if not new_status:
+            new_status_enum = keys_values_to_update.get(status_key_enum)
+            if not new_status or not new_status_enum:
                 new_read_percent = keys_values_to_update.get(read_percent_key)
                 current_status = metadata.get(status_key)
-                if new_read_percent and current_status != "abandoned":
-                    if new_read_percent > 0 and new_read_percent < 100 and current_status != "reading":
-                        debug_print(
-                            f'book {book_id} set column_status to reading')
-                        keys_values_to_update[status_key] = "reading"
+                current_status_enum = metadata.get(status_key_enum)
+                if new_read_percent \
+                        and ((current_status is not None and current_status != reading_status_texts_abandoned) \
+                          or (current_status_enum is not None and current_status_enum != reading_status_texts_abandoned)):
+                    if new_read_percent > 0 and new_read_percent < 100 \
+                            and ((current_status is not None and current_status != reading_status_texts_reading) \
+                              or (current_status_enum is not None and current_status_enum != reading_status_texts_reading)):
+                        if status_key:
+                            debug_print(
+                                f'book {book_id} set column_status to {reading_status_texts_reading}')
+                            keys_values_to_update[status_key] = reading_status_texts_reading
+                        if status_key_enum:
+                            debug_print(
+                                f'book {book_id} set column_status_enum to {reading_status_texts_reading}')
+                            keys_values_to_update[status_key_enum] = reading_status_texts_reading
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = False
-                    elif new_read_percent >= 100 and current_status != "complete":
-                        debug_print(
-                            f'book {book_id} set column_status to complete')
-                        keys_values_to_update[status_key] = "complete"
+                    elif new_read_percent >= 100 \
+                            and ((current_status is not None and current_status != reading_status_texts_complete) \
+                              or (current_status_enum is not None and current_status_enum != reading_status_texts_complete)):
+                        if status_key:
+                            debug_print(
+                                f'book {book_id} set column_status to {reading_status_texts_complete}')
+                            keys_values_to_update[status_key] = reading_status_texts_complete
+                        if status_key_enum:
+                            debug_print(
+                                f'book {book_id} set column_status_enum to {reading_status_texts_complete}')
+                            keys_values_to_update[status_key_enum] = reading_status_texts_complete
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = True
@@ -878,13 +902,27 @@ class KoreaderAction(InterfaceAction):
             return None
 
         status_key = CONFIG['column_status']
+        status_key_enum = CONFIG['column_status_enum']
         read_percent_key = CONFIG['column_percent_read_int'] or CONFIG['column_percent_read']
-        if read_percent_key == '' or status_key == '':
+        if read_percent_key == '' or (status_key == '' and status_key_enum == ''):
             error_dialog(
                 self.gui,
                 'Failure',
-                'This feature needs a KOReader Progress (int or float) and Status Text column.\n'
+                'This feature needs a KOReader Progress (int or float) and Status Text column (text or fixed text).\n'
                 'Add those in plugin settings and try again.',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+        reading_status_texts_reading = CONFIG['reading_status_texts_reading']
+        reading_status_texts_complete = CONFIG['reading_status_texts_complete']
+        reading_status_texts_abandoned = CONFIG['reading_status_texts_abandoned']
+        if reading_status_texts_reading == '' or reading_status_texts_complete == '' or reading_status_texts_abandoned == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'This feature needs the reading status texts (reading, complete, abandoned) not to be empty.\n'
+                'Change those in plugin settings and try again.',
                 show=True,
                 show_copy_button=False
             )
@@ -915,8 +953,11 @@ class KoreaderAction(InterfaceAction):
 
             # Only get sync status if curr progress < 100 and status = reading or if curr_progress/status is not set yet
             metadata_status = metadata.get(status_key)
+            metadata_status_enum = metadata.get(status_key_enum)
             metadata_read_percent = metadata.get(read_percent_key)
-            if (metadata_status is None or metadata_status == "reading") and (metadata_read_percent is None or metadata_read_percent < 100):
+            if (metadata_read_percent is None or metadata_read_percent < 100) \
+                   and ((metadata_status is None or metadata_status == reading_status_texts_reading) \
+                     or (metadata_status_enum is None or metadata_status_enum == reading_status_texts_reading)):
                 try:
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
                     request = Request(url, headers=headers)

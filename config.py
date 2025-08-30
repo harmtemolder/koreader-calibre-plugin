@@ -117,6 +117,18 @@ CUSTOM_COLUMN_DEFAULTS = {
         'data_source': 'sidecar',
         'data_location': ['summary', 'status'],
     },
+    'column_status_enum': {
+        'column_heading': _("KOReader Book Status (Fixed Text)"),
+        'datatype': 'enumeration',
+        'description': _("Reading status of the book, either Finished, Reading, or On hold."),
+        'default_lookup_name': '#ko_status_enum',
+        'config_label': _('Reading status column (fixed text):'),
+        'config_tool_tip': _('A regular "Text" column to store the reading status of the\n'
+                             'book, as entered on the book status page ("Finished",\n'
+                             '"Reading", "On hold").'),
+        'data_source': 'sidecar',
+        'data_location': ['summary', 'status'],
+    },
     'column_status_bool': {
         'column_heading': _("KOReader Book Status Y/N"),
         'datatype': 'bool',
@@ -286,6 +298,9 @@ for this_column in CUSTOM_COLUMN_DEFAULTS:
     CONFIG.defaults[this_column] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox] = False
+CONFIG.defaults['reading_status_texts_reading'] = 'reading'
+CONFIG.defaults['reading_status_texts_complete'] = 'complete'
+CONFIG.defaults['reading_status_texts_abandoned'] = 'abandoned'
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
@@ -350,6 +365,24 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                 CONFIG[config_name]
             )
 
+        # Add option to change reading status texts
+        layout.addWidget(QLabel('Set the reading status names for "Reading", "Completed" and "Abandoned" (case sensitive):'))
+        reading_status_texts_layout = QHBoxLayout()
+        reading_status_texts_layout.setAlignment(Qt.AlignLeft)
+        self.reading_status_texts_reading = QLineEdit(self)
+        self.reading_status_texts_reading.setText(CONFIG['reading_status_texts_reading'])
+        self.reading_status_texts_reading.setToolTip('Text to set to when book is being read')
+        reading_status_texts_layout.addWidget(self.reading_status_texts_reading)
+        self.reading_status_texts_complete = QLineEdit(self)
+        self.reading_status_texts_complete.setText(CONFIG['reading_status_texts_complete'])
+        self.reading_status_texts_complete.setToolTip('Text to set to when book is complete')
+        reading_status_texts_layout.addWidget(self.reading_status_texts_complete)
+        self.reading_status_texts_abandoned = QLineEdit(self)
+        self.reading_status_texts_abandoned.setText(CONFIG['reading_status_texts_abandoned'])
+        self.reading_status_texts_abandoned.setToolTip('Text to set to when book is abandoned')
+        reading_status_texts_layout.addWidget(self.reading_status_texts_abandoned)
+        layout.addLayout(reading_status_texts_layout)
+
         # Add custom checkboxes
         layout.addLayout(self.add_checkbox('checkbox_percent_read_100'))
         layout.addLayout(self.add_checkbox('checkbox_sync_if_more_recent'))
@@ -362,7 +395,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         ps_header_label = QLabel(
             "This plugin supports use of KOReader's built-in ProgressSync server to update reading progress and location without the device connected. "
             "You must have an MD5 column mapped and use Binary matching in KOReader's ProgressSync Settings (default).\n"
-            "You also need a reading progress column and status text column.\n"
+            "You also need a reading progress column and status text column (text or fixed text).\n"
             "This functionality can optionally be scheduled into a daily sync from within calibre. "
             "Enter scheduled time in military time, default is 4 AM local time. You must restart calibre after making changes to scheduled sync settings. "
         )
@@ -425,6 +458,11 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
         CONFIG['scheduleSyncMinute'] = self.schedule_minute_input.value()
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
+
+        # Save reading status texts
+        CONFIG['reading_status_texts_reading'] = self.reading_status_texts_reading.text()
+        CONFIG['reading_status_texts_complete'] = self.reading_status_texts_complete.text()
+        CONFIG['reading_status_texts_abandoned'] = self.reading_status_texts_abandoned.text()
 
         debug_print('new CONFIG = ', CONFIG)
         if needRestart and show_restart_warning('Changes have been made that require a restart to take effect.\nRestart now?'):
