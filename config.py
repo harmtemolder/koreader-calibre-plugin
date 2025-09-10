@@ -291,6 +291,7 @@ CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
 CONFIG.defaults['scheduleSyncHour'] = 4
 CONFIG.defaults['scheduleSyncMinute'] = 0
+CONFIG.defaults['main_action'] = 'KOReader Sync'
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:config:', sep='')
@@ -349,6 +350,23 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                 self.sync_custom_columns[config_name]['current_columns'],
                 CONFIG[config_name]
             )
+
+        # Main action combobox
+        main_action_layout = QHBoxLayout()
+        main_action_layout.setAlignment(Qt.AlignLeft)
+        self.main_action_box_label = QLabel('Main button:')
+        tooltip = 'Select which action will be used for the main button on calibre GUI'
+        self.main_action_box_label.setToolTip(tooltip)
+        self.main_action_combo = QComboBox()
+        self.main_action_combo.setToolTip(tooltip)
+        self.main_action_combo.setMinimumWidth(200)
+        self.main_action_combo.addItems({'KOReader Sync', 'Progress Sync'})
+        self.main_action_combo.model().sort(0)
+        self.main_action_box_label.setBuddy(self.main_action_combo)
+        main_action_layout.addWidget(self.main_action_box_label)
+        main_action_layout.addWidget(self.main_action_combo)
+        self.main_action_combo.setCurrentText(CONFIG['main_action'])
+        layout.addLayout(main_action_layout)
 
         # Add custom checkboxes
         layout.addLayout(self.add_checkbox('checkbox_percent_read_100'))
@@ -420,6 +438,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         for config_name in CHECKBOXES:
             CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState(
             ) == Qt.Checked
+
+        # Save main action Settings
+        CONFIG['main_action'] = self.main_action_combo.currentText()
 
         # Save Scheduled ProgressSync Settings
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
