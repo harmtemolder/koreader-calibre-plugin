@@ -530,11 +530,9 @@ class KoreaderAction(InterfaceAction):
         status_key_enum = CONFIG['column_status_enum']
         if CONFIG['checkbox_no_sync_if_finished']:
             current_read_percent = metadata.get(read_percent_key)
-            current_status = metadata.get(status_key)
-            current_status_enum = metadata.get(status_key_enum)
+            current_status = metadata.get(status_key) or metadata.get(status_key_enum)
             if (current_read_percent is not None and current_read_percent >= 100) \
-                    or (current_status is not None and current_status == reading_status_texts_complete) \
-                    or (current_status_enum is not None and current_status_enum == reading_status_texts_complete):
+                    or (current_status is not None and current_status == reading_status_texts_complete):
                 debug_print(f'book {book_id} was already finished')
                 return OperationStatus.SKIP, {
                     'result': 'skipped, book already finished',
@@ -546,14 +544,10 @@ class KoreaderAction(InterfaceAction):
             new_status_enum = keys_values_to_update.get(status_key_enum)
             if not new_status or not new_status_enum:
                 new_read_percent = keys_values_to_update.get(read_percent_key)
-                current_status = metadata.get(status_key)
-                current_status_enum = metadata.get(status_key_enum)
-                if new_read_percent \
-                        and ((current_status is not None and current_status != reading_status_texts_abandoned) \
-                          or (current_status_enum is not None and current_status_enum != reading_status_texts_abandoned)):
+                current_status = metadata.get(status_key) or metadata.get(status_key_enum)
+                if new_read_percent and (current_status is not None and current_status != reading_status_texts_abandoned):
                     if new_read_percent > 0 and new_read_percent < 100 \
-                            and ((current_status is not None and current_status != reading_status_texts_reading) \
-                              or (current_status_enum is not None and current_status_enum != reading_status_texts_reading)):
+                            and (current_status is not None and current_status != reading_status_texts_reading):
                         if status_key:
                             debug_print(
                                 f'book {book_id} set column_status to {reading_status_texts_reading}')
@@ -565,9 +559,7 @@ class KoreaderAction(InterfaceAction):
                         status_bool_key = CONFIG['column_status_bool']
                         if status_bool_key:
                             keys_values_to_update[status_bool_key] = False
-                    elif new_read_percent >= 100 \
-                            and ((current_status is not None and current_status != reading_status_texts_complete) \
-                              or (current_status_enum is not None and current_status_enum != reading_status_texts_complete)):
+                    elif new_read_percent >= 100 and (current_status is not None and current_status != reading_status_texts_complete):
                         if status_key:
                             debug_print(
                                 f'book {book_id} set column_status to {reading_status_texts_complete}')
@@ -952,12 +944,10 @@ class KoreaderAction(InterfaceAction):
             title = metadata.get('title')
 
             # Only get sync status if curr progress < 100 and status = reading or if curr_progress/status is not set yet
-            metadata_status = metadata.get(status_key)
-            metadata_status_enum = metadata.get(status_key_enum)
+            metadata_status = metadata.get(status_key) or metadata.get(status_key_enum)
             metadata_read_percent = metadata.get(read_percent_key)
             if (metadata_read_percent is None or metadata_read_percent < 100) \
-                   and ((metadata_status is None or metadata_status == reading_status_texts_reading) \
-                     or (metadata_status_enum is None or metadata_status_enum == reading_status_texts_reading)):
+                    and (metadata_status is None or metadata_status == reading_status_texts_reading):
                 try:
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
                     request = Request(url, headers=headers)
