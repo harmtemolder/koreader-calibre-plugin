@@ -208,7 +208,7 @@ CUSTOM_COLUMN_DEFAULTS = {
         'config_tool_tip': _('A regular "Text" column to store the MD5 hash KOReader uses\n'
                              'to sync progress to a KOReader Sync Server. ("Progress sync"\n'
                              'in the KOReader app.)'),
-        'data_source': 'sidecar',
+        'data_source': 'progresssync',
         'data_location': ['partial_md5_checksum'],
     },
     'column_date_synced': {
