@@ -181,7 +181,7 @@ class KoreaderAction(InterfaceAction):
     action_menu_clone_qaction = 'Sync from KOReader'
     dont_add_to = frozenset(
         [
-            'context-menu', 'context-menu-device', 'toolbar-child', 'menubar',
+            'context-menu', 'context-menu-device', 'menubar',
             'menubar-device', 'context-menu-cover-browser',
             'context-menu-split']
     )
