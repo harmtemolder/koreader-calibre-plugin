@@ -317,6 +317,7 @@ class KoreaderAction(InterfaceAction):
             metadata = db.get_metadata(book_id)
             md5_values = metadata.get(md5_key)
             result = formatter.safe_format(template, {}, 'TEMPLATE ERROR', metadata)
+            result = result.translate(str.maketrans("öäüÖÄÜ", "oauOAU"))
             formats = db.formats(book_id)
             for fmt in sorted(formats, key=lambda x: (x.upper() != 'EPUB', x.lower())):
                 result = (f"{result}.{fmt.lower()}")
