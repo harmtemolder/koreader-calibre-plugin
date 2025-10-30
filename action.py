@@ -449,9 +449,15 @@ class KoreaderAction(InterfaceAction):
             try:
                 parsed_contents['calculated'][
                 'date_synced'] = datetime.now().replace(tzinfo=local_tz)
+            except:
+                pass
+            try:
                 parsed_contents['calculated'][
                     'date_status_changed'] = datetime.strptime(
                     parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
+            except:
+                pass
+            try:
                 parsed_contents['calculated'][
                     'date_sidecar_modified'] = datetime.fromtimestamp(
                     os.path.getmtime(path)).replace(tzinfo=local_tz)
