@@ -14,6 +14,7 @@ import time
 
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
+import ssl
 
 from PyQt5.Qt import (
     QUrl,
@@ -907,6 +908,13 @@ class KoreaderAction(InterfaceAction):
             'User-Agent': f'CalibreKOReaderSync/{self.version}'
         }
 
+        # Create SSL context based on user preference
+        ssl_context = ssl.create_default_context()
+        if CONFIG['checkbox_skip_ssl_verification']:
+            # Skip SSL verification for custom servers with self-signed certificates
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+
         for book_id in books_with_md5:
             metadata = db.get_metadata(book_id)
             md5_value = metadata.get(md5_column)
@@ -920,7 +928,7 @@ class KoreaderAction(InterfaceAction):
                 try:
                     url = f'{CONFIG["progress_sync_url"]}/syncs/progress/{md5_value}'
                     request = Request(url, headers=headers)
-                    with urlopen(request, timeout=20) as response:
+                    with urlopen(request, timeout=20, context=ssl_context) as response:
                         response_data = response.read()
                         if response_data == b'{}':
                             results.append({

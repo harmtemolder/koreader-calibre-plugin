@@ -279,6 +279,12 @@ CHECKBOXES = {  # Each entry in the below dict is keyed with config_name
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
         'KOReader\'s ProgressSync server.',
     },
+    'checkbox_skip_ssl_verification': {
+        'config_label': 'Skip SSL certificate verification for ProgressSync',
+        'config_tool_tip': 'Disable SSL certificate verification when connecting to ProgressSync server.\n'
+        'Enable this if you use a custom server with self-signed certificates or IP addresses.\n'
+        'Warning: This reduces security. Only use with trusted servers.',
+    },
 }
 
 CONFIG = JSONConfig(os.path.join('plugins', 'KOReader Sync.json'))
@@ -286,6 +292,8 @@ for this_column in CUSTOM_COLUMN_DEFAULTS:
     CONFIG.defaults[this_column] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox] = False
+
+CONFIG.defaults['checkbox_skip_ssl_verification'] = False
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
@@ -368,6 +376,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         )
         ps_header_label.setWordWrap(True)
         layout.addWidget(ps_header_label)
+
+        # Add SSL verification checkbox
+        layout.addLayout(self.add_checkbox('checkbox_skip_ssl_verification'))
 
         # Add scheduled sync options
         scheduled_sync_layout = QHBoxLayout()
