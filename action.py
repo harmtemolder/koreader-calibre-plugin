@@ -11,7 +11,6 @@ import re
 import sys
 import importlib.util
 import time
-
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
@@ -50,6 +49,8 @@ from calibre_plugins.koreader import (
     KoreaderSync,
 )
 
+from calibre_plugins.koreader.md5_utils import partial_md5_checksum
+
 from calibre.utils.iso8601 import utc_tz, local_tz
 from calibre.gui2.dialogs.message_box import MessageBox
 from calibre.gui2.actions import InterfaceAction
@@ -63,12 +64,14 @@ from calibre.gui2 import (
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.constants import numeric_version
 from enum import Enum, auto
+from calibre.library import db
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
 __modified_by__ = 'kyxap kyxappp@gmail.com'
 __modification_date__ = '2024'
 __docformat__ = 'restructuredtext en'
+
 
 if numeric_version >= (5, 5, 0):
     module_debug_print = partial(root_debug_print, ' koreader:action:', sep='')
@@ -377,43 +380,57 @@ class KoreaderAction(InterfaceAction):
         self.sync_to_calibre(silent=True if not DEBUG else False)
 
     def get_paths(self, device):
-        """Retrieves paths to sidecars of all books in calibre's library
-        on the device
+            """Retrieves paths to sidecars of all books in calibre's library
+            on the device
 
-        :param device: a device object
-        :return: a dict of uuids with corresponding paths to sidecars
-        """
-        debug_print = partial(
-            module_debug_print,
-            'KoreaderAction:get_paths:'
-        )
-
-        debug_print(
-            f'found {len(device.books())} paths to books:\n\t',
-            '\n\t'.join([book.path for book in device.books()])
-        )
-
-        debug_print(
-            f'found {len(device.books())} lpaths to books:\n\t',
-            '\n\t'.join([book.lpath for book in device.books()])
-        )
-
-        for book in device.books():
-            debug_print(f'uuid to path: {book.uuid} - {book.path}')
-
-        paths = {
-            book.uuid: re.sub(
-                r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
+            :param device: a device object
+            :return: a dict of uuids with corresponding paths to sidecars
+            """
+            debug_print = partial(
+                module_debug_print,
+                'KoreaderAction:get_paths:'
             )
-            for book in device.books()
-        }
 
-        debug_print(
-            f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
-            '\n\t'.join(paths.values())
-        )
+            debug_print(
+                f'found {len(device.books())} paths to books:\n\t',
+                '\n\t'.join([book.path for book in device.books()])
+            )
 
-        return paths
+            debug_print(
+                f'found {len(device.books())} lpaths to books:\n\t',
+                '\n\t'.join([book.lpath for book in device.books()])
+            )
+
+            for book in device.books():
+                debug_print(f'uuid to path: {book.uuid} - {book.path}')
+
+            # Générer les chemins selon la configuration
+            if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
+                # Chemin hashdocsettings avec MD5 calculé
+                # Note: Le calcul MD5 sera fait dans le thread worker
+                paths = {}
+                for book in device.books():
+                    # Stocker le path du livre pour le calcul MD5 plus tard
+                    paths[book.uuid] = {
+                        'book_path': book.path,
+                        'needs_md5': True
+                    }
+            else:
+                # Chemin classique dans le même répertoire que le livre
+                paths = {
+                    book.uuid: re.sub(
+                        r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
+                    )
+                    for book in device.books()
+                }
+
+            if not CONFIG['checkbox_enable_sidecar_hashdocsettings']:
+                debug_print(
+                    f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
+                    '\n\t'.join(paths.values())
+                )
+
+            return paths
 
     def get_sidecar(self, device, path):
         """Requests the given path from the given device and returns the
@@ -1066,9 +1083,10 @@ class KoreaderAction(InterfaceAction):
 
         main()  # Runs scheduled_progress_sync
 
+
     def sync_to_calibre(self, silent=False):
-        """This plugin’s main purpose. It syncs the contents of
-        KOReader’s metadata sidecar files into calibre’s metadata.
+        """This plugin's main purpose. It syncs the contents of
+        KOReader's metadata sidecar files into calibre's metadata.
 
         :return:
         """
@@ -1089,11 +1107,12 @@ class KoreaderAction(InterfaceAction):
             progress_update = pyqtSignal(int, str)
             finished_signal = pyqtSignal(dict)
 
-            def __init__(self, action, db, sidecar_paths):
+            def __init__(self, action, db, sidecar_paths, device):
                 super().__init__()
                 self.action = action
                 self.db = db
                 self.sidecar_paths = sidecar_paths
+                self.device = device
 
             def run(self):
                 results = []
@@ -1101,8 +1120,48 @@ class KoreaderAction(InterfaceAction):
                 num_fail = 0
                 num_skip = 0
 
-                for idx, (book_uuid, sidecar_path) in enumerate(sidecar_paths.items()):
-                    debug_print('Trying to get sidecar from ', device,
+                # Si on utilise hashdocsettings, calculer les MD5 d'abord
+                if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
+                    debug_print('Calculating MD5 hashes for hashdocsettings...')
+                    resolved_paths = {}
+                    hashdocpath = CONFIG['sidecar_hashdocsettings_loc']
+
+                    for book_uuid, path_info in self.sidecar_paths.items():
+                        if isinstance(path_info, dict) and path_info.get('needs_md5'):
+                            try:
+                                book_path = path_info['book_path']
+                                book_id = self.db.lookup_by_uuid(book_uuid)
+                                metadata = self.db.get_metadata(book_id)
+                                title = metadata.get('title', 'Unknown')
+
+                                # Mettre à jour la progress bar
+                                idx = list(self.sidecar_paths.keys()).index(book_uuid)
+                                self.progress_update.emit(idx + 1, f'Calculating Partial MD5 for: {title}')
+
+                                # Calculer le MD5
+                                book_md5 = partial_md5_checksum(self.device, book_path)
+
+                                # Construire le chemin sidecar
+                                extension = re.sub(r'.*\.(\w+)$', r'\1', book_path)
+                                sidecar_path = (
+                                    f"{hashdocpath}/{book_md5[:2]}/{book_md5}.sdr/"
+                                    f"metadata.{extension}.lua"
+                                )
+                                resolved_paths[book_uuid] = sidecar_path
+                                debug_print(f'MD5 for {book_path}: {book_md5} -> {sidecar_path}')
+
+                            except Exception as e:
+                                debug_print(f'Error calculating MD5 for {book_uuid}: {e}')
+                                # Skip ce livre
+                                continue
+                        else:
+                            resolved_paths[book_uuid] = path_info
+
+                    self.sidecar_paths = resolved_paths
+
+                # Maintenant traiter les sidecars
+                for idx, (book_uuid, sidecar_path) in enumerate(self.sidecar_paths.items()):
+                    debug_print('Trying to get sidecar from ', self.device,
                                 ', with sidecar_path: ', sidecar_path)
 
                     # pre-checks before parsing
@@ -1114,13 +1173,13 @@ class KoreaderAction(InterfaceAction):
                         continue
 
                     sidecar_contents = self.action.get_sidecar(
-                        device, sidecar_path)
+                        self.device, sidecar_path)
                     debug_print("sidecar_contents:", sidecar_contents)
-                    book_id = db.lookup_by_uuid(book_uuid)
-                    metadata = db.get_metadata(book_id)
+                    book_id = self.db.lookup_by_uuid(book_uuid)
+                    metadata = self.db.get_metadata(book_id)
                     title = metadata.get('title')
-                    self.progress_update.emit(idx + 1, title)
-                    if DEBUG: # Add time delay when debugging
+                    self.progress_update.emit(idx + 1, f'Processing: {title}')
+                    if DEBUG:  # Add time delay when debugging
                         time.sleep(.4)
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
@@ -1181,7 +1240,7 @@ class KoreaderAction(InterfaceAction):
                         keys_values_to_update[target] = value
 
                     operation_status, result = self.action.update_metadata(
-                        book_uuid, db, keys_values_to_update
+                        book_uuid, self.db, keys_values_to_update
                     )
 
                     results.append(
@@ -1205,13 +1264,15 @@ class KoreaderAction(InterfaceAction):
 
         db = self.gui.current_db.new_api
         startTime = time.perf_counter()
-        self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths)
+        self.koSyncWorker = KOSyncWorker(self, db, sidecar_paths, device)
         progress_dialog = None
-        if not silent and len(sidecar_paths) > 10:
-            progress_dialog = ProgressDialog(
-                self.gui, "Syncing Sidecars...", len(sidecar_paths))
-            progress_dialog.show()
-            self.koSyncWorker.progress_update.connect(progress_dialog.setValue)
+        if not silent:
+            # Toujours montrer la progress bar si on utilise hashdocsettings
+            if CONFIG['checkbox_enable_sidecar_hashdocsettings'] or len(sidecar_paths) > 10:
+                progress_dialog = ProgressDialog(
+                    self.gui, "Syncing Sidecars...", len(sidecar_paths))
+                progress_dialog.show()
+                self.koSyncWorker.progress_update.connect(progress_dialog.setValue)
 
         def on_finished(res):
             if not silent:

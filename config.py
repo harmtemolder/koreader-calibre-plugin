@@ -286,6 +286,8 @@ for this_column in CUSTOM_COLUMN_DEFAULTS:
     CONFIG.defaults[this_column] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox] = False
+CONFIG.defaults['checkbox_enable_sidecar_hashdocsettings'] = False
+CONFIG.defaults['sidecar_hashdocsettings_loc'] = '../koreader'
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
@@ -357,6 +359,58 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
 
         layout.addLayout(self.add_checkbox('checkbox_enable_automatic_sync'))
 
+        # Hashdocsettings Section
+        layout.addWidget(create_separator())
+
+        hashdoc_header_label = QLabel(
+            "KOReader can store metadata sidecars in a centralized location using hashdocsettings. "
+            "Enable this option if you use hashdocsettings instead of storing sidecars alongside books. "
+            "You must specify the relative path to the KOReader directory from your books (e.g., ../koreader)."
+        )
+        hashdoc_header_label.setWordWrap(True)
+        layout.addWidget(hashdoc_header_label)
+
+        # Checkbox to enable hashdocsettings
+        hashdoc_checkbox_layout = QHBoxLayout()
+        hashdoc_checkbox = QCheckBox()
+        hashdoc_checkbox.setCheckState(
+            Qt.Checked if CONFIG['checkbox_enable_sidecar_hashdocsettings'] else Qt.Unchecked
+        )
+        hashdoc_label = QLabel("Use hashdocsettings for metadata storage")
+        hashdoc_label.setToolTip(
+            "Enable this to use KOReader's hashdocsettings feature for centralized metadata storage.\n"
+            "This is useful if you have configured KOReader to store sidecars in a single directory."
+        )
+        hashdoc_label.setBuddy(hashdoc_checkbox)
+        hashdoc_label.mousePressEvent = lambda event, cb=hashdoc_checkbox: cb.toggle()
+        hashdoc_checkbox_layout.addWidget(hashdoc_checkbox)
+        hashdoc_checkbox_layout.addWidget(hashdoc_label)
+        hashdoc_checkbox_layout.addStretch()
+        layout.addLayout(hashdoc_checkbox_layout)
+
+        # Path input for hashdocsettings directory
+        hashdoc_path_layout = QHBoxLayout()
+        hashdoc_path_layout.setAlignment(Qt.AlignLeft)
+        hashdoc_path_label = QLabel("Hashdocsettings path:")
+        hashdoc_path_label.setToolTip(
+            "Path to the KOReader directory containing hashdocsettings metadata.\n"
+            "Examples:\n"
+            "  - Kindle: /mnt/us/koreader\n"
+            "  - Kobo: /mnt/onboard/.adds/koreader\n"
+            "  - Custom device: adjust according to your setup"
+        )
+        hashdoc_path_input = QLineEdit()
+        hashdoc_path_input.setText(CONFIG['sidecar_hashdocsettings_loc'])
+        hashdoc_path_input.setMinimumWidth(300)
+        hashdoc_path_input.setPlaceholderText("/mnt/us/koreader")
+        hashdoc_path_layout.addWidget(hashdoc_path_label)
+        hashdoc_path_layout.addWidget(hashdoc_path_input)
+        hashdoc_path_layout.addStretch()
+        layout.addLayout(hashdoc_path_layout)
+
+        self.hashdoc_checkbox = hashdoc_checkbox
+        self.hashdoc_path_input = hashdoc_path_input
+
         # Progress Sync Section
         layout.addWidget(create_separator())
         ps_header_label = QLabel(
@@ -410,6 +464,9 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
                        CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
                        CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
                        CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
+                       # Ajout: vérifier si hashdocsettings a changé
+                       CONFIG['checkbox_enable_sidecar_hashdocsettings'] != (self.hashdoc_checkbox.checkState() == Qt.Checked) or
+                       CONFIG['sidecar_hashdocsettings_loc'] != self.hashdoc_path_input.text()
                        )
 
         # Save Column Settings
@@ -420,6 +477,12 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         for config_name in CHECKBOXES:
             CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState(
             ) == Qt.Checked
+
+        # Save Hashdocsettings Settings
+        CONFIG['checkbox_enable_sidecar_hashdocsettings'] = (
+            self.hashdoc_checkbox.checkState() == Qt.Checked
+        )
+        CONFIG['sidecar_hashdocsettings_loc'] = self.hashdoc_path_input.text().strip()
 
         # Save Scheduled ProgressSync Settings
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
