@@ -379,58 +379,132 @@ class KoreaderAction(InterfaceAction):
     def _on_device_metadata_available(self):
         self.sync_to_calibre(silent=True if not DEBUG else False)
 
+    def detect_hashdocsettings_path(self, device):
+        """Auto-detect the hashdocsettings path based on device type.
+
+        :param device: a device object
+        :return: path to hashdocsettings directory or None if not found
+        """
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:detect_hashdocsettings_path:'
+        )
+
+        # Common hashdocsettings locations for different devices
+        possible_paths = [
+            # Kobo
+            '../.adds/koreader/hashdocsettings',
+            '../../.adds/koreader/hashdocsettings',
+            # Kindle
+            '../koreader/hashdocsettings',
+            '../../koreader/hashdocsettings',
+            # PocketBook and others
+            '../system/koreader/hashdocsettings',
+            '../../system/koreader/hashdocsettings',
+            # Generic fallback
+            '../hashdocsettings',
+            '../.koreader/hashdocsettings',
+        ]
+
+        # Try to find the directory that exists
+        for test_path in possible_paths:
+            debug_print(f'Testing path: {test_path}')
+
+            test_file = test_path.replace('hashdocsettings', 'defaults.custom.lua')
+
+            try:
+                # Try to guess hashdocsettings path with defaults.custom.lua
+                with io.BytesIO() as outfile:
+                    device.get_file(test_file, outfile)
+                debug_print(f'Found: {test_file}')
+                return test_path
+
+            except Exception as e:
+                debug_print(f'Error checking path {test_path}: {e}')
+                continue
+
+        debug_print('Could not find hashdocsettings directory')
+        return None
+
     def get_paths(self, device):
-            """Retrieves paths to sidecars of all books in calibre's library
-            on the device
+        """Retrieves paths to sidecars of all books in calibre's library
+        on the device
 
-            :param device: a device object
-            :return: a dict of uuids with corresponding paths to sidecars
-            """
-            debug_print = partial(
-                module_debug_print,
-                'KoreaderAction:get_paths:'
-            )
+        :param device: a device object
+        :return: a dict of uuids with corresponding paths to sidecars
+        """
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:get_paths:'
+        )
 
-            debug_print(
-                f'found {len(device.books())} paths to books:\n\t',
-                '\n\t'.join([book.path for book in device.books()])
-            )
+        debug_print(
+            f'found {len(device.books())} paths to books:\n\t',
+            '\n\t'.join([book.path for book in device.books()])
+        )
 
-            debug_print(
-                f'found {len(device.books())} lpaths to books:\n\t',
-                '\n\t'.join([book.lpath for book in device.books()])
-            )
+        debug_print(
+            f'found {len(device.books())} lpaths to books:\n\t',
+            '\n\t'.join([book.lpath for book in device.books()])
+        )
 
-            for book in device.books():
-                debug_print(f'uuid to path: {book.uuid} - {book.path}')
+        for book in device.books():
+            debug_print(f'uuid to path: {book.uuid} - {book.path}')
 
-            # Générer les chemins selon la configuration
-            if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
-                # Chemin hashdocsettings avec MD5 calculé
-                # Note: Le calcul MD5 sera fait dans le thread worker
+        if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
+            # Auto-detect hashdocsettings path if not manually set or if auto-detect is enabled
+            hashdocpath = CONFIG.get('sidecar_hashdocsettings_loc', '')
+
+            # If path is empty or user wants auto-detection, try to find it
+            if not hashdocpath or CONFIG.get('checkbox_autodetect_hashdocsettings', True):
+                detected_path = self.detect_hashdocsettings_path(device)
+                if detected_path:
+                    hashdocpath = detected_path
+                    debug_print(f'Auto-detected hashdocsettings path: {hashdocpath}')
+                    # Optionally save it to config for future use
+                    if CONFIG.get('checkbox_save_detected_path', True):
+                        CONFIG['sidecar_hashdocsettings_loc'] = hashdocpath
+                elif not hashdocpath:
+                    # No path detected and no manual path set
+                    debug_print('No hashdocsettings path found, falling back to standard sidecar location')
+                    CONFIG['checkbox_enable_sidecar_hashdocsettings'] = False
+                    # Fall through to standard path generation below
+
+            if CONFIG['checkbox_enable_sidecar_hashdocsettings'] and hashdocpath:
                 paths = {}
                 for book in device.books():
-                    # Stocker le path du livre pour le calcul MD5 plus tard
                     paths[book.uuid] = {
                         'book_path': book.path,
-                        'needs_md5': True
+                        'needs_md5': True,
+                        'hashdocpath': hashdocpath
                     }
             else:
-                # Chemin classique dans le même répertoire que le livre
+                # Fall back to standard path
                 paths = {
                     book.uuid: re.sub(
                         r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
                     )
                     for book in device.books()
                 }
-
-            if not CONFIG['checkbox_enable_sidecar_hashdocsettings']:
-                debug_print(
-                    f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
-                    '\n\t'.join(paths.values())
+        else:
+            # Default path same as books
+            paths = {
+                book.uuid: re.sub(
+                    r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
                 )
+                for book in device.books()
+            }
 
-            return paths
+        # Debug print only for standard paths
+        if not CONFIG.get('checkbox_enable_sidecar_hashdocsettings') or not any(
+            isinstance(p, dict) and p.get('needs_md5') for p in paths.values()
+        ):
+            debug_print(
+                f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
+                '\n\t'.join(str(p) for p in paths.values())
+            )
+
+        return paths
 
     def get_sidecar(self, device, path):
         """Requests the given path from the given device and returns the
@@ -778,6 +852,38 @@ class KoreaderAction(InterfaceAction):
 
         sidecar_paths = self.get_paths(device)
         debug_print('sidecar_paths: ', sidecar_paths)
+
+        # Resolve  paths if using  hashdocsettings
+        resolved_paths = {}
+        if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
+            debug_print('Resolving paths for hashdocsettings...')
+            db = self.gui.current_db.new_api
+
+            for book_uuid, path_info in sidecar_paths.items():
+                if isinstance(path_info, dict) and path_info.get('needs_md5'):
+                    try:
+                        book_path = path_info['book_path']
+                        hashdocpath = path_info['hashdocpath']
+
+                        # get partial  MD5
+                        book_md5 = partial_md5_checksum(device, book_path)
+
+                        # Construire le chemin sidecar
+                        extension = re.sub(r'.*\.(\w+)$', r'\1', book_path)
+                        sidecar_path = (
+                            f"{hashdocpath}/{book_md5[:2]}/{book_md5}.sdr/"
+                            f"metadata.{extension}.lua"
+                        )
+                        resolved_paths[book_uuid] = sidecar_path
+
+                    except Exception as e:
+                        debug_print(f'Error calculating partial MD5 for {book_uuid}: {e}')
+                        continue
+                else:
+                    resolved_paths[book_uuid] = path_info
+
+            sidecar_paths = resolved_paths
+
         sidecar_paths_exist = {}
         sidecar_paths_not_exist = {}
         for book_uuid, path in sidecar_paths.items():
@@ -1120,28 +1226,27 @@ class KoreaderAction(InterfaceAction):
                 num_fail = 0
                 num_skip = 0
 
-                # Si on utilise hashdocsettings, calculer les MD5 d'abord
+                # If ussing  hashdocsettings, get partial MD5 first
                 if CONFIG['checkbox_enable_sidecar_hashdocsettings']:
-                    debug_print('Calculating MD5 hashes for hashdocsettings...')
+                    debug_print('Calculating partial md5 hashes for hashdocsettings...')
                     resolved_paths = {}
-                    hashdocpath = CONFIG['sidecar_hashdocsettings_loc']
 
                     for book_uuid, path_info in self.sidecar_paths.items():
                         if isinstance(path_info, dict) and path_info.get('needs_md5'):
                             try:
                                 book_path = path_info['book_path']
+                                hashdocpath = path_info['hashdocpath']
+
                                 book_id = self.db.lookup_by_uuid(book_uuid)
                                 metadata = self.db.get_metadata(book_id)
                                 title = metadata.get('title', 'Unknown')
 
-                                # Mettre à jour la progress bar
                                 idx = list(self.sidecar_paths.keys()).index(book_uuid)
-                                self.progress_update.emit(idx + 1, f'Calculating Partial MD5 for: {title}')
+                                self.progress_update.emit(idx + 1, f'Calculating partial md5 hash: {title}')
 
-                                # Calculer le MD5
                                 book_md5 = partial_md5_checksum(self.device, book_path)
 
-                                # Construire le chemin sidecar
+                                # Build metadata path
                                 extension = re.sub(r'.*\.(\w+)$', r'\1', book_path)
                                 sidecar_path = (
                                     f"{hashdocpath}/{book_md5[:2]}/{book_md5}.sdr/"
@@ -1152,14 +1257,12 @@ class KoreaderAction(InterfaceAction):
 
                             except Exception as e:
                                 debug_print(f'Error calculating MD5 for {book_uuid}: {e}')
-                                # Skip ce livre
                                 continue
                         else:
                             resolved_paths[book_uuid] = path_info
 
                     self.sidecar_paths = resolved_paths
 
-                # Maintenant traiter les sidecars
                 for idx, (book_uuid, sidecar_path) in enumerate(self.sidecar_paths.items()):
                     debug_print('Trying to get sidecar from ', self.device,
                                 ', with sidecar_path: ', sidecar_path)
@@ -1168,7 +1271,7 @@ class KoreaderAction(InterfaceAction):
                     if book_uuid is None:
                         status = 'skipped, no UUID'
                         append_results(results, None, status,
-                                       book_uuid, sidecar_path)
+                                    book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
@@ -1184,16 +1287,16 @@ class KoreaderAction(InterfaceAction):
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
-                                  '(seems like book is never opened)')
+                                '(seems like book is never opened)')
                         append_results(results, title, status,
-                                       book_uuid, sidecar_path)
+                                    book_uuid, sidecar_path)
                         num_skip += 1
                         continue
 
                     elif sidecar_contents is GetSidecarStatus.DECODE_FAILED:
                         status = 'decoding is failed see debug for more details'
                         append_results(results, title, status,
-                                       book_uuid, sidecar_path)
+                                    book_uuid, sidecar_path)
                         num_fail += 1
                         continue
 

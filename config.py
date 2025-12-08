@@ -286,8 +286,11 @@ for this_column in CUSTOM_COLUMN_DEFAULTS:
     CONFIG.defaults[this_column] = ''
 for this_checkbox in CHECKBOXES:
     CONFIG.defaults[this_checkbox] = False
+# hashdocsettings defautls
 CONFIG.defaults['checkbox_enable_sidecar_hashdocsettings'] = False
 CONFIG.defaults['sidecar_hashdocsettings_loc'] = '../koreader'
+CONFIG.defaults['checkbox_autodetect_hashdocsettings'] = True
+CONFIG.defaults['checkbox_save_detected_path'] = True
 CONFIG.defaults['progress_sync_url'] = 'https://sync.koreader.rocks:443'
 CONFIG.defaults['progress_sync_username'] = ''
 CONFIG.defaults['progress_sync_password'] = ''
@@ -411,6 +414,46 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         self.hashdoc_checkbox = hashdoc_checkbox
         self.hashdoc_path_input = hashdoc_path_input
 
+        # Auto-detect checkbox
+        autodetect_layout = QHBoxLayout()
+        autodetect_checkbox = QCheckBox()
+        autodetect_checkbox.setCheckState(
+            Qt.Checked if CONFIG.get('checkbox_autodetect_hashdocsettings', True) else Qt.Unchecked
+        )
+        autodetect_label = QLabel("Auto-detect hashdocsettings path")
+        autodetect_label.setToolTip(
+            "Automatically find the hashdocsettings directory on the device.\n"
+            "Works for Kobo (.adds/koreader), Kindle (koreader), and other devices."
+        )
+        autodetect_label.setBuddy(autodetect_checkbox)
+        autodetect_label.mousePressEvent = lambda event, cb=autodetect_checkbox: cb.toggle()
+        autodetect_layout.addWidget(autodetect_checkbox)
+        autodetect_layout.addWidget(autodetect_label)
+        autodetect_layout.addStretch()
+        layout.addLayout(autodetect_layout)
+
+        # Save detected path checkbox
+        save_detected_layout = QHBoxLayout()
+        save_detected_checkbox = QCheckBox()
+        save_detected_checkbox.setCheckState(
+            Qt.Checked if CONFIG.get('checkbox_save_detected_path', True) else Qt.Unchecked
+        )
+        save_detected_label = QLabel("Save auto-detected path for future syncs")
+        save_detected_label.setToolTip(
+            "Save the auto-detected path to configuration for faster subsequent syncs.\n"
+            "You can still manually override this path if needed."
+        )
+        save_detected_label.setBuddy(save_detected_checkbox)
+        save_detected_label.mousePressEvent = lambda event, cb=save_detected_checkbox: cb.toggle()
+        save_detected_layout.addWidget(save_detected_checkbox)
+        save_detected_layout.addWidget(save_detected_label)
+        save_detected_layout.addStretch()
+        layout.addLayout(save_detected_layout)
+
+        # Stocker les widgets pour les sauvegarder plus tard
+        self.autodetect_checkbox = autodetect_checkbox
+        self.save_detected_checkbox = save_detected_checkbox
+
         # Progress Sync Section
         layout.addWidget(create_separator())
         ps_header_label = QLabel(
@@ -459,30 +502,43 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         debug_print('old CONFIG = ', CONFIG)
 
         # Check relevant settings for changes in order to show restart warning
-        needRestart = (self.must_restart or  # Custom Column Addition
-                       CONFIG['checkbox_enable_automatic_sync'] != (CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked) or
-                       CONFIG['checkbox_enable_scheduled_progressync'] != (CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked) or
-                       CONFIG['scheduleSyncHour'] != self.schedule_hour_input.value() or
-                       CONFIG['scheduleSyncMinute'] != self.schedule_minute_input.value()
-                       # Ajout: vérifier si hashdocsettings a changé
-                       CONFIG['checkbox_enable_sidecar_hashdocsettings'] != (self.hashdoc_checkbox.checkState() == Qt.Checked) or
-                       CONFIG['sidecar_hashdocsettings_loc'] != self.hashdoc_path_input.text()
-                       )
+        needRestart = (
+            self.must_restart or  # Custom Column Addition
+            CONFIG.get('checkbox_enable_automatic_sync', False) != (
+                CHECKBOXES['checkbox_enable_automatic_sync']['checkbox'].checkState() == Qt.Checked
+            ) or
+            CONFIG.get('checkbox_enable_scheduled_progressync', False) != (
+                CHECKBOXES['checkbox_enable_scheduled_progressync']['checkbox'].checkState() == Qt.Checked
+            ) or
+            CONFIG.get('scheduleSyncHour', 4) != self.schedule_hour_input.value() or
+            CONFIG.get('scheduleSyncMinute', 0) != self.schedule_minute_input.value() or
+            # Vérifier si hashdocsettings a changé
+            CONFIG.get('checkbox_enable_sidecar_hashdocsettings', False) != (
+                self.hashdoc_checkbox.checkState() == Qt.Checked
+            ) or
+            CONFIG.get('sidecar_hashdocsettings_loc', '') != self.hashdoc_path_input.text().strip()
+        )
 
         # Save Column Settings
         for config_name, metadata in CUSTOM_COLUMN_DEFAULTS.items():
             CONFIG[config_name] = metadata['comboBox'].get_selected_column()
 
-        # Save Checkbox Settings
+        # Save Checkbox Settings (only those in CHECKBOXES dict with 'checkbox' attribute)
         for config_name in CHECKBOXES:
-            CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState(
-            ) == Qt.Checked
+            if 'checkbox' in CHECKBOXES[config_name]:
+                CONFIG[config_name] = CHECKBOXES[config_name]['checkbox'].checkState() == Qt.Checked
 
-        # Save Hashdocsettings Settings
+        # Save Hashdocsettings Settings (gérés manuellement)
         CONFIG['checkbox_enable_sidecar_hashdocsettings'] = (
             self.hashdoc_checkbox.checkState() == Qt.Checked
         )
         CONFIG['sidecar_hashdocsettings_loc'] = self.hashdoc_path_input.text().strip()
+        CONFIG['checkbox_autodetect_hashdocsettings'] = (
+            self.autodetect_checkbox.checkState() == Qt.Checked
+        )
+        CONFIG['checkbox_save_detected_path'] = (
+            self.save_detected_checkbox.checkState() == Qt.Checked
+        )
 
         # Save Scheduled ProgressSync Settings
         CONFIG['scheduleSyncHour'] = self.schedule_hour_input.value()
@@ -490,7 +546,10 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         # NOTE: Server/Credentials are saved by the ProgressSyncPopup
 
         debug_print('new CONFIG = ', CONFIG)
-        if needRestart and show_restart_warning('Changes have been made that require a restart to take effect.\nRestart now?'):
+
+        if needRestart and show_restart_warning(
+            'Changes have been made that require a restart to take effect.\nRestart now?'
+        ):
             self.action.gui.quit(restart=True)
 
     def add_checkbox(self, checkboxKey):
