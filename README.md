@@ -44,7 +44,7 @@ that thread.
 1. Pick and choose the metadata you would like to sync and create the
    appropriate columns in calibre. The plugin makes this easy, simply select
    the **create new columns** option in the config dropdowns.
-   
+
    These are your options:
    - A _Floating point numbers_ column to store the **current percent read**,
      with _Format for numbers_ set to `{:.0%}`.
@@ -64,7 +64,7 @@ that thread.
      markdown_. (Highlights are an unordered list with their metadata in an
      HTML comment.)
    - A regular _Text_ column to store the **MD5 hash** KOReader uses to sync
-     progress to a [KOReader Sync 
+     progress to a [KOReader Sync
      Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
      (_Progress sync_ in the KOReader app). This allows for syncing
      progress and location to calibre without having to connect your KOReader device.
@@ -75,7 +75,7 @@ that thread.
    - A _Date_ column to store **when the book status was first marked finished**.
    - A _Long text_ column to store the **contents of the metadata sidecar** as
      HTML, with _Interpret this column as_ set to _HTML_.
-  
+
    There are additional settings for:
    - Sync only if changes are more recent: Checks retrieved **Last Sync Date** against date on file.
    - No sync if book has already been finished: If **percent read** is _100_ or if **reading status** is _finished_ don't update data.
@@ -101,7 +101,7 @@ changed/removed from `sidecar_contents` data structure:
 
 ### ProgressSync
 
-  This plugin supports use of a [KOReader Sync 
+  This plugin supports use of a [KOReader Sync
   Server](https://github.com/koreader/koreader-sync-server#koreader-sync-server)
   (_Progress sync_ in the KOReader app) in order to update **current percent read**
   (both float and int) and **location you last stopped reading at** wirelessly.\
@@ -209,6 +209,32 @@ Use make to load the plugin into calibre and launch it:
 
 ```shell
 make dev
+```
+
+For Flatpak installations of Calibre, use the `FLATPAK=1` flag:
+
+```shell
+make dev FLATPAK=1
+```
+
+### Makefile Targets
+
+| Target | Description |
+|--------|-------------|
+| `dev` | Load plugin source directly into Calibre and launch in debug mode |
+| `zip` | Create plugin ZIP file in `release/` directory |
+| `load` | Install ZIP from `release/` and launch Calibre in debug mode |
+| `release` | Full release workflow: update version → create zip → load |
+| `update_version` | Update version number in `__init__.py` and `pluginIndexKOReaderSync.txt` |
+| `tag` | Create and push git tag for current version |
+
+All targets that interact with Calibre support Flatpak installations via the `FLATPAK` environment variable:
+
+```shell
+# Examples
+make dev FLATPAK=1
+make release FLATPAK=1
+make load FLATPAK=1
 ```
 
 ### Release

@@ -9,6 +9,16 @@ release_dir = release
 # Convert the version to tuple format
 version_tuple := $(shell echo $(version) | awk -F. '{print "("$$1", "$$2", "$$3")"}')
 
+# Flatpak support: set FLATPAK=1 to use Flatpak commands
+# e.g., make release FLATPAK=1
+ifdef FLATPAK
+CALIBRE_CUSTOMIZE = flatpak run --command=calibre-customize com.calibre_ebook.calibre
+CALIBRE_DEBUG = flatpak run --command=calibre-debug com.calibre_ebook.calibre
+else
+CALIBRE_CUSTOMIZE = calibre-customize
+CALIBRE_DEBUG = calibre-debug
+endif
+
 # Main targets
 release: update_version zip load
 
@@ -17,12 +27,14 @@ zip: $(release_dir)
 	@mkdir -p "$(release_dir)" && zip "$(release_dir)/$(zip_file)" $(zip_contents)
 
 # Loads current src content, use this if doing dev changes
+# Use FLATPAK=1 for Flatpak installations
 dev:
-	@calibre-customize -b .; calibre-debug -g
+	@$(CALIBRE_CUSTOMIZE) -b .; $(CALIBRE_DEBUG) -g
 
 # Loads zip from release dir if exists
+# Use FLATPAK=1 for Flatpak installations
 load:
-	@calibre-customize -a "$(release_dir)/$(zip_file)"; calibre-debug -g
+	@$(CALIBRE_CUSTOMIZE) -a "$(release_dir)/$(zip_file)"; $(CALIBRE_DEBUG) -g
 
 update_version: update_version_plugin_index update_version_init
 	@echo "Versions updated in all files."
