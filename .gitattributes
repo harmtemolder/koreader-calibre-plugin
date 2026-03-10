@@ -1,0 +1,12 @@
+# Handle line endings automatically for files detected as text
+# and leave binary files untouched.
+* text=auto
+
+# Force bash scripts and python files to always use LF
+*.sh text eol=lf
+*.py text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+Makefile text eol=lf
+.editorconfig text eol=lf
+.gitignore text eol=lf
