@@ -193,7 +193,10 @@ class KoreaderAction(InterfaceAction):
         debug_print('start')
 
         base = self.interface_action_base_plugin
-        self.version = f'{base.name} (v{".".join(map(str, base.version))})'
+        if hasattr(base, 'version_string') and base.version_string:
+            self.version = f'{base.name} (v{base.version_string})'
+        else:
+            self.version = f'{base.name} (v{".".join(map(str, base.version))})'
         self.extension_callback = None
 
         # Overwrite icon with actual KOReader logo
