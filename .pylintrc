@@ -35,7 +35,8 @@ disable=raw-checker-failed,
         inconsistent-return-statements
 
 [REPORTS]
-evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+# Increased error weight from 5 to 50 so a single E fails the 9.5 threshold
+evaluation=10.0 - ((float(50 * error + warning + refactor + convention) / statement) * 10)
 score=yes
 
 [VARIABLES]

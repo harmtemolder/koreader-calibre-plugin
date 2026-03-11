@@ -78,7 +78,7 @@ test:
 
 lint:
 	@echo "Running linting (pylint)..."
-	@pylint *.py --rcfile=.pylintrc
+	@pylint __init__.py action.py config.py --rcfile=.pylintrc --fail-on=E,F
 
 # Helper targets to bump version in .version file
 bump-patch:

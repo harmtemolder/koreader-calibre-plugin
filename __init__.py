@@ -32,7 +32,7 @@ else:
 
 
 class KoreaderSync(InterfaceActionBase):
-    nameSome = 'KOReader Sync'
+    name = 'KOReader Sync'
     description = 'Get metadata from a connected KOReader device'
     author = 'harmtemolder & others, currently maintaining by: kyxap'
     version = (0, 7, 2)
@@ -51,7 +51,7 @@ class KoreaderSync(InterfaceActionBase):
             return ConfigWidget(self.actual_plugin_)
         return None
 
-    def save_settings(self, config_widget):
+    def save_settings(self, config_widget1):
         config_widget.save_settings()
 
 
