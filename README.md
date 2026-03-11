@@ -211,19 +211,26 @@ Use make to load the plugin into calibre and launch it:
 make dev
 ```
 
-For Flatpak installations of Calibre, use the `FLATPAK=1` flag:
+For Linux users with a Flatpak installation of Calibre, use the `FLATPAK=1`
+flag. This is necessary because Flatpak runs Calibre in a
+[sandboxed environment](https://docs.flatpak.org/en/latest/sandbox-permissions.html),
+requiring specific commands to interact with it:
 
 ```shell
 make dev FLATPAK=1
 ```
+
+> **Note:** `FLATPAK=1` is only supported on Linux. On Windows and macOS,
+> please install Calibre natively and run `make` without this flag.
 
 ### Makefile Targets
 
 | Target | Description |
 |--------|-------------|
 | `dev` | Load plugin source directly into Calibre and launch in debug mode |
-| `zip` | Create plugin ZIP file in `release/` directory |
-| `load` | Install ZIP from `release/` and launch Calibre in debug mode |
+| `install` | Install ZIP into Calibre without launching the GUI |
+| `zip` | Create plugin ZIP file in `dist/` directory |
+| `load` | Install ZIP from `dist/` and launch Calibre in debug mode |
 | `release` | Full release workflow: update version → create zip → load |
 | `update_version` | Update version number in `__init__.py` and `pluginIndexKOReaderSync.txt` |
 | `tag` | Create and push git tag for current version |
