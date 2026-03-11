@@ -231,28 +231,27 @@ make dev FLATPAK=1
 | `install` | Install ZIP into Calibre without launching the GUI |
 | `zip` | Create plugin ZIP file in `dist/` directory |
 | `load` | Install ZIP from `dist/` and launch Calibre in debug mode |
-| `release` | Full release workflow: update version → create zip → load |
-| `update_version` | Update version number in `__init__.py` and `pluginIndexKOReaderSync.txt` |
+| `build` | Full build workflow: update versions from `.version` and create ZIP |
+| `release` | Tag the current version and push to trigger GitHub Release |
+| `prep-release` | Create a `release-prep-<version>` branch, update files, and commit |
+| `bump-patch` | Increment the patch version in `.version` (e.g., 0.7.2 -> 0.7.3) |
+| `bump-minor` | Increment the minor version in `.version` (e.g., 0.7.2 -> 0.8.0) |
+| `update_version` | Sync version from `.version` to `__init__.py` and index file |
 | `tag` | Create and push git tag for current version |
 
-All targets that interact with Calibre support Flatpak installations via the `FLATPAK` environment variable:
+### Release Workflow
 
-```shell
-# Examples
-make dev FLATPAK=1
-make release FLATPAK=1
-make load FLATPAK=1
-```
+The project uses GitHub Actions to automate releases. When a tag `v*` is pushed, a GitHub Release is created automatically with the built plugin ZIP.
 
-### Release
-
-1. Update version in one file `version.txt`
-1. Use `make release` and it will update version, create zip, upload zip to
-   plugin directory
-1. Push all changes
-1. Use `make tag` to create and push tag
-1. Create release in github, use pushed tag and upload created zip to the
-   release
+1.  **Prepare the version:**
+    -   Manually edit `.version` OR run `make bump-patch` / `make bump-minor`.
+2.  **Run preparation:**
+    -   Run `make prep-release`. This creates a new branch (e.g., `release-prep-x.x.x`), updates all version strings in the code, and commits them.
+3.  **Review and Merge:**
+    -   Review the changes in the new branch, then merge it into `main`.
+4.  **Publish:**
+    -   On the `main` branch, run `make release`. This will tag the commit and push it.
+    -   The GitHub Action will pick up the tag, build the plugin, and create a GitHub Release with the ZIP attached.
 
 ### Debugging a release
 

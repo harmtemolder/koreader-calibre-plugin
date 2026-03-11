@@ -44,10 +44,36 @@ endif
 
 # Main targets
 # Always clean dev metadata before a formal release
-release: clean_dev
+build: clean_dev
 	@$(MAKE) update_version
 	@$(MAKE) zip
-	@$(MAKE) load
+
+release: build
+	@$(MAKE) tag
+
+# Preparation for a release: creates a branch, updates versions, and commits.
+# Allows .version to be dirty so you can edit it before running.
+prep-release:
+	@if [ -n "$$(git status --short | grep -v ' .version$$')" ]; then \
+		echo "Working directory has uncommitted changes (other than .version). Please commit or stash them first."; \
+		exit 1; \
+	fi
+	@echo "Preparing release for version $(version)"
+	@git checkout -b "release-prep-$(version)"
+	@$(MAKE) update_version
+	@git add .version $(init_file_to_upd) $(plugin_index_file_to_upd)
+	@git commit -m "chore: Prepare release $(version)"
+	@echo "Release preparation branch 'release-prep-$(version)' created."
+	@echo "Review the changes and then merge to main. Finally, run 'make release' on main."
+
+# Helper targets to bump version in .version file
+bump-patch:
+	@awk -F. '{print $$1"."$$2"."$$3+1}' .version > .version.tmp && mv .version.tmp .version
+	@echo "Version bumped to $$(cat .version)"
+
+bump-minor:
+	@awk -F. '{print $$1"."$$2+1".0"}' .version > .version.tmp && mv .version.tmp .version
+	@echo "Version bumped to $$(cat .version)"
 
 zip: $(dist_dir)
 	@echo "Creating new $(dist_dir)/$(zip_file)"
@@ -113,12 +139,11 @@ debug_version:
 tag:
 	@echo "Tagging version v$(version) and pushing to the repository"
 	@if git rev-parse "v$(version)" >/dev/null 2>&1; then \
-		echo "Tag v$(version) already exists. Deleting the old tag."; \
-		git tag -d "v$(version)"; \
-		git push origin ":refs/tags/v$(version)"; \
+		echo "Tag v$(version) already exists."; \
+	else \
+		git tag -a "v$(version)" -m "Version $(version)"; \
+		git push origin "v$(version)"; \
 	fi
-	@git tag -a "v$(version)" -m "Version $(version)"  # Create annotated tag for the version
-	@git push origin "v$(version)"  # Push the tag to the remote repository
 
 md_to_bb:
 	@echo "Converting input.md to output.forumbb"
@@ -126,4 +151,5 @@ md_to_bb:
 	@echo "Done:"
 	@cat .scripts/output.forumbb
 
-.PHONY: release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean
+.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release
+
