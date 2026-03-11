@@ -1,6 +1,7 @@
 [MASTER]
 ignore-patterns=slpp.py
-fail-under=8.0
+fail-under=9.5
+
 
 [MESSAGES CONTROL]
 # Disable some of the more "opinionated" or hard-to-fix-quickly checks
