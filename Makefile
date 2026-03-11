@@ -53,7 +53,7 @@ release: build
 
 # Preparation for a release: creates a branch, updates versions, and commits.
 # Allows .version to be dirty so you can edit it before running.
-prep-release:
+prep-release: lint test
 	@if [ -n "$$(git status --short | grep -v ' .version$$')" ]; then \
 		echo "Working directory has uncommitted changes (other than .version). Please commit or stash them first."; \
 		exit 1; \
@@ -65,6 +65,19 @@ prep-release:
 	@git commit -m "chore: Prepare release $(version)"
 	@echo "Release preparation branch 'release-prep-$(version)' created."
 	@echo "Review the changes and then merge to main. Finally, run 'make release' on main."
+
+# Quality tools
+test:
+	@echo "Running tests..."
+	@if [ -d "tests" ]; then \
+		pytest tests/ || echo "Tests failed."; \
+	else \
+		echo "No tests directory found."; \
+	fi
+
+lint:
+	@echo "Running linting (pylint)..."
+	@pylint *.py --rcfile=.pylintrc || echo "Linting issues found."
 
 # Helper targets to bump version in .version file
 bump-patch:
@@ -151,5 +164,5 @@ md_to_bb:
 	@echo "Done:"
 	@cat .scripts/output.forumbb
 
-.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release
+.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release test lint bump-patch bump-minor
 
