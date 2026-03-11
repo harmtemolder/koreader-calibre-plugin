@@ -35,7 +35,6 @@ from PyQt5.Qt import (
     QThread,
     pyqtSignal,
 )
-from PyQt5.QtGui import QPixmap
 
 from calibre_plugins.koreader.slpp import slpp as lua
 from calibre_plugins.koreader.config import (
@@ -58,7 +57,6 @@ from calibre.gui2.device import device_signals
 from calibre.gui2 import (
     error_dialog,
     warning_dialog,
-    info_dialog,
     open_url,
 )
 from calibre.devices.usbms.driver import debug_print as root_debug_print
@@ -1269,7 +1267,7 @@ class KoreaderAction(InterfaceAction):
                     SyncCompletionDialog(
                         self.gui,
                         'Metadata sync finished',
-                        results_message + f'All looks good!\n\n',
+                        results_message + 'All looks good!\n\n',
                         res['results'],
                         'info'
                     )
@@ -1277,9 +1275,9 @@ class KoreaderAction(InterfaceAction):
                     SyncCompletionDialog(
                         self.gui,
                         'Some sync failed',
-                        results_message + f'There was some error during sync process!\n'
-                        f'Please investigate and report if it looks '
-                        f'like a bug\n\n',
+                        results_message + 'There was some error during sync process!\n'
+                        'Please investigate and report if it looks '
+                        'like a bug\n\n',
                         res['results'],
                         'error'
                     )
@@ -1287,11 +1285,11 @@ class KoreaderAction(InterfaceAction):
                     SyncCompletionDialog(
                         self.gui,
                         'No errors but not successful syncs',
-                        results_message + f'No errors but no successful syncs\n'
-                        f'Do you have book(s) which are ready to be '
-                        f'sync?\n'
-                        f'Please investigate and report if it looks '
-                        f'like a bug\n\n',
+                        results_message + 'No errors but no successful syncs\n'
+                        'Do you have book(s) which are ready to be '
+                        'sync?\n'
+                        'Please investigate and report if it looks '
+                        'like a bug\n\n',
                         res['results'],
                         'warn'
                     )
@@ -1299,7 +1297,7 @@ class KoreaderAction(InterfaceAction):
                     error_dialog(
                         self.gui,
                         'Edge case',
-                        results_message + f'Seems like and bug, please report ASAP\n\n',
+                        results_message + 'Seems like and bug, please report ASAP\n\n',
                         det_msg=json.dumps(res['results'], indent=2),
                         show=True,
                         show_copy_button=False

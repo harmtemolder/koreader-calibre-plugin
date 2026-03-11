@@ -120,8 +120,8 @@ def clean_bookmarks(bookmarks):
             html_content += (f'<p><strong>{highlight_count}. Highlight</strong'
                              f'> - {highlight["datetime"]} '
                              f'<br/>{highlight["highlighted_text"]}\n')
-            html_content += f'<br><br>\n'
-            html_content += (f'<strong>Note:</strong> <i>'
+            html_content += '<br><br>\n'
+            html_content += ('<strong>Note:</strong> <i>'
                              f'{highlight["reader_note"]}</i></p>\n')
             html_content += f'{highlight["hidden_attributes"]}\n'
 

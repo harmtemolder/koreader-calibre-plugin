@@ -28,9 +28,7 @@ from calibre.constants import numeric_version
 from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.utils.config import JSONConfig
 from calibre_plugins.koreader import clean_bookmarks
-from calibre.gui2 import show_restart_warning, error_dialog
-from calibre.customize.ui import initialized_plugins
-from calibre.customize import PluginInstallationType
+from calibre.gui2 import show_restart_warning
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2021, harmtemolder <mail at harmtemolder.com>'
@@ -675,8 +673,10 @@ class TitleLayout(QHBoxLayout):
 
 
 class CustomColumnComboBox(QComboBox):
-    def __init__(self, parent, custom_columns={}, selected_column='', create_column_callback=None):
-        super(CustomColumnComboBox, self).__init__(parent)
+    def __init__(self, parent, custom_columns=None, selected_column='', create_column_callback=None):
+        super().__init__(parent)
+        if custom_columns is None:
+            custom_columns = {}
         self.create_column_callback = create_column_callback
         if create_column_callback is not None:
             self.currentTextChanged.connect(self.current_text_changed)
