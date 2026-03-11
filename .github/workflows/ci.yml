@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test-and-lint:
+  lint:
+    name: Linting (Pylint)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,12 +22,29 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pylint
-          # Add other dependencies if needed
+          pip install pylint
           if [ -f Pipfile ]; then pip install pipenv && pipenv install --system --dev; fi
 
       - name: Run Linting
         run: make lint
+
+  test:
+    name: Unit Tests (Pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f Pipfile ]; then pip install pipenv && pipenv install --system --dev; fi
 
       - name: Run Tests
         run: make test

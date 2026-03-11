@@ -231,6 +231,8 @@ make dev FLATPAK=1
 | `install` | Install ZIP into Calibre without launching the GUI |
 | `zip` | Create plugin ZIP file in `dist/` directory |
 | `load` | Install ZIP from `dist/` and launch Calibre in debug mode |
+| `test` | Run unit tests using `pytest` (includes Calibre environment mocks) |
+| `lint` | Run static analysis using `pylint` (enforces 9.5/10 score and zero Errors) |
 | `build` | Full build workflow: update versions from `.version` and create ZIP |
 | `release` | Tag the current version and push to trigger GitHub Release |
 | `prep-release` | Create a `release-prep-<version>` branch, update files, and commit |
@@ -239,7 +241,16 @@ make dev FLATPAK=1
 | `update_version` | Sync version from `.version` to `__init__.py` and index file |
 | `tag` | Create and push git tag for current version |
 
-### Release Workflow
+### Quality Assurance
+
+The project enforces high code quality standards through automated checks:
+
+- **Unit Testing:** Run `make test`. We use `pytest` along with a mocking layer (`tests/conftest.py`) that simulates the Calibre environment. This allows you to test plugin logic without having Calibre installed.
+- **Linting:** Run `make lint`. We use `pylint` with a custom configuration (`.pylintrc`).
+  - **Threshold:** The project requires a minimum score of **9.5/10**.
+  - **Strictness:** The build will **instantly fail** if any **Fatal (F)** or **Error (E)** messages are found, regardless of the total score.
+
+These checks run automatically on every Pull Request via GitHub Actions.
 
 The project uses GitHub Actions to automate releases. When a tag `v*` is pushed, a GitHub Release is created automatically with the built plugin ZIP.
 

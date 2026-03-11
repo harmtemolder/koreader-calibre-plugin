@@ -70,14 +70,18 @@ prep-release: lint test
 test:
 	@echo "Running tests..."
 	@if [ -d "tests" ]; then \
-		pytest tests/ || echo "Tests failed."; \
+		pytest tests/; \
 	else \
 		echo "No tests directory found."; \
+		exit 1; \
 	fi
 
 lint:
 	@echo "Running linting (pylint)..."
-	@pylint *.py --rcfile=.pylintrc || echo "Linting issues found."
+	@pylint __init__.py action.py config.py --rcfile=.pylintrc --fail-on=E,F --output-format=colorized --msg-template="{path}:{line}: [{category}] {msg} ({symbol})" || \
+	(echo -e "\n\033[0;31m[!!!] CRITICAL ERRORS FOUND - FIX THESE FIRST:\033[0m" && \
+	 pylint __init__.py action.py config.py --rcfile=.pylintrc --errors-only && \
+	 exit 1)
 
 # Helper targets to bump version in .version file
 bump-patch:
@@ -86,6 +90,10 @@ bump-patch:
 
 bump-minor:
 	@awk -F. '{print $$1"."$$2+1".0"}' .version > .version.tmp && mv .version.tmp .version
+	@echo "Version bumped to $$(cat .version)"
+
+bump-major:
+	@awk -F. '{print $$1+1".0.0"}' .version > .version.tmp && mv .version.tmp .version
 	@echo "Version bumped to $$(cat .version)"
 
 zip: $(dist_dir)
@@ -164,5 +172,5 @@ md_to_bb:
 	@echo "Done:"
 	@cat .scripts/output.forumbb
 
-.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release test lint bump-patch bump-minor
+.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release test lint bump-patch bump-minor bump-major
 
