@@ -32,7 +32,7 @@ else:
 
 
 class KoreaderSync(InterfaceActionBase):
-    name = 'KOReader Sync'
+    nameSome = 'KOReader Sync'
     description = 'Get metadata from a connected KOReader device'
     author = 'harmtemolder & others, currently maintaining by: kyxap'
     version = (0, 7, 2)
