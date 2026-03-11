@@ -23,6 +23,25 @@ dist_dir = dist
 # Convert the version to tuple format
 version_tuple := $(shell echo $(version) | awk -F. '{print "("$$1", "$$2", "$$3")"}')
 
+# Flatpak support: set FLATPAK=1 to use Flatpak commands
+# e.g., make release FLATPAK=1
+ifdef FLATPAK
+    ifneq ($(shell uname -s 2>/dev/null),Linux)
+        $(error FLATPAK=1 is only supported on Linux. For other platforms, please install Calibre natively and run make without FLATPAK=1)
+    endif
+    ifeq ($(shell command -v flatpak 2>/dev/null),)
+        $(error The 'flatpak' command was not found. Please install flatpak or run make without FLATPAK=1)
+    endif
+    ifeq ($(shell flatpak info com.calibre_ebook.calibre >/dev/null 2>&1; echo $$?),1)
+        $(error Calibre Flatpak (com.calibre_ebook.calibre) is not installed. Please install it or run make without FLATPAK=1)
+    endif
+    CALIBRE_CUSTOMIZE = flatpak run --command=calibre-customize com.calibre_ebook.calibre
+    CALIBRE_DEBUG = flatpak run --command=calibre-debug com.calibre_ebook.calibre
+else
+    CALIBRE_CUSTOMIZE = calibre-customize
+    CALIBRE_DEBUG = calibre-debug
+endif
+
 # Main targets
 # Always clean dev metadata before a formal release
 release: clean_dev
@@ -42,18 +61,22 @@ dev: dev_version
 dev_version:
 	@mkdir -p "$(dist_dir)"
 	@echo "$(DEV_VERSION)" > "$(dist_dir)/.version-dev"
-	@sed -i 's/version = ([0-9, ]*)/version = $(DEV_TUPLE)/' $(init_file_to_upd)
-	@if grep -q "version_string =" $(init_file_to_upd); then \
-		sed -i "s/version_string = .*/version_string = '$(DEV_VERSION)'/" $(init_file_to_upd); \
+	@sed -i 's/^\([[:space:]]*\)version = ([0-9, ]*)/\1version = $(DEV_TUPLE)/' $(init_file_to_upd)
+	@if grep -q "^[[:space:]]*version_string =" $(init_file_to_upd); then \
+		sed -i "s/^\([[:space:]]*\)version_string = .*/\1version_string = '$(DEV_VERSION)'/" $(init_file_to_upd); \
 	else \
-		sed -i "/version = /a \    version_string = '$(DEV_VERSION)'" $(init_file_to_upd); \
+		sed -i "/^[[:space:]]*version = /a \    version_string = '$(DEV_VERSION)'" $(init_file_to_upd); \
 	fi
 	@sed -i 's/Version: [^;]*;/Version: $(DEV_VERSION);/' $(plugin_index_file_to_upd)
 	@echo "Dev version set to $(DEV_VERSION)"
 
-# Loads zip from dist dir if exists
-load:
-	@calibre-customize -a "$(dist_dir)/$(zip_file)"; calibre-debug -g
+# Install the plugin into Calibre
+install: zip
+	@$(CALIBRE_CUSTOMIZE) -a "$(dist_dir)/$(zip_file)"
+
+# Install and then launch Calibre in debug mode
+load: install
+	@$(CALIBRE_DEBUG) -g
 
 update_version: update_version_plugin_index update_version_init
 	@echo "Versions updated in all files."
@@ -65,8 +88,8 @@ update_version_plugin_index:
 
 update_version_init:
 	@echo "Updating version in $(init_file_to_upd) to $(version_tuple)"
-	@sed -i '/^[[:space:]]*version = /s/version = ([0-9, ]*)/version = $(version_tuple)/' $(init_file_to_upd)
-	@sed -i "/^[[:space:]]*version_string = /s/version_string = '.*'/version_string = '$(version)'/" $(init_file_to_upd)
+	@sed -i 's/^\([[:space:]]*\)version = ([0-9, ]*)/\1version = $(version_tuple)/' $(init_file_to_upd)
+	@sed -i "s/^\([[:space:]]*\)version_string = .*/\1version_string = '$(version)'/" $(init_file_to_upd)
 	@echo "Version updated in $(init_file_to_upd)"
 
 clean_dev:
@@ -103,4 +126,4 @@ md_to_bb:
 	@echo "Done:"
 	@cat .scripts/output.forumbb
 
-.PHONY: release zip dev load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean
+.PHONY: release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean
