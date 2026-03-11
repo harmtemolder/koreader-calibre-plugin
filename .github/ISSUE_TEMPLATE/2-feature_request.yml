@@ -2,8 +2,7 @@ name: Feature Request
 description: Suggest an idea for a new feature
 title: "[FEATURE] "
 labels: ["enhancement", "triage"]
-assignees:
-  - kyxap
+assignees: []
 
 body:
   - type: markdown
