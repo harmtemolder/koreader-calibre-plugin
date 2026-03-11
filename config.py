@@ -211,6 +211,28 @@ CUSTOM_COLUMN_DEFAULTS = {
         'data_source': 'sidecar',
         'data_location': ['partial_md5_checksum'],
     },
+    'column_device_name': {
+        'column_heading': _("KOReader Device Name"),
+        'datatype': 'text',
+        'description': _("Last Synced Device Name from ProgressSync."),
+        'default_lookup_name': '#ko_device_name',
+        'config_label': _('ProgressSync Device Name:'),
+        'config_tool_tip': _('A regular "Text" column to store the last device name used\n'
+                             'to sync progress via ProgressSync.'),
+        'data_source': 'progresssync',
+        'data_location': ['device'],
+    },
+    'column_device_id': {
+        'column_heading': _("KOReader Device ID"),
+        'datatype': 'text',
+        'description': _("Last Synced Device ID from ProgressSync."),
+        'default_lookup_name': '#ko_device_id',
+        'config_label': _('ProgressSync Device ID:'),
+        'config_tool_tip': _('A regular "Text" column to store the last device id used\n'
+                             'to sync progress via ProgressSync.'),
+        'data_source': 'progresssync',
+        'data_location': ['device'],
+    },
     'column_date_synced': {
         'column_heading': _("Date KOReader Synced"),
         'datatype': 'datetime',
