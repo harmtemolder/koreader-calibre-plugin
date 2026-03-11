@@ -89,6 +89,10 @@ bump-minor:
 	@awk -F. '{print $$1"."$$2+1".0"}' .version > .version.tmp && mv .version.tmp .version
 	@echo "Version bumped to $$(cat .version)"
 
+bump-major:
+	@awk -F. '{print $$1+1".0.0"}' .version > .version.tmp && mv .version.tmp .version
+	@echo "Version bumped to $$(cat .version)"
+
 zip: $(dist_dir)
 	@echo "Creating new $(dist_dir)/$(zip_file)"
 	@mkdir -p "$(dist_dir)" && zip -r "$(dist_dir)/$(zip_file)" $(zip_contents)
@@ -165,5 +169,5 @@ md_to_bb:
 	@echo "Done:"
 	@cat .scripts/output.forumbb
 
-.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release test lint bump-patch bump-minor
+.PHONY: build release zip dev install load update_version update_version_plugin_index update_version_init debug_version tag md_to_bb dev_version clean_dev clean prep-release test lint bump-patch bump-minor bump-major
 

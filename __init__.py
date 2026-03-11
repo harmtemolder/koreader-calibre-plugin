@@ -51,7 +51,7 @@ class KoreaderSync(InterfaceActionBase):
             return ConfigWidget(self.actual_plugin_)
         return None
 
-    def save_settings(self, config_widget1):
+    def save_settings(self, config_widget):
         config_widget.save_settings()
 
 
