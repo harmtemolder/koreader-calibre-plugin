@@ -207,7 +207,7 @@ class KoreaderAction(InterfaceAction):
         self.qaction.setIcon(icon)
 
         # Left-click action
-        self.qaction.triggered.connect(self.sync_to_calibre)
+        self.qaction.triggered.connect(self.exec_main_action)
 
         # Right-click menu (already includes left-click action)
 
@@ -288,6 +288,16 @@ class KoreaderAction(InterfaceAction):
                         return
                 except Exception as e:
                     print(f"Failed to load extension: {e}")
+
+    def exec_main_action(self) -> None:
+        # Execute main action defined by user
+        main_button = CONFIG['main_action']
+        if main_button == 'KOReader Sync':
+            self.sync_to_calibre()
+        elif main_button == 'Progress Sync':
+            self.sync_progress_from_progresssync()
+        else:
+            self.sync_to_calibre()
 
     def show_config(self):
         self.interface_action_base_plugin.do_user_config(self.gui)
