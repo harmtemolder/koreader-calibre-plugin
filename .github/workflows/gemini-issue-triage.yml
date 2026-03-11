@@ -1,0 +1,61 @@
+name: Gemini Issue Triage
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'issues' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request == null && github.event.comment.user.id == github.event.issue.user.id)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Gemini Triage
+        uses: google-github-actions/run-gemini-cli@v0
+        with:
+          google_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            You are an expert project maintainer for "koreader-calibre-plugin".
+            Your goal is to triage issues, check for missing info, and manage assignments.
+            You have access to the GitHub CLI (`gh`) and the project source code.
+
+            Current Event: ${{ github.event_name }}
+            Issue Number: ${{ github.event.issue.number }}
+            Issue Title: ${{ github.event.issue.title }}
+            Issue Body: ${{ github.event.issue.body }}
+            Comment Body: ${{ github.event.comment.body || 'No comment body' }}
+
+            ### STEPS:
+            1. Use `gh issue list --state open --json number,title --limit 100` to find potential duplicates.
+            2. If `github.event_name == 'issues'` (new issue opened):
+               - Check if "Bug Report" or "Feature Request" templates were followed correctly.
+               - Required fields for Bugs: Plugin version, KOreader version, OS, Connection type, Reproduction steps, Expected behavior.
+               - Required fields for Features: Summary, Motivation, Use Cases.
+               - **Ambiguity Check:** Even if fields are filled, are the "Reproduction steps" or "Describe the bug" clear enough? If it's too vague (e.g., "it doesn't work"), mark it as needing info.
+               - Check for duplicates using the list of open issues.
+               - ACTION:
+                 - If missing info or ambiguous: `gh issue comment ${{ github.event.issue.number }} --body "Polite message about what's missing or why the description is unclear. Be specific about what you need."` AND `gh issue edit ${{ github.event.issue.number }} --add-label "needs-info"`.
+                 - If duplicate: `gh issue comment ${{ github.event.issue.number }} --body "Polite message about duplicate with link to original."` AND `gh issue edit ${{ github.event.issue.number }} --add-label "duplicate"`.
+                 - If good and clear: `gh issue edit ${{ github.event.issue.number }} --add-label "triaged"`.
+                 - NEVER assign `kyxap` on a new issue.
+
+            3. If `github.event_name == 'issue_comment'` (comment from author):
+               - Check if the issue has "needs-info" or "duplicate" labels.
+               - Determine if this comment provides the missing info, refutes the duplicate claim, or clarifies the ambiguity.
+               - ACTION:
+                 - If satisfied and the issue is now clear: Remove "needs-info"/"duplicate" labels, add "triaged", and ASSIGN "kyxap".
+                 - Example: `gh issue edit ${{ github.event.issue.number }} --remove-label "needs-info" --add-label "triaged" --add-assignee "kyxap"`.
+                 - `gh issue comment ${{ github.event.issue.number }} --body "Thank you! That clears things up. kyxap is now assigned to look into this."`.
+                 - If still unclear or info still missing: `gh issue comment ${{ github.event.issue.number }} --body "Still missing [details] or still unclear because [reason]..."`.
+
+            Use `gh` commands for all issue interactions. Be professional and concise.

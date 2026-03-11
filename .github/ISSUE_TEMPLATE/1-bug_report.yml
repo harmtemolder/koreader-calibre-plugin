@@ -2,8 +2,7 @@ name: Bug Report
 description: File a bug report.
 title: "[Bug] "
 labels: ["bug", "triage"]
-assignees:
-  - kyxap
+assignees: []
 
 body:
   - type: markdown
@@ -38,6 +37,7 @@ body:
       options:
         - Linux
         - Windows
+        - MacOS
     validations:
       required: true
 
