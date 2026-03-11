@@ -78,7 +78,10 @@ test:
 
 lint:
 	@echo "Running linting (pylint)..."
-	@pylint __init__.py action.py config.py --rcfile=.pylintrc --fail-on=E,F
+	@pylint __init__.py action.py config.py --rcfile=.pylintrc --fail-on=E,F --output-format=colorized --msg-template="{path}:{line}: [{category}] {msg} ({symbol})" || \
+	(echo -e "\n\033[0;31m[!!!] CRITICAL ERRORS FOUND - FIX THESE FIRST:\033[0m" && \
+	 pylint __init__.py action.py config.py --rcfile=.pylintrc --errors-only && \
+	 exit 1)
 
 # Helper targets to bump version in .version file
 bump-patch:
