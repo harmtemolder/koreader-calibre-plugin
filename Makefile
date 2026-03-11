@@ -70,9 +70,10 @@ prep-release: lint test
 test:
 	@echo "Running tests..."
 	@if [ -d "tests" ]; then \
-		pytest tests/ || echo "Tests failed."; \
+		pytest tests/; \
 	else \
 		echo "No tests directory found."; \
+		exit 1; \
 	fi
 
 lint:
