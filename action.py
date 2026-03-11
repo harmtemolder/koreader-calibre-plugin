@@ -145,7 +145,7 @@ def parse_sidecar_lua(sidecar_lua):
     )
 
     try:
-        clean_lua = re.sub('^[^{]*', '', sidecar_lua).strip()
+        clean_lua = re.sub(r'^[^{]*', '', sidecar_lua).strip()
         decoded_lua = lua.decode(clean_lua)
     except:
         debug_print('could not decode sidecar_lua')
@@ -186,7 +186,7 @@ class KoreaderAction(InterfaceAction):
             'menubar-device', 'context-menu-cover-browser',
             'context-menu-split']
     )
-    dont_remove_from = InterfaceAction.all_locations - dont_add_to
+    dont_remove_from = frozenset()
     action_type = 'current'
 
     def genesis(self):
