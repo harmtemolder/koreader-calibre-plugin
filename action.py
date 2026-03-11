@@ -460,17 +460,20 @@ class KoreaderAction(InterfaceAction):
             debug_print(f'Parsing: {path}')
             parsed_contents = parse_sidecar_lua(decoded_contents)
             parsed_contents['calculated'] = {}
-            try:
-                parsed_contents['calculated'][
-                'date_synced'] = datetime.now().replace(tzinfo=local_tz)
-                parsed_contents['calculated'][
-                    'date_status_changed'] = datetime.strptime(
-                    parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)
-                parsed_contents['calculated'][
-                    'date_sidecar_modified'] = datetime.fromtimestamp(
-                    os.path.getmtime(path)).replace(tzinfo=local_tz)
-            except:
-                pass
+            # Define metadata extraction tasks
+            metadata_tasks = [
+                ('date_synced', lambda: datetime.now().replace(tzinfo=local_tz)),
+                ('date_status_changed', lambda: datetime.strptime(
+                    parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)),
+                ('date_sidecar_modified', lambda: datetime.fromtimestamp(
+                    os.path.getmtime(path)).replace(tzinfo=local_tz))
+            ]
+
+            for key, task in metadata_tasks:
+                try:
+                    parsed_contents['calculated'][key] = task()
+                except Exception as error:
+                    debug_print(f'Failed to set {key}: {error}')
 
         return parsed_contents
 
