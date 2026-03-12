@@ -393,7 +393,7 @@ class KoreaderAction(InterfaceAction):
         on the device
 
         :param device: a device object
-        :return: a dict of uuids with corresponding paths to sidecars
+        :return: a list of (uuid, path) tuples to sidecars
         """
         debug_print = partial(
             module_debug_print,
@@ -405,24 +405,25 @@ class KoreaderAction(InterfaceAction):
             '\n\t'.join([book.path for book in device.books()])
         )
 
-        debug_print(
-            f'found {len(device.books())} lpaths to books:\n\t',
-            '\n\t'.join([book.lpath for book in device.books()])
-        )
-
         for book in device.books():
             debug_print(f'uuid to path: {book.uuid} - {book.path}')
 
-        paths = {
-            book.uuid: re.sub(
+        paths = []
+        for book in device.books():
+            # Ignore hidden folders (issue #101)
+            if any(part.startswith('.') for part in book.path.replace('\\\\', '/').split('/')):
+                debug_print(f'Ignoring book in hidden folder: {book.path}')
+                continue
+
+            sidecar_path = re.sub(
                 r'\.(\w+)$', r'.sdr/metadata.\1.lua', book.path
             )
-            for book in device.books()
-        }
+            paths.append((book.uuid, sidecar_path))
+
 
         debug_print(
             f'generated {len(paths)} path(s) to sidecar Lua files:\n\t',
-            '\n\t'.join(paths.values())
+            '\n\t'.join([p[1] for p in paths])
         )
 
         return paths
@@ -458,13 +459,19 @@ class KoreaderAction(InterfaceAction):
             debug_print(f'Parsing: {path}')
             parsed_contents = parse_sidecar_lua(decoded_contents)
             parsed_contents['calculated'] = {}
+            
+            # Ensure 'summary' exists to avoid KeyError later (#117)
+            if 'summary' not in parsed_contents:
+                debug_print(f"Warning: 'summary' key missing in sidecar for {path}")
+                parsed_contents['summary'] = {'status': 'unknown', 'modified': datetime.now().strftime("%Y-%m-%d")}
+
             # Define metadata extraction tasks
             metadata_tasks = [
                 ('date_synced', lambda: datetime.now().replace(tzinfo=local_tz)),
                 ('date_status_changed', lambda: datetime.strptime(
-                    parsed_contents['summary']['modified'], "%Y-%m-%d").replace(tzinfo=local_tz)),
+                    parsed_contents['summary'].get('modified', datetime.now().strftime("%Y-%m-%d")), "%Y-%m-%d").replace(tzinfo=local_tz)),
                 ('date_sidecar_modified', lambda: datetime.fromtimestamp(
-                    os.path.getmtime(path)).replace(tzinfo=local_tz))
+                    os.path.getmtime(path) if os.path.exists(path) else time.time()).replace(tzinfo=local_tz))
             ]
 
             for key, task in metadata_tasks:
@@ -675,9 +682,52 @@ class KoreaderAction(InterfaceAction):
             )
             return True
 
-    def push_metadata_to_koreader_sidecar(self, book_uuid, path):
+    def device_path_exists(self, device, path):
+        """Checks if a path exists on the device, with timing debug logs."""
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:device_path_exists:'
+        )
+        start_time = time.time()
+        exists = False
+        method = "unknown"
+
+        # 1. Try native driver exists() if available
+        if hasattr(device, 'exists'):
+            try:
+                exists = device.exists(path)
+                method = "driver.exists"
+            except:
+                pass
+
+        # 2. Try local filesystem (for USB)
+        if not exists:
+            try:
+                if os.path.exists(path):
+                    exists = True
+                    method = "os.path.exists"
+            except:
+                pass
+
+        # 3. Try get_file (for Wireless) - this is the "expensive" fallback
+        if not exists and method == "unknown":
+            try:
+                with io.BytesIO() as dummy:
+                    device.get_file(path, dummy)
+                exists = True
+                method = "device.get_file"
+            except:
+                exists = False
+                method = "device.get_file (failed)"
+
+        end_time = time.time()
+        debug_print(f"Path: {path} | Exists: {exists} | Method: {method} | Time: {end_time - start_time:.4f}s")
+        return exists
+
+    def push_metadata_to_koreader_sidecar(self, device, book_uuid, path):
         """Create a sidecar file for the given book.
 
+        :param device: The connected device object
         :param book_uuid: Calibre's uuid for the book
         :param path: path to sidecar file to create
         :return: tuple of bool and result dict
@@ -720,25 +770,23 @@ class KoreaderAction(InterfaceAction):
         # KOReader uses those.
         sidecar_lua = re.sub(r'\["(\d+)"\]', r'[\1]', sidecar_lua)
         sidecar_lua_formatted = f"-- we can read Lua syntax here!\nreturn {sidecar_lua}\n"
-        try:
-            os.makedirs(os.path.dirname(path))
-        except FileExistsError:
-            # dir exists, so we're fine
-            pass
-        except PermissionError as perm_e:
+        
+        # Use device.put_file to support wireless devices (#122)
+        # Check if driver supports writing arbitrary files
+        if not hasattr(device, 'put_file'):
+            debug_print(f"Device driver {device.__class__.__name__} does not support writing sidecar files wirelessly.")
             return "failure", {
-                'result': f'Unable to create directory at: '
-                f'{path} due to {perm_e}',
-            }
-        except OSError as os_e:
-            return "failure", {
-                'result': f'Unexpectable exception is occurred, '
-                f'please report: {os_e}',
+                'result': 'Wireless write not supported by this device driver. Please use USB or Sync Server.',
             }
 
-        with open(path, "w", encoding="utf-8") as f:
-            debug_print(f"Writing to {path}")
-            f.write(sidecar_lua_formatted)
+        try:
+            with io.BytesIO(sidecar_lua_formatted.encode('utf-8')) as f:
+                device.put_file(path, f)
+        except Exception as e:
+            debug_print(f"Failed to push metadata to {path}: {e}")
+            return "failure", {
+                'result': f'Failed to write to device: {e}',
+            }
 
         return "success", {
             'result': 'success',
@@ -776,25 +824,23 @@ class KoreaderAction(InterfaceAction):
 
         sidecar_paths = self.get_paths(device)
         debug_print('sidecar_paths: ', sidecar_paths)
-        sidecar_paths_exist = {}
-        sidecar_paths_not_exist = {}
-        for book_uuid, path in sidecar_paths.items():
-            if os.path.exists(path):
-                sidecar_paths_exist[book_uuid] = path
-            else:
-                sidecar_paths_not_exist[book_uuid] = path
-        debug_print(
-            "Sidecars not present on device:",
-            "\n".join(sidecar_paths_not_exist.values())
-        )
-
+        
         results = []
-        num_candidates = len(sidecar_paths_not_exist)
+        num_processed = 0
         num_success = 0
         num_no_metadata = 0
         num_fail = 0
-        for book_uuid, path in sidecar_paths_not_exist.items():
-            result, details = self.push_metadata_to_koreader_sidecar(book_uuid,
+        num_skipped_existing = 0
+        
+        for book_uuid, path in sidecar_paths:
+            # Check if exists first (issue #122 revisited)
+            if self.device_path_exists(device, path):
+                debug_print(f"Skipping existing sidecar: {path}")
+                num_skipped_existing += 1
+                continue
+
+            num_processed += 1
+            result, details = self.push_metadata_to_koreader_sidecar(device, book_uuid,
                                                                      path)
             if result == "success":
                 num_success += 1
@@ -826,7 +872,8 @@ class KoreaderAction(InterfaceAction):
 
         if not silent:
             results_message = (
-                f'{num_candidates} books on device without sidecars.\n'
+                f'{len(sidecar_paths)} books on device.\n'
+                f'{num_skipped_existing} books already have sidecars (skipped).\n'
                 f'Sidecar creation succeeded for {num_success}.\n'
                 f'Sidecar creation failed for {num_fail}.\n'
                 f'No attempt made for {num_no_metadata} (no metadata in Calibre to push).\n'
@@ -1137,7 +1184,7 @@ class KoreaderAction(InterfaceAction):
                 num_fail = 0
                 num_skip = 0
 
-                for idx, (book_uuid, sidecar_path) in enumerate(sidecar_paths.items()):
+                for idx, (book_uuid, sidecar_path) in enumerate(self.sidecar_paths):
                     debug_print('Trying to get sidecar from ', device,
                                 ', with sidecar_path: ', sidecar_path)
 
@@ -1152,9 +1199,21 @@ class KoreaderAction(InterfaceAction):
                     sidecar_contents = self.action.get_sidecar(
                         device, sidecar_path)
                     debug_print("sidecar_contents:", sidecar_contents)
-                    book_id = db.lookup_by_uuid(book_uuid)
-                    metadata = db.get_metadata(book_id)
-                    title = metadata.get('title')
+
+                    try:
+                        book_id = db.lookup_by_uuid(book_uuid)
+                        if not book_id:
+                            raise Exception("Book not found")
+                        metadata = db.get_metadata(book_id)
+                        title = metadata.get('title')
+                    except Exception as e:
+                        debug_print(f"Failed to lookup book {book_uuid}: {e}")
+                        status = f'skipped, could not find in library'
+                        append_results(results, "Unknown", status,
+                                       book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
+
                     self.progress_update.emit(idx + 1, title)
                     if DEBUG: # Add time delay when debugging
                         time.sleep(.4)
@@ -1187,18 +1246,20 @@ class KoreaderAction(InterfaceAction):
                             continue
 
                         # Special handling for date started/finished
+                        # Safety check for 'summary' key (#117)
+                        summary = sidecar_contents.get('summary', {})
                         if config_name == 'column_date_book_started':
-                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'reading':
+                            if metadata.get(target) is None and summary.get('status') == 'reading':
                                 sidecar_contents['calculated']['date_book_started'] = sidecar_contents['calculated'].get('date_status_changed')
                         if config_name == 'column_date_book_finished':
-                            if metadata.get(target) is None and sidecar_contents['summary']['status'] == 'complete':
+                            if metadata.get(target) is None and summary.get('status') == 'complete':
                                 sidecar_contents['calculated']['date_book_finished'] = sidecar_contents['calculated'].get('date_status_changed')
 
                         data_location = column['data_location']
                         value = sidecar_contents
 
                         for subproperty in data_location:
-                            if subproperty in value:
+                            if value and subproperty in value:
                                 value = value[subproperty]
                             else:
                                 debug_print(
@@ -1206,7 +1267,7 @@ class KoreaderAction(InterfaceAction):
                                 value = None
                                 break
 
-                        if not value:
+                        if value is None:
                             continue
 
                         # Transform value if required
@@ -1217,8 +1278,8 @@ class KoreaderAction(InterfaceAction):
                         keys_values_to_update[target] = value
 
                     operation_status, result = self.action.update_metadata(
-                        book_uuid, db, keys_values_to_update
-                    )
+                        book_uuid, db, keys_values_to_update)
+
 
                     results.append(
                         {
