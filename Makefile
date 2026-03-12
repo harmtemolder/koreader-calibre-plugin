@@ -48,7 +48,20 @@ build: clean_dev
 	@$(MAKE) update_version
 	@$(MAKE) zip
 
-release: build
+release: lint test build
+	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
+		echo "Error: You must be on the 'main' branch to release."; \
+		exit 1; \
+	fi
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Error: Working directory is not clean. Commit all changes before releasing."; \
+		exit 1; \
+	fi
+	@git fetch origin
+	@if [ "$$(git rev-parse HEAD)" != "$$(git rev-parse origin/main)" ]; then \
+		echo "Error: Your local main is not in sync with origin/main. Push your changes first."; \
+		exit 1; \
+	fi
 	@$(MAKE) tag
 
 # Preparation for a release: creates a branch, updates versions, and commits.
