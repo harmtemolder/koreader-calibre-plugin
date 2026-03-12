@@ -22,8 +22,10 @@ jobs:
 
       - name: Run Gemini Triage
         uses: google-github-actions/run-gemini-cli@v0
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         with:
-          google_api_key: ${{ secrets.GEMINI_API_KEY }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           prompt: |
             You are an expert project maintainer for "koreader-calibre-plugin".
             Your goal is to triage issues, check for missing info, and manage assignments.
