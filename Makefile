@@ -53,7 +53,7 @@ release: build
 
 # Preparation for a release: creates a branch, updates versions, and commits.
 # Allows .version to be dirty so you can edit it before running.
-prep-release: lint test
+prep-release:
 	@if [ -n "$$(git status --short | grep -v ' .version$$')" ]; then \
 		echo "Working directory has uncommitted changes (other than .version). Please commit or stash them first."; \
 		exit 1; \
@@ -61,6 +61,8 @@ prep-release: lint test
 	@echo "Preparing release for version $(version)"
 	@git checkout -b "release-prep-$(version)"
 	@$(MAKE) update_version
+	@$(MAKE) lint
+	@$(MAKE) test
 	@git add .version $(init_file_to_upd) $(plugin_index_file_to_upd)
 	@git commit -m "chore: Prepare release $(version)"
 	@echo "Release preparation branch 'release-prep-$(version)' created."
