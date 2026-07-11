@@ -1065,7 +1065,7 @@ class KoreaderAction(InterfaceAction):
                         'column_percent_read': progress_data['percentage'] if not CONFIG["checkbox_percent_read_100"] else progress_data['percentage']*100,
                         'column_percent_read_int': round(progress_data['percentage']*100),
                         'column_last_read_location': progress_data['progress'],
-                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp']/1000, tz=local_tz),
+                        'column_date_synced': datetime.fromtimestamp(progress_data['timestamp'], tz=local_tz),
                         'column_device_name': progress_data['device'],
                         'column_device_id': progress_data['device_id']
                     }
