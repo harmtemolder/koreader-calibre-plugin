@@ -37,6 +37,7 @@ from PyQt5.Qt import (
 )
 
 from calibre_plugins.koreader.slpp import slpp as lua
+from calibre_plugins.koreader.koreader_hash import calculate_koreader_md5
 from calibre_plugins.koreader.config import (
     SUPPORTED_DEVICES,
     UNSUPPORTED_DEVICES,
@@ -229,6 +230,19 @@ class KoreaderAction(InterfaceAction):
             description="Use KOReader's built in ProgressSync Plugin "
                         "to update percentRead int or float.",
             triggered=self.sync_progress_from_progresssync
+        )
+
+        self.create_menu_action(
+            self.qaction.menu(),
+            'Calculate Missing MD5 Hashes',
+            'Calculate Missing MD5 Hashes',
+            icon='convert.png',
+            description="Compute KOReader's document hash locally from each "
+                        "book's EPUB file and fill in the MD5 column for "
+                        "books that don't have one yet - useful for devices "
+                        "that push straight to ProgressSync without ever "
+                        "running real KOReader software (see issue #150).",
+            triggered=self.calculate_missing_md5_hashes
         )
 
         self.qaction.menu().addSeparator()
@@ -1173,6 +1187,91 @@ class KoreaderAction(InterfaceAction):
                     results,
                     'error'
                 )
+
+    def calculate_missing_md5_hashes(self, silent=False):
+        """Fill in the KOReader MD5 hash for books that don't have one yet.
+
+        Normally the MD5 column is only ever populated by reading a real
+        KOReader sidecar file, so books that were only ever synced from a
+        device that pushes straight to ProgressSync without running actual
+        KOReader software (see issue #150) never get one, and ProgressSync
+        silently skips them. This computes KOReader's own partial-content
+        hash directly from each book's EPUB file instead.
+
+        :return:
+        """
+        debug_print = partial(
+            module_debug_print,
+            'KoreaderAction:calculate_missing_md5_hashes:'
+        )
+
+        md5_column = CONFIG["column_md5"]
+        if md5_column == '':
+            error_dialog(
+                self.gui,
+                'Failure',
+                'MD5 column not mapped, impossible to calculate MD5 hashes',
+                show=True,
+                show_copy_button=False
+            )
+            return None
+
+        db = self.gui.current_db.new_api
+        results = []
+        num_calculated = 0
+        num_skipped = 0
+
+        for book_id in db.all_book_ids():
+            metadata = db.get_metadata(book_id)
+            if metadata.get(md5_column):
+                continue  # already has a hash - don't overwrite it
+
+            title = metadata.get('title')
+            file_path = db.format_abspath(book_id, 'EPUB')
+            if not file_path:
+                num_skipped += 1
+                continue
+
+            md5_value = calculate_koreader_md5(file_path)
+            if not md5_value:
+                debug_print(f'could not hash {title} ({file_path})')
+                num_skipped += 1
+                continue
+
+            if DEBUG and DRY_RUN:
+                debug_print(
+                    f'would have set {md5_column} = {md5_value} for {title}')
+            else:
+                metadata.set(md5_column, md5_value)
+                db.set_metadata(
+                    book_id, metadata, set_title=False, set_authors=False)
+
+            results.append({'title': title, 'md5_value': md5_value})
+            num_calculated += 1
+
+        if not silent:
+            results_message = (
+                f'Calculated MD5 hashes: {num_calculated}\n'
+                f'Skipped (no EPUB format found): {num_skipped}\n\n'
+            )
+
+            if num_calculated > 0:
+                SyncCompletionDialog(
+                    self.gui,
+                    'MD5 calculation finished',
+                    results_message,
+                    results,
+                    'info'
+                )
+            else:
+                warning_dialog(
+                    self.gui,
+                    'No hashes calculated',
+                    results_message,
+                    show=True
+                )
+
+        return results
 
     def scheduled_progress_sync(self):
         def scheduledTask():

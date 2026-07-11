@@ -114,3 +114,8 @@ koreader_pkg.KoreaderSync = __init__.KoreaderSync
 import config
 koreader_pkg.config = config
 sys.modules["calibre_plugins.koreader.config"] = config
+
+# 8. Import koreader_hash
+import koreader_hash
+koreader_pkg.koreader_hash = koreader_hash
+sys.modules["calibre_plugins.koreader.koreader_hash"] = koreader_hash
