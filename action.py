@@ -7,10 +7,12 @@ from functools import partial
 import io
 import json
 import os
+import posixpath
 import re
 import sys
 import importlib.util
 import time
+import uuid as uuid_module
 
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -392,7 +394,12 @@ class KoreaderAction(InterfaceAction):
     def _on_device_metadata_available(self):
         self.sync_to_calibre(silent=not DEBUG)
 
-    def get_paths(self, device):
+    @staticmethod
+    def document_to_sidecar_path(book_path):
+        """Convert a KOReader document path to its adjacent sidecar path."""
+        return re.sub(r'\.([^./\\]+)$', r'.sdr/metadata.\1.lua', book_path)
+
+    def get_registered_paths(self, device):
         """Retrieves paths to sidecars of all books in calibre's library
         on the device
 
@@ -419,9 +426,7 @@ class KoreaderAction(InterfaceAction):
                 debug_print(f'Ignoring book in hidden folder: {book.path}')
                 continue
 
-            sidecar_path = re.sub(
-                r'\.([^./\\]+)$', r'.sdr/metadata.\1.lua', book.path
-            )
+            sidecar_path = self.document_to_sidecar_path(book.path)
             paths.append((book.uuid, sidecar_path))
 
 
@@ -431,6 +436,122 @@ class KoreaderAction(InterfaceAction):
         )
 
         return paths
+
+    def get_paths(self, device):
+        """Backward-compatible alias for registered device paths."""
+        return self.get_registered_paths(device)
+
+    @staticmethod
+    def extract_history_document_paths(history_contents):
+        """Return document paths from a decoded KOReader history table."""
+        paths = []
+
+        def visit(value):
+            if isinstance(value, dict):
+                file_path = value.get('file')
+                if isinstance(file_path, str):
+                    paths.append(file_path)
+                for child in value.values():
+                    visit(child)
+            elif isinstance(value, (list, tuple)):
+                for child in value:
+                    visit(child)
+
+        visit(history_contents)
+        return paths
+
+    @staticmethod
+    def infer_wireless_inbox_root(history_paths, registered_document_paths):
+        """Infer KOReader's absolute inbox root from matching path suffixes.
+
+        Calibre's SMART_DEVICE_APP protocol exposes only paths relative to the
+        wireless inbox. KOReader uses its absolute inbox path internally but
+        does not send it during initialization or device-information exchange.
+        Comparing a registered relative path with KOReader's absolute history
+        is therefore the least invasive plugin-only fallback: reading
+        settings.reader.lua would unnecessarily expose unrelated credentials,
+        while a protocol change requires coordinated KOReader/Calibre updates.
+
+        Return no result unless every match agrees on one root. This deliberately
+        fails closed instead of guessing a device path.
+        """
+        roots = set()
+        normalized_history = [posixpath.normpath(path.replace('\\', '/'))
+                              for path in history_paths]
+        for registered_path in registered_document_paths:
+            relative = posixpath.normpath(
+                registered_path.replace('\\', '/')
+            ).lstrip('/')
+            suffix = '/' + relative
+            for absolute in normalized_history:
+                if absolute.endswith(suffix):
+                    roots.add(absolute[:-len(suffix)] or '/')
+        return roots.pop() if len(roots) == 1 else None
+
+    def get_history_import_paths(self, device, registered_paths):
+        """Discover unregistered sidecars from wireless KOReader history."""
+        debug_print = partial(module_debug_print,
+                              'KoreaderAction:get_history_import_paths:')
+        if device.__class__.__name__ != 'SMART_DEVICE_APP':
+            return []
+        if not CONFIG['checkbox_discover_from_history']:
+            return []
+
+        with io.BytesIO() as outfile:
+            try:
+                device.get_file('../history.lua', outfile)
+            except Exception as error:
+                debug_print(f'Unable to retrieve ../history.lua: {error}')
+                return []
+            try:
+                history_contents = parse_sidecar_lua(
+                    outfile.getvalue().decode())
+            except (UnicodeDecodeError, ValueError, TypeError) as error:
+                debug_print(f'Unable to parse ../history.lua: {error}')
+                return []
+
+        history_paths = self.extract_history_document_paths(history_contents)
+        registered_documents = [
+            re.sub(r'\.sdr/metadata\.([^./\\]+)\.lua$', r'.\1', path)
+            for _, path in registered_paths
+        ]
+        inbox_root = self.infer_wireless_inbox_root(
+            history_paths, registered_documents)
+        if inbox_root is None:
+            debug_print('Could not infer a unique KOReader wireless inbox root')
+            return []
+
+        discovered = []
+        root_prefix = inbox_root.rstrip('/') + '/'
+        for absolute_path in history_paths:
+            normalized = posixpath.normpath(absolute_path.replace('\\', '/'))
+            if not normalized.startswith(root_prefix):
+                continue
+            relative = normalized[len(root_prefix):]
+            if relative.startswith('../') or relative in ('', '.'):
+                continue
+            sidecar_path = self.document_to_sidecar_path(relative)
+            if sidecar_path == relative:
+                continue
+            discovered.append((None, sidecar_path))
+            debug_print(f'Discovered history sidecar: {sidecar_path}')
+        return discovered
+
+    def get_import_paths(self, device):
+        """Return registered and read-only history-discovered import paths."""
+        registered = self.get_registered_paths(device)
+        combined = list(registered)
+        known_paths = {path for _, path in registered}
+        history_paths = self.get_history_import_paths(device, registered)
+        for book_uuid, path in history_paths:
+            if path not in known_paths:
+                combined.append((book_uuid, path))
+                known_paths.add(path)
+        return combined
+
+    def get_restore_paths(self, device):
+        """Return only registered paths eligible for sidecar write-back."""
+        return self.get_registered_paths(device)
 
     def get_sidecar(self, device, path):
         """Requests the given path from the given device and returns the
@@ -487,23 +608,50 @@ class KoreaderAction(InterfaceAction):
 
         return parsed_contents
 
-    def get_calibre_uuid_from_sidecar(self, sidecar_contents):
-        """Extracts the calibre UUID from sidecar identifiers if present.
-        (Issue #115)
-        """
+    def get_calibre_uuids_from_sidecar(self, sidecar_contents):
+        """Extract stable UUID candidates from known sidecar locations."""
         if not isinstance(sidecar_contents, dict):
-            return None
-        stats = sidecar_contents.get('stats', {})
-        identifiers_str = stats.get('identifiers', '')
-        if not identifiers_str:
-            return None
+            return []
+        candidates = []
+        for location in ('doc_props', 'stats'):
+            identifiers_str = sidecar_contents.get(location, {}).get(
+                'identifiers', '')
+            if not isinstance(identifiers_str, str):
+                continue
+            for match in re.finditer(
+                    r'(?:^|[\s\\])(?:calibre:|uuid:|urn:uuid:)'
+                    r'([0-9a-fA-F-]{36})(?=$|[\s\\])', identifiers_str):
+                try:
+                    candidate = str(uuid_module.UUID(match.group(1)))
+                except ValueError:
+                    continue
+                if candidate not in candidates:
+                    candidates.append(candidate)
+        return candidates
 
-        # KOReader uses both space and \ as separators in some versions
-        parts = re.split(r'[\s\\]+', identifiers_str)
-        for part in parts:
-            if part.startswith('calibre:'):
-                return part.replace('calibre:', '').strip()
-        return None
+    def get_calibre_uuid_from_sidecar(self, sidecar_contents):
+        """Return the first stable sidecar UUID for legacy callers."""
+        candidates = self.get_calibre_uuids_from_sidecar(sidecar_contents)
+        return candidates[0] if candidates else None
+
+    def resolve_book_uuid(self, device_uuid, sidecar_contents, db):
+        """Resolve exactly one book in the active Calibre library."""
+        candidates = []
+        if device_uuid:
+            candidates.append(device_uuid)
+        candidates.extend(self.get_calibre_uuids_from_sidecar(sidecar_contents))
+
+        matches = []
+        for candidate in candidates:
+            if any(candidate == matched_uuid for matched_uuid, _ in matches):
+                continue
+            try:
+                book_id = db.lookup_by_uuid(candidate)
+            except Exception:
+                book_id = None
+            if book_id:
+                matches.append((candidate, book_id))
+        return matches[0] if len(matches) == 1 else (None, None)
 
     def update_metadata(self, uuid, db, keys_values_to_update):
         """Update multiple metadata columns for the given book.
@@ -874,7 +1022,7 @@ class KoreaderAction(InterfaceAction):
         if not self.check_device(device):
             return None
 
-        sidecar_paths = self.get_paths(device)
+        sidecar_paths = self.get_restore_paths(device)
         debug_print('sidecar_paths: ', sidecar_paths)
 
         results = []
@@ -1217,7 +1365,7 @@ class KoreaderAction(InterfaceAction):
         if not self.check_device(device):
             return None
 
-        sidecar_paths = self.get_paths(device)
+        sidecar_paths = self.get_import_paths(device)
         debug_print('sidecar_paths:', sidecar_paths)
 
         class KOSyncWorker(QThread):
@@ -1240,44 +1388,23 @@ class KoreaderAction(InterfaceAction):
                     debug_print('Trying to get sidecar from ', device,
                                 ', with sidecar_path: ', sidecar_path)
 
-                    # pre-checks before parsing
-                    if book_uuid is None:
-                        status = 'skipped, no UUID'
-                        append_results(results, None, status,
-                                       book_uuid, sidecar_path)
-                        num_skip += 1
-                        continue
+                    # Preserve the existing result title for registered books.
+                    # History-discovered paths have no device UUID until their
+                    # sidecar is parsed, so their title remains unknown if the
+                    # sidecar itself is missing.
+                    title = None
+                    if book_uuid:
+                        try:
+                            registered_book_id = db.lookup_by_uuid(book_uuid)
+                            if registered_book_id:
+                                title = db.get_metadata(
+                                    registered_book_id).get('title')
+                        except Exception:
+                            pass
 
                     sidecar_contents = self.action.get_sidecar(
                         device, sidecar_path)
                     debug_print("sidecar_contents:", sidecar_contents)
-
-                    try:
-                        book_id = db.lookup_by_uuid(book_uuid)
-                        if not book_id:
-                            # Try to find a better UUID in the sidecar (Issue #115)
-                            better_uuid = self.action.get_calibre_uuid_from_sidecar(sidecar_contents)
-                            if better_uuid:
-                                debug_print(f"Found alternative UUID in sidecar: {better_uuid}")
-                                book_id = db.lookup_by_uuid(better_uuid)
-                                if book_id:
-                                    book_uuid = better_uuid # Use the one that worked
-
-                        if not book_id:
-                            raise Exception("Book not found")
-                        metadata = db.get_metadata(book_id)
-                        title = metadata.get('title')
-                    except Exception as e:
-                        debug_print(f"Failed to lookup book {book_uuid}: {e}")
-                        status = 'skipped, could not find in library'
-                        append_results(results, "Unknown", status,
-                                       book_uuid, sidecar_path)
-                        num_skip += 1
-                        continue
-
-                    self.progress_update.emit(idx + 1, title)
-                    if DEBUG: # Add time delay when debugging
-                        time.sleep(.4)
 
                     if sidecar_contents is GetSidecarStatus.PATH_NOT_FOUND:
                         status = ('skipped, sidecar does not exist '
@@ -1293,6 +1420,25 @@ class KoreaderAction(InterfaceAction):
                                        book_uuid, sidecar_path)
                         num_fail += 1
                         continue
+
+                    try:
+                        book_uuid, book_id = self.action.resolve_book_uuid(
+                            book_uuid, sidecar_contents, db)
+                        if not book_id:
+                            raise Exception("Book not found")
+                        metadata = db.get_metadata(book_id)
+                        title = metadata.get('title')
+                    except Exception as e:
+                        debug_print(f"Failed to lookup book {book_uuid}: {e}")
+                        status = 'skipped, could not find in library'
+                        append_results(results, "Unknown", status,
+                                       book_uuid, sidecar_path)
+                        num_skip += 1
+                        continue
+
+                    self.progress_update.emit(idx + 1, title)
+                    if DEBUG: # Add time delay when debugging
+                        time.sleep(.4)
 
                     debug_print('sidecar_contents is found!')
 

@@ -295,6 +295,14 @@ CHECKBOXES = {  # Each entry in the below dict is keyed with config_name
         'config_tool_tip': 'Sync from KOReader automatically on device connection. \n'
         'Restart calibre to apply this setting',
     },
+    'checkbox_discover_from_history': {
+        'config_label': 'Discover unregistered books from KOReader history',
+        'config_tool_tip': (
+            'For KOReader wireless connections, read history.lua to find '
+            'sidecars\nfor opened books that were not sent with Calibre '
+            '(for example OPDS downloads).'
+        ),
+    },
     'checkbox_enable_scheduled_progressync': {
         'config_label': 'Daily ProgressSync',
         'config_tool_tip': 'Enable daily sync of reading progress and location using \n'
@@ -403,6 +411,7 @@ class ConfigWidget(QWidget):  # https://doc.qt.io/qt-5/qwidget.html
         layout.addLayout(self.add_checkbox('checkbox_no_sync_if_finished'))
 
         layout.addLayout(self.add_checkbox('checkbox_enable_automatic_sync'))
+        layout.addLayout(self.add_checkbox('checkbox_discover_from_history'))
 
         # Progress Sync Section
         layout.addWidget(create_separator())
