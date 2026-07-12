@@ -88,6 +88,16 @@ that thread.
    - Sync only if changes are more recent: Checks retrieved **Last Sync Date** against date on file.
    - No sync if book has already been finished: If **percent read** is _100_ or if **reading status** is _finished_ don't update data.
    - Automatic Sync on device connection: Silently sync's from KOReader when device is connected
+   - Discover unregistered books from KOReader history: For wireless KOReader
+     connections, also import sidecars for recently opened books that are not
+     in calibre's device list, such as books downloaded through OPDS. The
+     plugin identifies these books using UUIDs stored in their sidecars. This
+     option is read-only and does not add history-discovered paths to
+     **Sync missing to KOReader**.
+
+     Discovery is limited to documents retained in KOReader's `history.lua`.
+     The plugin must also find at least one registered book in that history to
+     infer KOReader's wireless inbox directory.
 
 1.  Add _KOReader Sync_ to _main toolbar when a device is connected_, if it
     isn't there already.

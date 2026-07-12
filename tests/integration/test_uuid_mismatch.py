@@ -8,20 +8,25 @@ def test_get_calibre_uuid_from_sidecar():
     action = KoreaderAction(MagicMock(), MagicMock())
     
     # Test with valid identifiers
-    sidecar = {
-        'stats': {
-            'identifiers': 'uuid:8d62883d calibre:5ac8d90f-7d24-4b65-9f89-ff77df18bee9 isbn:123'
-        }
-    }
-    assert action.get_calibre_uuid_from_sidecar(sidecar) == '5ac8d90f-7d24-4b65-9f89-ff77df18bee9'
+    sidecar = {'doc_props': {
+        'identifiers': ('calibre:456 '
+                        'uuid:d1fe7ad2-bf4f-4a92-bb23-931ccc23e571 '
+                        'urn:uuid:fb126322-1c5c-465f-a4e6-29d357e86841')
+    }}
+    assert action.get_calibre_uuids_from_sidecar(sidecar) == [
+        'd1fe7ad2-bf4f-4a92-bb23-931ccc23e571',
+        'fb126322-1c5c-465f-a4e6-29d357e86841',
+    ]
+    assert action.get_calibre_uuid_from_sidecar(sidecar) == \
+        'd1fe7ad2-bf4f-4a92-bb23-931ccc23e571'
     
     # Test with newline/backslash separator
-    sidecar = {
-        'stats': {
-            'identifiers': 'uuid:abc\\calibre:xyz\\isbn:123'
-        }
-    }
-    assert action.get_calibre_uuid_from_sidecar(sidecar) == 'xyz'
+    sidecar = {'stats': {
+        'identifiers': ('uuid:8d62883d-1111-4222-8333-123456789abc\\'
+                        'calibre:5ac8d90f-7d24-4b65-9f89-ff77df18bee9')
+    }}
+    assert action.get_calibre_uuid_from_sidecar(sidecar) == \
+        '8d62883d-1111-4222-8333-123456789abc'
     
     # Test with no calibre identifier
     sidecar = {
@@ -74,8 +79,7 @@ def test_uuid_mismatch_resolution_integration():
     book_id = mock_db.lookup_by_uuid(wrong_uuid)
     assert book_id is None # Initial failure
     
-    better_uuid = action.get_calibre_uuid_from_sidecar(sidecar_contents)
-    assert better_uuid == correct_uuid
-    
-    book_id = mock_db.lookup_by_uuid(better_uuid)
+    resolved_uuid, book_id = action.resolve_book_uuid(
+        wrong_uuid, sidecar_contents, mock_db)
+    assert resolved_uuid == correct_uuid
     assert book_id == 4 # Success!
